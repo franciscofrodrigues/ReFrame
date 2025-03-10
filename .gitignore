@@ -2,3 +2,4 @@
 __pycache__
 modules/assets/outputs/
 modules/segmentation/weights/FastSAM-x.pt
+weights/FastSAM-x.pt

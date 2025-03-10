@@ -17,8 +17,7 @@ for root, dirs, files in os.walk('./modules/assets/inputs'):
     for file in files:
         img_path = os.path.join(root, file)
         original_img = cv2.imread(img_path)
-
-        resized_img = cv2.resize(original_img, None, fx=0.2, fy=0.2)
+        resized_img = cv2.resize(original_img, None, fx=0.2, fy=0.2)        
         
         inputs = image_processor(resized_img, return_tensors="pt").to(device)
 

@@ -12,3 +12,4 @@ numpy==1.26.4
 scipy
 
 ## Image Segmentation (FastSAM)
+ultralytics == 8.0.120
