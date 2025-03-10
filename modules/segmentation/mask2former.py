@@ -6,7 +6,9 @@ import numpy as np
 
 image_processor = AutoImageProcessor.from_pretrained("facebook/mask2former-swin-large-ade-semantic")
 model = Mask2FormerForUniversalSegmentation.from_pretrained("facebook/mask2former-swin-large-ade-semantic")
+
 id2label = model.config.id2label
+semantic_labels = []
 
 device = 'cpu'
 model.to(device)
@@ -30,8 +32,7 @@ for root, dirs, files in os.walk('./modules/assets/inputs'):
         pred_map_numpy = pred_instance_map.numpy()
         instances = np.unique(pred_map_numpy)
 
-        mask_counter = 0
-        semantic_labels = []
+        mask_counter = 0        
         for instance in instances:
             mask = (pred_map_numpy == instance).astype(np.uint8) * 255            
                         
@@ -43,7 +44,8 @@ for root, dirs, files in os.walk('./modules/assets/inputs'):
             result_img_rgba[mask == 0] = [0, 0, 0, 0]
 
             basename = os.path.splitext(os.path.basename(img_path))[0]
-            cv2.imwrite(f'./modules/assets/outputs/{basename}_{mask_counter}.png', result_img_rgba)
+            cv2.imwrite(f'./modules/assets/outputs/mask2former/{basename}_{mask_counter}.png', result_img_rgba)
             mask_counter += 1
 
-        print(semantic_labels)
+    
+print(semantic_labels)
