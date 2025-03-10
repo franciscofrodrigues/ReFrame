@@ -10,3 +10,5 @@ pillow
 transformers
 numpy==1.26.4
 scipy
+
+## Image Segmentation (FastSAM)
