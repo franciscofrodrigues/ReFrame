@@ -1,5 +1,5 @@
-from modules.concept.concept import getConcepts, checkRelations
-from modules.scene_graph.scene_graph import drawGraph
+from modules import getConcepts, checkRelations # Concept
+from modules import drawGraph # Scene Graph
 
 concepts = ["person", "cat", "dog", "horse", "book", "library"]
 related = getConcepts(concepts)
