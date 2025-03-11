@@ -6,8 +6,7 @@ import json
 segmentation_model = 'fastsam'
 weights_path = './weights/yolo11n.pt'
 inputs_path = f'./modules/assets/outputs/{segmentation_model}'
-# inputs_path = f'./modules/assets/inputs/'
-outputs_path = './modules/assets/outputs/fastsam'
+outputs_path = './classification_results'
 
 # Inicializar o modelo
 model = YOLO(weights_path)

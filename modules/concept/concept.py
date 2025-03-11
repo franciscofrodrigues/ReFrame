@@ -19,6 +19,7 @@ def getConcepts(concepts):
 
 # Verificar relações entre palavras
 def checkRelations(concepts, related):
+    # print(related)
     edges = []
     for c1, c2 in combinations(concepts, 2):
         if related[c1].intersection(related[c2]):

@@ -5,3 +5,4 @@ weights/FastSAM-x.pt
 weights/yolo11n.pt
 weights/yolo11n-cls.pt
 weights/yolo11x-cls.pt
+classification_results
