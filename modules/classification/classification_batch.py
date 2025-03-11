@@ -32,7 +32,8 @@ def get_labels(json_file):
 # Classificação de VÁRIAS imagens
 def classification_batch(img_paths):
     results = model(img_paths, device='cpu', imgsz=320, conf=0.2, iou=0.7) # Inferência
-    
+
+    labels = []
     for result in results:                        
         json_file = result.to_json() # "name", "class", "confidence", "box" (x1,y1,x2,y2)        
         instance_label = get_labels(json_file) # Categoria
