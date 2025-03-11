@@ -1,6 +1,6 @@
 from ultralytics import YOLO
 import os
-import cv2
+import json
 
 # Localização de ficheiros
 segmentation_model = 'fastsam'
@@ -21,14 +21,29 @@ def img_list(inputs_path):
             path_list.append(img_path)
     return path_list
 
+def get_labels(json_file):
+    result_list = json.loads(json_file)
+    if result_list:
+        class_name = result_list[0]['name']
+        return class_name
+    else:
+        return ""
+
 # Classificação de VÁRIAS imagens
 def classification_batch(img_paths):
-    results = model(img_paths, conf=0.2)
+    results = model(img_paths, device='cpu', imgsz=320, conf=0.2, iou=0.7) # Inferência
 
-    for result in results:
-        # labels = result.names
-        # print(labels)
-        result.show()  # Display image with bounding boxes
+    labels = []
+    for result in results:                        
+        json_file = result.to_json() # "name", "class", "confidence", "box" (x1,y1,x2,y2)        
+        instance_label = get_labels(json_file) # Categoria
+        if instance_label:
+            labels.append(instance_label)
+
+        # result.show()
+
+    print("Categorias:", labels)
+    return labels
 
 # ------------------------------------------------------------------------------
 
@@ -36,7 +51,8 @@ def main():
     image_paths = img_list(inputs_path)
     classification_batch(image_paths)
 
-main()
+if __name__ == "__main__":
+    main()
 
 # probs = result.probs  # Probs object for classification outputs
 # boxes = result.boxes  # Boxes object for bounding box outputs
