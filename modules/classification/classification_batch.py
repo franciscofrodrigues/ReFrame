@@ -42,7 +42,7 @@ def classification_batch(img_paths):
 
         # result.show()
 
-    print("Categorias:", labels)
+    # print("Categorias:", labels)
     return labels
 
 # ------------------------------------------------------------------------------

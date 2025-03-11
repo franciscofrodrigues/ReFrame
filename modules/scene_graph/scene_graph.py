@@ -8,5 +8,5 @@ def drawGraph(concepts, edges):
     G.add_edges_from(edges) # Edges
 
     plt.figure(figsize=(5, 5))
-    nx.draw(G, with_labels=True, node_color='white', edge_color='black', node_size=1000, font_size=10)
+    nx.draw(G, with_labels=True, node_color='white', edge_color='black', edgecolors='black', node_size=1000, font_size=10)
     plt.show()
