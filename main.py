@@ -7,8 +7,7 @@ def main():
     
     # Object Classification
     print("2 - Classificação")
-    concepts = classification()    
-    print(concepts)
+    concepts = classification()
 
     # ConceptNet
     print("3 - Rede Conceptual")
