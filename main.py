@@ -1,4 +1,6 @@
-from modules import fastsam, mask2former, classification, getConcepts, checkRelations, drawGraph
+from modules import fastsam, classification
+from modules.concept import getConcepts, checkRelations
+from modules.scene_graph import drawGraph
 
 def main():
     # Segmentação de Imagem
