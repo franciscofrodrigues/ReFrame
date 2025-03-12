@@ -3,4 +3,4 @@ __pycache__
 modules/assets/outputs/
 weights/FastSAM-x.pt
 weights/yolo11x.pt
-res
+res/*/
