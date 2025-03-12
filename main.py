@@ -8,11 +8,11 @@ def main():
     
     # Classificação
     print("2. Classificação")
-    concepts = classification()
+    # concepts = classification()
 
     # ConceptNet
     print("3. Rede Conceptual")
-    # concepts = ["person", "cat", "dog", "horse", "book", "library", ""]
+    concepts = ["person", "cat", "dog", "horse", "book", "library", ""]
     related = getConcepts(concepts)    
     
     # Scene Graph

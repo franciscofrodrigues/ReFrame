@@ -5,8 +5,8 @@ import numpy as np
 
 # Localização de ficheiros
 weights_path = './weights/FastSAM-x.pt'
-inputs_path = './modules/assets/inputs'
-outputs_path = './modules/assets/outputs/fastsam'
+inputs_path = './res/inputs'
+outputs_path = './res/segmentation/fastsam'
 
 # Inicializar o modelo
 model = FastSAM(weights_path)

@@ -5,7 +5,7 @@ import json
 # Localização de ficheiros
 segmentation_model = 'fastsam'
 weights_path = './weights/yolo11x.pt'
-inputs_path = f'./modules/assets/outputs/{segmentation_model}'
+inputs_path = f'./res/segmentation/{segmentation_model}'
 outputs_path = './classification_results'
 
 # Inicializar o modelo

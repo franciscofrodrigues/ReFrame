@@ -5,8 +5,8 @@ import torch
 import numpy as np
 
 # Localização de ficheiros
-inputs_path = './modules/assets/inputs'
-outputs_path = './modules/assets/outputs/mask2former'
+inputs_path = './res/inputs'
+outputs_path = './res/segmentation/mask2former'
 
 # Inicializar o modelo
 image_processor = AutoImageProcessor.from_pretrained("facebook/mask2former-swin-large-ade-semantic")

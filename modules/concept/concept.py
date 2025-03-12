@@ -12,19 +12,16 @@ def relatedConcepts(word):
 
 # Guardar todos os conceitos relacionados
 def getConcepts(concepts):
-    related = {}
-    for concept in concepts:
-        related[concept] = relatedConcepts(concept)
+    related = {concept: relatedConcepts(concept) for concept in concepts}
     return related
 
 # Verificar relações entre palavras
 def checkRelations(concepts, related):
-    # print(related)
+    # print(related) # Debug
     edges = []
     for c1, c2 in combinations(concepts, 2):
-        if related[c1].intersection(related[c2]):
+        if related[c1] & related[c2]:
             edges.append((c1, c2)) # Ligações do Gráfico
-
     return edges
 
 # response.keys()
