@@ -4,7 +4,7 @@ import json
 
 # Localização de ficheiros
 segmentation_model = 'fastsam'
-weights_path = './weights/yolo11n.pt'
+weights_path = './weights/yolo11x.pt'
 inputs_path = f'./modules/assets/outputs/{segmentation_model}'
 outputs_path = './classification_results'
 
@@ -22,11 +22,7 @@ def img_list(inputs_path):
 
 def get_labels(json_file):
     result_list = json.loads(json_file)
-    if result_list:
-        class_name = result_list[0]['name']
-        return class_name
-    else:
-        return ""
+    return result_list[0]['name'] if result_list else ""
 
 # Classificação de VÁRIAS imagens
 def classification_batch(img_paths):

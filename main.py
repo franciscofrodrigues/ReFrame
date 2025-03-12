@@ -6,7 +6,7 @@ def main():
     # fastsam()
     # concepts = mask2former()
     
-    # Object Classification
+    # Classificação
     print("2. Classificação")
     concepts = classification()
 
