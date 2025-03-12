@@ -1,6 +1,11 @@
 .venv/
 __pycache__
 modules/assets/outputs/
+
 weights/FastSAM-x.pt
 weights/yolo11x.pt
-res/*/
+
+res/classification/*
+res/segmentation/fastsam/*
+res/segmentation/mask2former/*
+res/inputs/*
