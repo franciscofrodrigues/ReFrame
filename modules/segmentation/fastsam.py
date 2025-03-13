@@ -4,12 +4,12 @@ import cv2
 import numpy as np
 
 # Localização de ficheiros
-weights_path = './weights/FastSAM-x.pt'
-inputs_path = './res/inputs'
-outputs_path = './res/segmentation/fastsam'
+WEIGHTS_PATH = './weights/FastSAM-x.pt'
+INPUTS_PATH = './res/inputs'
+OUTPUTS_PATH = './res/segmentation/fastsam'
 
 # Inicializar o modelo
-model = FastSAM(weights_path)
+model = FastSAM(WEIGHTS_PATH)
 
 # Segmentação de UMA imagem
 def segmentation(img_path):
@@ -19,11 +19,10 @@ def segmentation(img_path):
     everything_results = model(original_img, device="cpu", retina_masks=True, imgsz=512, conf=0.8, iou=0.9) # Inferência
     # everything_results = model(original_img, device="cpu", retina_masks=True, imgsz=1024, conf=0.8, iou=0.9) # Inferência (Melhor resolução)
 
-    mask_counter = 0
     for instance in everything_results:
         masks = instance.masks
                 
-        for mask in masks.data:
+        for i, mask in enumerate(masks.data):
             mask_np = mask.cpu().numpy()  # Converter de tensor para numpy
             mask_binary = (mask_np > 0).astype(np.uint8) * 255  # Máscara binária
 
@@ -33,14 +32,13 @@ def segmentation(img_path):
             result_img_rgba[mask_binary == 0] = [0, 0, 0, 0] # Preto para transparente
                     
             basename = os.path.splitext(os.path.basename(img_path))[0]
-            cv2.imwrite(f'{outputs_path}/{basename}_{mask_counter}.png', result_img_rgba) # Guardar ficheiro de máscara
-            mask_counter += 1
+            cv2.imwrite(f'{OUTPUTS_PATH}/{basename}_{i}.png', result_img_rgba) # Guardar ficheiro de máscara
 
 # ------------------------------------------------------------------------------
 
 def main():
     # Segmentação de um CONJUNTO de images da pasta "inputs"
-    for root, dirs, files in os.walk(inputs_path):
+    for root, dirs, files in os.walk(INPUTS_PATH):
         for file in files:
             img_path = os.path.join(root, file)
             segmentation(img_path)
