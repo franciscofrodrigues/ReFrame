@@ -1,5 +1,4 @@
-from modules import fastsam, classification
-from modules.concept import getConcepts, checkRelations
+from modules import fastsam, classification, concept_relations
 from modules.scene_graph import drawGraph
 
 def main():
@@ -14,12 +13,11 @@ def main():
 
     # ConceptNet
     print("3. Rede Conceptual")
-    concepts = ["person", "cat", "dog", "horse", "book", "library", ""]
-    related = getConcepts(concepts)    
-    
+    concepts = {"person", "cat", "dog", "horse", "book", "library", ""}    
+    edges = concept_relations(concepts)
+
     # Scene Graph
     print("4. Scene Graph")
-    edges = checkRelations(concepts, related)
     drawGraph(concepts, edges)
 
 main()
