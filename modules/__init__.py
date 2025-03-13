@@ -1,7 +1,4 @@
-from .segmentation.fastsam import main as fastsam
-from .segmentation.mask2former import main as mask2former
-from .classification.classification import main as classification
-from .concept.concept import main as concept_relations
-from .scene_graph.scene_graph import drawGraph
-
-__all__ = ["fastsam", "mask2former", "classification", "getConcepts", "checkRelations", "drawGraph"]
+from .segmentation import seg_fastsam, seg_mask2former
+from .classification import classify
+from .concept import conceptRelations
+from .scene_graph import drawGraph

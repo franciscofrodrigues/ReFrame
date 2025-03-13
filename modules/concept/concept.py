@@ -7,11 +7,11 @@ def relatedConcepts(word: str) -> set[str]:
     return {edge['end']['label'] for edge in response['edges']}
 
 # Guardar todos os conceitos relacionados
-def getConcepts(concepts: set) -> dict[str, set[str]]:
+def getConcepts(concepts: set[str]) -> dict[str, set[str]]:
     return {concept: relatedConcepts(concept) for concept in concepts}
 
 # Verificar relações entre palavras
-def checkRelations(concepts: set, related: dict) -> list[tuple[str,str]]:
+def checkRelations(concepts: set[str], related: dict[str, set[str]]) -> list[tuple[str,str]]:
     edges = []
     for c1, c2 in combinations(concepts, 2):
         if related[c1] & related[c2]:
@@ -20,11 +20,10 @@ def checkRelations(concepts: set, related: dict) -> list[tuple[str,str]]:
 
 # ------------------------------------------------------------------------------
 
-def main(concepts: set):
+def main(concepts: set[str]):
     related = getConcepts(concepts)
     edges = checkRelations(concepts, related)
     return edges
-
 
 if __name__ == "__main__":
     main()
