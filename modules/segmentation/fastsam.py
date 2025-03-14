@@ -3,16 +3,8 @@ import os
 import cv2
 import numpy as np
 
-# Localização de ficheiros
-WEIGHTS_PATH = './weights/FastSAM-x.pt'
-INPUTS_PATH = './res/inputs'
-OUTPUTS_PATH = './res/segmentation/fastsam'
-
-# Inicializar o modelo
-model = FastSAM(WEIGHTS_PATH)
-
 # Segmentação de UMA imagem
-def segmentation(img_path):
+def segmentation(model, img_path, outputs_path):
     original_img = cv2.imread(img_path)
     # resized_img = cv2.resize(original_img, None, fx=0.2, fy=0.2) # Reduzir resolução
 
@@ -32,16 +24,23 @@ def segmentation(img_path):
             result_img_rgba[mask_binary == 0] = [0, 0, 0, 0] # Preto para transparente
                     
             basename = os.path.splitext(os.path.basename(img_path))[0]
-            cv2.imwrite(f'{OUTPUTS_PATH}/{basename}_{i}.png', result_img_rgba) # Guardar ficheiro de máscara
+            cv2.imwrite(f'{outputs_path}/{basename}_{i}.png', result_img_rgba) # Guardar ficheiro de máscara
 
 # ------------------------------------------------------------------------------
 
-def main():
+def main(weights_path, inputs_path, outputs_path):
+
+    if not os.path.exists(weights_path):
+        raise FileNotFoundError(f"Weights file not found at {weights_path}. Please download it manually.")
+
+    # Inicializar o modelo
+    model = FastSAM(weights_path)
+
     # Segmentação de um CONJUNTO de images da pasta "inputs"
-    for root, dirs, files in os.walk(INPUTS_PATH):
+    for root, dirs, files in os.walk(inputs_path):
         for file in files:
             img_path = os.path.join(root, file)
-            segmentation(img_path)
+            segmentation(model, img_path, outputs_path)
 
 if __name__ == "__main__":
     main()

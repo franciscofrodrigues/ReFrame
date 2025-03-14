@@ -5,7 +5,7 @@ modules/assets/outputs/
 weights/FastSAM-x.pt
 weights/yolo11x.pt
 
-res/classification/*
-res/segmentation/fastsam/*
-res/segmentation/mask2former/*
-res/inputs/*
+res/class_outputs/*
+res/seg_outputs/fastsam/*
+res/seg_outputs/mask2former/*
+res/seg_inputs/*

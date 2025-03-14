@@ -2,15 +2,6 @@ from ultralytics import YOLO
 import os
 import json
 
-# Localização de ficheiros
-segmentation_model = 'fastsam'
-weights_path = './weights/yolo11x.pt'
-inputs_path = f'./res/segmentation/{segmentation_model}'
-outputs_path = './classification_results'
-
-# Inicializar o modelo
-model = YOLO(weights_path)
-
 # Lista de imagens de input
 def img_list(inputs_path):
     path_list = []
@@ -25,12 +16,13 @@ def get_labels(json_file):
     return result_list[0]['name'] if result_list else ""
 
 # Classificação de VÁRIAS imagens
-def classification_batch(img_paths):
-    results = model(img_paths, device='cpu', imgsz=320, conf=0.2, iou=0.7) # Inferência
+def classification_batch(model, img_paths, outputs_path):
+    results = model(img_paths, device='cpu', save=True, project=outputs_path, name='results', imgsz=320, conf=0.2, iou=0.7) # Inferência
 
     labels = []
     for result in results:                        
         json_file = result.to_json() # "name", "class", "confidence", "box" (x1,y1,x2,y2)        
+        print(json_file)
         instance_label = get_labels(json_file) # Categoria
         if instance_label:
             labels.append(instance_label)
@@ -42,9 +34,12 @@ def classification_batch(img_paths):
 
 # ------------------------------------------------------------------------------
 
-def main():
-    image_paths = img_list(inputs_path)
-    labels = classification_batch(image_paths)
+def main(seg_model, weights_path, inputs_path, outputs_path):
+    # Inicializar o modelo
+    model = YOLO(weights_path)
+
+    img_paths = img_list(inputs_path)
+    labels = classification_batch(model, img_paths, outputs_path)
     return labels
 
 if __name__ == "__main__":
