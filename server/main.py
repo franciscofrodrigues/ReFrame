@@ -6,7 +6,6 @@ def main():
     # Segmentação de Imagem
     print("1. Segmentação")
     # segmentation.seg_fastsam(config.FASTSAM_WEIGHTS, config.SEG_INPUTS, config.SEG_OUTPUTS)
-    # concepts = mask2former()
     
     # Classificação
     print("2. Classificação")
