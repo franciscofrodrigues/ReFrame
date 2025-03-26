@@ -40,7 +40,7 @@ def main(weights_path, inputs_path, outputs_path):
 
 if __name__ == "__main__":
     weights_path = "./server/weights/FastSAM-x.pt"
-    inputs_path = "./server/res/class_ouputs"
+    inputs_path = "./server/res/class_outputs"
     outputs_path = "./server/res/seg_outputs"
     main(weights_path, inputs_path, outputs_path)
 
