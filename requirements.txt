@@ -1,6 +1,7 @@
 networkx
 matplotlib
 requests
+fastapi
 
 ## Image Segmentation (Mask2Former)
 torch 
