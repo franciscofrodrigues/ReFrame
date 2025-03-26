@@ -1,8 +1,12 @@
 import config
 from modules import segmentation, classification, concept, scene_graph
 
+from fastapi import FastAPI
+
+app = FastAPI()
+
 # def main(individual: bool, batch_mode: bool, debug: bool):
-def main():
+def pipeline(img_paths: List[str]):
     # Segmentação de Imagem
     print("1. Segmentação")
     # segmentation.seg_fastsam(config.FASTSAM_WEIGHTS, config.SEG_INPUTS, config.SEG_OUTPUTS)
@@ -21,4 +25,29 @@ def main():
     print("4. Scene Graph")
     scene_graph.drawGraph(concepts, edges)
 
-main()
+# pipeline()
+
+@app.get('/')
+async def get():
+    return FileResponse('./app/index.html')
+
+@app.post("/upload")
+async def upload_image(background_tasks: BackgroundTasks, files: List[UploadFile] = File(...)):
+    img_paths = []
+    for file in files:
+        try:
+            file.filename = f'{uuid4()}.jpg'
+
+            with open(f'{UPLOAD_PATH}/{file.filename}', 'wb') as uploaded_img:
+                while content := file.file.read(1024 * 1024):
+                    uploaded_img.write(content)
+
+            img_paths.append(f'{UPLOAD_PATH}/{file.filename}')
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+        finally:
+            await file.close()
+
+        background_tasks.add_task(pipeline, img_paths)
+
+    return {'message': f"Uploaded {img_paths}"}
