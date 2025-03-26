@@ -39,7 +39,10 @@ def main(weights_path, inputs_path, outputs_path):
             segmentation(model, img_path, outputs_path)
 
 if __name__ == "__main__":
-    main()
+    weights_path = "./server/weights/FastSAM-x.pt"
+    inputs_path = "./server/res/class_ouputs"
+    outputs_path = "./server/res/seg_outputs"
+    main(weights_path, inputs_path, outputs_path)
 
 # # Run inference with bboxes prompt
 # results = model(source, bboxes=[439, 437, 524, 709])

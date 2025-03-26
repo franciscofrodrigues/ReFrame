@@ -2,8 +2,8 @@
 __pycache__
 server/modules/assets/outputs/
 
-weights/FastSAM-x.pt
-weights/yolo11x.pt
+server/weights/FastSAM-x.pt
+server/weights/yolo11x.pt
 
 server/res/class_inputs/*
 server/res/class_outputs/*

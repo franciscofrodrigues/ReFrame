@@ -14,17 +14,14 @@ def img_list(inputs_path):
 def get_label(box, model):
     return model.names[int(box.cls.item())] 
 
-# Get confidence score
 def get_confidence(box):
     return float(box.conf.item())
 
-# Get bounding box coordinates
 def get_bbox(box):
     box_coords = box.xyxy[0]
     x1, y1, x2, y2 = map(int, box_coords)
     return x1, y1, x2, y2
 
-# Crop object with padding
 def crop_objects(padding, img, x1, y1, x2, y2):
     x1 = max(0, x1 - padding)
     y1 = max(0, y1 - padding)
