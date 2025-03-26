@@ -29,10 +29,6 @@ def segmentation(model, img_path, outputs_path):
 # ------------------------------------------------------------------------------
 
 def main(weights_path, inputs_path, outputs_path):
-
-    if not os.path.exists(weights_path):
-        raise FileNotFoundError(f"Weights file not found at {weights_path}. Please download it manually.")
-
     # Inicializar o modelo
     model = FastSAM(weights_path)
 
