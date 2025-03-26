@@ -5,7 +5,7 @@ server/modules/assets/outputs/
 weights/FastSAM-x.pt
 weights/yolo11x.pt
 
+server/res/class_inputs/*
 server/res/class_outputs/*
-server/res/seg_outputs/fastsam/*
-server/res/seg_outputs/mask2former/*
-server/res/seg_inputs/*
+server/res/seg_outputs/*
+yolo11x.pt

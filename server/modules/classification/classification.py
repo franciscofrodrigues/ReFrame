@@ -1,8 +1,8 @@
 from ultralytics import YOLO
+import cv2
 import os
-import json
 
-# Lista de imagens de input
+# Get list of image paths
 def img_list(inputs_path):
     path_list = []
     for root, dirs, files in os.walk(inputs_path):
@@ -11,42 +11,72 @@ def img_list(inputs_path):
             path_list.append(img_path)
     return path_list
 
-def get_labels(json_file):
-    result_list = json.loads(json_file)
-    return result_list[0]['name'] if result_list else ""
+def get_label(box, model):
+    return model.names[int(box.cls.item())] 
+
+# Get confidence score
+def get_confidence(box):
+    return float(box.conf.item())
+
+# Get bounding box coordinates
+def get_bbox(box):
+    box_coords = box.xyxy[0]
+    x1, y1, x2, y2 = map(int, box_coords)
+    return x1, y1, x2, y2
+
+# Crop object with padding
+def crop_objects(padding, img, x1, y1, x2, y2):
+    x1 = max(0, x1 - padding)
+    y1 = max(0, y1 - padding)
+    x2 = min(img.shape[1], x2 + padding)
+    y2 = min(img.shape[0], y2 + padding)
+    return img[y1:y2, x1:x2]
+
+def output_name(outputs_path, counter):
+    return f'{outputs_path}/output_{counter}.jpg'
 
 # Classificação de VÁRIAS imagens
-def classification_batch(model, img_paths, outputs_path):
-    results = model(img_paths, device='cpu', save=True, project=outputs_path, name='results', imgsz=320, conf=0.2, iou=0.7) # Inferência
+def classification_batch(model, img_paths, outputs_path, padding=10):
+    results = model(img_paths, device='cpu', imgsz=320, conf=0.2, iou=0.7)
 
-    labels = []
-    for result in results:                        
-        json_file = result.to_json() # "name", "class", "confidence", "box" (x1,y1,x2,y2)        
-        print(json_file)
-        instance_label = get_labels(json_file) # Categoria
-        if instance_label:
-            labels.append(instance_label)
+    data = []
+    counter = 0
+    for img_path, result in zip(img_paths, results):
+        img = cv2.imread(img_path)
 
-        # result.show()
+        for box in result.boxes:
+            label = get_label(box, model)
+            confidence = get_confidence(box)
+            x1, y1, x2, y2 = get_bbox(box)
+            cropped_img = crop_objects(padding, img, x1, y1, x2, y2)
 
-    # print("Categorias:", labels)
-    return labels
+            output_file = output_name(outputs_path, counter)
+            cv2.imwrite(output_file, cropped_img)
+
+            data.append({
+                "input_path": img_path,
+                "output_path": output_file,
+                "label": label,
+                "confidence": confidence,
+                "coords": [x1, y1, x2, y2]
+            })
+        
+            counter += 1
+
+    return data
 
 # ------------------------------------------------------------------------------
 
-def main(seg_model, weights_path, inputs_path, outputs_path):
-    # Inicializar o modelo
+def main(weights_path, inputs_path, outputs_path):
     model = YOLO(weights_path)
-
     img_paths = img_list(inputs_path)
     labels = classification_batch(model, img_paths, outputs_path)
     return labels
 
 if __name__ == "__main__":
-    main()
+    weights_path = "yolo11x.pt"
+    inputs_path = "./server/res/class_inputs"
+    outputs_path = "./server/res/class_outputs"
 
-# probs = result.probs  # Probs object for classification outputs
-# boxes = result.boxes  # Boxes object for bounding box outputs
-# masks = result.masks  # Masks object for segmentation masks outputs
-# keypoints = result.keypoints  # Keypoints object for pose outputs
-# obb = result.obb  # Oriented boxes object for OBB outputs
+    results = main(weights_path, inputs_path, outputs_path)
+    print(results)

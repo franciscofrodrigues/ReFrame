@@ -4,13 +4,10 @@ FASTSAM_WEIGHTS = f'{WEIGHTS_PATH}/FastSAM-x.pt'
 YOLO_WEIGHTS = f'{WEIGHTS_PATH}/yolo11x.pt'
 
 RES_PATH = './server/res'
-SEG_MODEL = 'fastsam'
-SEG_INPUTS = f'./{RES_PATH}/seg_inputs'
-SEG_OUTPUTS = f'./{RES_PATH}/seg_outputs/{SEG_MODEL}'
+SEG_OUTPUTS = f'./{RES_PATH}/seg_outputs'
 
-CLASS_MODEL = 'yolo'
-CLASS_INPUTS = SEG_OUTPUTS
-CLASS_OUPUTS = f'./{RES_PATH}/class_outputs/{CLASS_MODEL}'
+CLASS_OUPUTS = f'./{RES_PATH}/class_intputs'
+CLASS_OUPUTS = f'./{RES_PATH}/class_outputs'
 
 # Atributos gerais
 DEBUG_MODE = True
