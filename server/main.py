@@ -36,7 +36,7 @@ def pipeline(img_paths):
 
 @app.get('/')
 async def get():
-    return FileResponse('./app/index.html')
+    return FileResponse('./client/index.html')
 
 
 @app.post("/upload")
@@ -58,4 +58,4 @@ async def upload_image(background_tasks: BackgroundTasks, files: List[UploadFile
 
     background_tasks.add_task(pipeline, img_paths)
 
-    return {'message': f"Uploaded {img_paths}"}
+    return {'message': f"{img_paths}"}

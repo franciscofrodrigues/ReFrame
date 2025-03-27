@@ -24,7 +24,7 @@ def output_name(outputs_path, counter):
 
 # Classificação de VÁRIAS imagens
 def classification_batch(model, img_paths, outputs_path, padding=10):
-    results = model(img_paths, device='cpu', imgsz=320, conf=0.2, iou=0.7)
+    results = model(img_paths, device='cpu', save=True, imgsz=320, conf=0.2, iou=0.7)
 
     data = []
     counter = 0
@@ -61,7 +61,7 @@ def main(weights_path, inputs_path, outputs_path):
     return labels
 
 if __name__ == "__main__":
-    weights_path = "yolo11x.pt"
+    weights_path = "./server/weights"
     inputs_path = "./server/res/class_inputs"
     outputs_path = "./server/res/class_outputs"
 
