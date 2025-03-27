@@ -1,15 +1,5 @@
 from ultralytics import YOLO
 import cv2
-import os
-
-# Get list of image paths
-def img_list(inputs_path):
-    path_list = []
-    for root, dirs, files in os.walk(inputs_path):
-        for file in files:
-            img_path = os.path.join(root, file)
-            path_list.append(img_path)
-    return path_list
 
 def get_label(box, model):
     return model.names[int(box.cls.item())] 
@@ -66,8 +56,8 @@ def classification_batch(model, img_paths, outputs_path, padding=10):
 
 def main(weights_path, inputs_path, outputs_path):
     model = YOLO(weights_path)
-    img_paths = img_list(inputs_path)
-    labels = classification_batch(model, img_paths, outputs_path)
+    
+    labels = classification_batch(model, inputs_path, outputs_path)
     return labels
 
 if __name__ == "__main__":

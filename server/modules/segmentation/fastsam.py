@@ -31,12 +31,10 @@ def segmentation(model, img_path, outputs_path):
 def main(weights_path, inputs_path, outputs_path):
     # Inicializar o modelo
     model = FastSAM(weights_path)
-
-    # Segmentação de um CONJUNTO de images da pasta "inputs"
-    for root, dirs, files in os.walk(inputs_path):
-        for file in files:
-            img_path = os.path.join(root, file)
-            segmentation(model, img_path, outputs_path)
+    
+    # Segmentação de um CONJUNTO de images da pasta "seg_outputs"
+    for img_path in inputs_path:
+        segmentation(model, img_path, outputs_path)
 
 if __name__ == "__main__":
     weights_path = "./server/weights/FastSAM-x.pt"

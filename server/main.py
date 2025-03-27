@@ -9,14 +9,18 @@ from modules import segmentation, classification, concept, scene_graph
 app = FastAPI()
 
 # def main(individual: bool, batch_mode: bool, debug: bool):
-def pipeline(img_paths: List[str]):
+def pipeline(img_paths):
+    
     # Classificação
     print("1. Classificação")
-    concepts = classification.classify(config.YOLO_WEIGHTS, config.CLASS_INPUTS, config.CLASS_OUPUTS)
+    class_output_json = classification.classify(config.YOLO_WEIGHTS, img_paths, config.CLASS_OUPUTS)
+    
+    concepts = [label["label"] for label in class_output_json]
+    print(concepts)
 
     # Segmentação de Imagem
     print("2. Segmentação")
-    segmentation.seg_fastsam(config.FASTSAM_WEIGHTS, config.CLASS_OUPUTS, config.SEG_OUTPUTS)
+    segmentation.seg_fastsam(config.FASTSAM_WEIGHTS, img_paths, config.SEG_OUTPUTS)
 
     # ConceptNet
     print("3. Rede Conceptual")
@@ -26,7 +30,8 @@ def pipeline(img_paths: List[str]):
 
     # Scene Graph
     print("4. Scene Graph")
-    scene_graph.drawGraph(concepts, edges)
+    graph_json = scene_graph.drawGraph(concepts, edges)
+    print(graph_json)
 
 
 @app.get('/')
@@ -51,6 +56,6 @@ async def upload_image(background_tasks: BackgroundTasks, files: List[UploadFile
         finally:
             await file.close()
 
-        background_tasks.add_task(pipeline, img_paths)
+    background_tasks.add_task(pipeline, img_paths)
 
     return {'message': f"Uploaded {img_paths}"}
