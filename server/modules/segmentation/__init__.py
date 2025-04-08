@@ -1,1 +1,0 @@
-from .fastsam import main as seg_fastsam

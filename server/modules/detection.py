@@ -1,5 +1,6 @@
 import cv2
 from ultralytics import YOLO
+import os
 import time
 
 class Detection:
@@ -36,8 +37,15 @@ class Detection:
         y2 = min(img.shape[0], y2 + self.padding)
         return img[y1:y2, x1:x2]
     
-    def save_crop(self, crop_img):
-        output_path = f'{self.outputs_path}/output_{time.time()}.jpg'
+    def get_filename(self, path):
+        filename = os.path.splitext(path)
+        return os.path.basename(filename[0])
+    
+    def save_crop(self, input_filename, crop_img):
+        output_dir = os.path.join(self.outputs_path, input_filename)
+        os.makedirs(output_dir, exist_ok=True)
+
+        output_path = os.path.join(output_dir, f"crop_{time.time()}.jpg")
         cv2.imwrite(output_path, crop_img)
 
     # OBJECT DETECTION de VÁRIAS imagens
@@ -50,16 +58,18 @@ class Detection:
                 label = self.get_label(box) # LABEL
                 confidence = self.get_confidence(box) # CONFIDENCE
                 x1, y1, x2, y2 = self.get_bbox(box) # BBOX
-
-                # Lógica de CROP
+                
                 img = cv2.imread(result.path)
-                crop_img = self.crop_object(img, x1, y1, x2, y2)
-                self.save_crop(crop_img)
+                input_filename = self.get_filename(result.path)
+                
+                # Lógica de CROP
+                cropped_img = self.crop_object(img, x1, y1, x2, y2)
+                self.save_crop(input_filename, cropped_img)
                     
         return {
             "label": label,
             "confidence": confidence,
-            "bbox": [x1, y1, x2, y2],
+            "bbox": [x1, y1, x2, y2]
         }
 
 # ------------------------------------------------------------------------------
