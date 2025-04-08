@@ -5,7 +5,4 @@ server/modules/assets/outputs/
 server/weights/FastSAM-x.pt
 server/weights/yolo11x.pt
 
-server/res/class_inputs/*
-server/res/class_outputs/*
-server/res/seg_outputs/*
 yolo11x.pt
