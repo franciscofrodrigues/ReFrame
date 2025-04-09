@@ -17,6 +17,9 @@ class Segmentation:
         self.imgsz = 1024
         self.conf = 0.4
         self.iou = 0.9
+
+    def get_confidence(self, box):
+        return float(box.conf.item())
     
     def mask_img(self, mask, original_img):
         mask_np = mask.cpu().numpy()  # Converter de tensor para numpy
@@ -50,14 +53,17 @@ class Segmentation:
             
             for mask in result.masks.data:                    
                 masked_img = self.mask_img(mask, original_img)
-                self.save_segmentation(input_filename, masked_img)
+                output_path = self.save_segmentation(input_filename, masked_img)
                     
         return {
-            "input_filename": input_filename
+            "input_filename": input_filename,
+            "confidence": self.conf,
+            "mask": mask,
+            "output_path": output_path
         }
 
 # ------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    segmentation = Segmentation('weights/FastSAM-x.pt', 'res', 'res')
+    segmentation = Segmentation('weights/FastSAM-x.pt', 'res/uploads', 'res/outputs')
     print(segmentation.run())

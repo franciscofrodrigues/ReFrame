@@ -1,1 +1,0 @@
-from .concept import main as conceptRelations
