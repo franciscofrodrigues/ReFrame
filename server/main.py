@@ -85,7 +85,7 @@ def get_images(filename: str):
         data = json.load(f)
 
     paths = [segment["output_path"] for segment in data.get("segmentation", [])]
-    return {"masks": paths}
+    return paths
 
 # ------------------------------------------------------------------------------
 

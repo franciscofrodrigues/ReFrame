@@ -73,12 +73,15 @@ void mousePressed() {
 }
 
 
-void getImg() {
+String getImg() {
   // GET REQUEST
   GetRequest get = new GetRequest(endpointAPI + "/upload/" + "1_1744238909");
   get.send();
 
-  println(get.getContent()); // RESPONSE
+  String response = get.getContent(); // RESPONSE
+  println(response);
+  
+  return response;
 }
 
 
