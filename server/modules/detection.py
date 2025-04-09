@@ -1,10 +1,7 @@
 from utils.file_export import get_filename, folder_structure, save_output
-import config
 
 import cv2
 from ultralytics import YOLO
-import os
-import time
 
 class Detection:
     def __init__(self, weights_path, input_files, outputs_path):

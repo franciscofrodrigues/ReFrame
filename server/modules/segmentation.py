@@ -1,10 +1,7 @@
 from utils.file_export import get_filename, save_output
-import config
 
 import cv2
 import numpy as np
-import os
-import time
 from ultralytics import FastSAM
 
 class Segmentation:
