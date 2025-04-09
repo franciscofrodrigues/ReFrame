@@ -14,7 +14,7 @@ class Segmentation:
         self.device = 'cpu'
         self.retina_masks = True
         self.save = False
-        self.imgsz = 1024
+        self.imgsz = 512
         self.conf = 0.4
         self.iou = 0.9
 

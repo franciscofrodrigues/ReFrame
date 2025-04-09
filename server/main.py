@@ -8,6 +8,7 @@ from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
 
 from typing import List
 import os
+import json
 
 
 def pipeline(uploads_path, outputs_path):
@@ -46,6 +47,8 @@ def pipeline(uploads_path, outputs_path):
 
 # ------------------------------------------------------------------------------
 
+mask_paths = []
+
 app = FastAPI()
 
 @app.get("/")
@@ -74,9 +77,15 @@ def upload(background_tasks: BackgroundTasks, files: List[UploadFile] = File(...
 
     return {"message": f"O ficheiro {[file.filename for file in files]} foi importado com sucesso."} 
 
-@app.get("/upload")
-def get_images():
-    return {"message": "done"}
+@app.get("/upload/{filename}")
+def get_images(filename: str):
+    # Carregar o JSON
+    json_path = os.path.join(config.OUTPUTS_PATH, filename, f'{filename}.json')
+    with open(json_path, 'r') as f:
+        data = json.load(f)
+
+    paths = [segment["output_path"] for segment in data.get("segmentation", [])]
+    return {"masks": paths}
 
 # ------------------------------------------------------------------------------
 

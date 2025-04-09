@@ -67,7 +67,7 @@ class Detection:
                 
                 # Lógica de CROP
                 cropped_img = self.crop_object(img, x1, y1, x2, y2)
-                output_path = save_output(crops_folder, cropped_img, input_filename, "crops")
+                output_path = save_output(crops_folder, cropped_img, f'x{x1}_y{y1}_x{x2}_y{y2}_conf{confidence}', "crops")
                     
                 data.append({
                     "label": label,

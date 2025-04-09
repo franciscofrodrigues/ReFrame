@@ -8,7 +8,7 @@ def get_filename(path):
 
 # Criação da estrutura de pastas
 def folder_structure(outputs_path, filename):    
-    timestamp = time.time()
+    timestamp = int(time.time())
     outputs_folder = os.path.join(outputs_path, f"{filename}_{timestamp}") # PASTA IMG
 
     crops_folder = os.path.join(outputs_folder, "crops") # CROPS
@@ -22,6 +22,6 @@ def folder_structure(outputs_path, filename):
 # Nomenclatura de EXPORTAÇÃO
 def save_output(outputs_path, file, filename, label):
     if label == "segmentation" or label == "crops":
-        path = os.path.join(outputs_path, f'{filename}_{time.time()}_{label}.png')
+        path = os.path.join(outputs_path, f'{label}_{filename}_{int(time.time())}.png')
         cv2.imwrite(path, file)
         return path

@@ -35,7 +35,6 @@ void setup() {
   dropColor = color(0, 0, 200);
   dropHoverColor = color(0, 0, 150);
 
-
   // INIT
   paddingUI = 10;
   sidebarW = 100;
@@ -76,19 +75,8 @@ void mousePressed() {
 
 void getImg() {
   // GET REQUEST
-  GetRequest get = new GetRequest(endpointAPI + "/upload");
+  GetRequest get = new GetRequest(endpointAPI + "/upload/" + "1_1744238909");
   get.send();
-
-  //println("response: " + get.getContent());
-  //JSONObject response = parseJSONObject(get.getContent());
-  //println("detections: " + response.getString("detections"));
-  //println("segmentation: " + response.getJSONObject("segmentation"));
-  
-  //JSONObject detections = response.getJSONObject("detections");
-  //float conf = detections.getFloat("confidence");
-  //String label = detections.getString("label");
-  
-  //println(conf + ", " + label);
 
   println(get.getContent()); // RESPONSE
 }
