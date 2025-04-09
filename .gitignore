@@ -1,8 +1,8 @@
 .venv/
 __pycache__
-server/modules/assets/outputs/
+
+server/res/uploads
+server/res/outputs
 
 server/weights/FastSAM-x.pt
 server/weights/yolo11x.pt
-
-yolo11x.pt

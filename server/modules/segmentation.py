@@ -1,3 +1,6 @@
+from utils.file_export import get_filename, save_output
+import config
+
 import cv2
 import numpy as np
 import os
@@ -31,30 +34,20 @@ class Segmentation:
         result_img_rgba[mask_binary == 0] = [0, 0, 0, 0] # Preto para transparente
         return result_img_rgba
 
-    def get_filename(self, path):
-        filename = os.path.splitext(path)
-        return os.path.basename(filename[0])
-
-    def save_segmentation(self, input_filename, mask_img):
-        output_dir = os.path.join(self.outputs_path, input_filename)
-        os.makedirs(output_dir, exist_ok=True)
-
-        output_path = os.path.join(output_dir, f"mask_{time.time()}.png")
-        cv2.imwrite(output_path, mask_img)
-
     # SEGMENTAÇÃO DE IMAGEM de VÁRIAS imagens
     def run(self):
         # Inferência
         results = self.model(self.input_files, device=self.device, retina_masks=self.retina_masks, save=self.save, imgsz=self.imgsz, conf=self.conf, iou=self.iou)        
 
         for result in results:
-            original_img = cv2.imread(result.path)
-            input_filename = self.get_filename(result.path)
+            input_file = result.path
+            input_filename = get_filename(input_file)
+            original_img = cv2.imread(input_file)
             
             for mask in result.masks.data:                    
-                masked_img = self.mask_img(mask, original_img)
-                output_path = self.save_segmentation(input_filename, masked_img)
-                    
+                masked_img = self.mask_img(mask, original_img)                
+                output_path = save_output(self.outputs_path, masked_img, input_filename, "segmentation")
+                
         return {
             "input_filename": input_filename,
             "confidence": self.conf,

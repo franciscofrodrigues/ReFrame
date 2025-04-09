@@ -1,3 +1,6 @@
+from utils.file_export import get_filename, folder_structure, save_output
+import config
+
 import cv2
 from ultralytics import YOLO
 import os
@@ -36,44 +39,40 @@ class Detection:
         x2 = min(img.shape[1], x2 + self.padding)
         y2 = min(img.shape[0], y2 + self.padding)
         return img[y1:y2, x1:x2]
-    
-    def get_filename(self, path):
-        filename = os.path.splitext(path)
-        return os.path.basename(filename[0])
-    
-    def save_crop(self, input_filename, crop_img):
-        output_dir = os.path.join(self.outputs_path, input_filename)
-        os.makedirs(output_dir, exist_ok=True)
-
-        output_path = os.path.join(output_dir, f"crop_{time.time()}.jpg")
-        cv2.imwrite(output_path, crop_img)
 
     # OBJECT DETECTION de VÁRIAS imagens
     def run(self):
         # Inferência
         results = self.model(self.input_files, device=self.device, save=self.save, imgsz=self.imgsz, conf=self.conf, iou=self.iou)
         
-        for result in results:            
+        for result in results:
+            input_file = result.path
+            input_filename = get_filename(input_file)            
+            img = cv2.imread(input_file)
+            
+            # Criação da estrutura de pastas
+            crops_folder, segmentation_folder = folder_structure(self.outputs_path, input_filename)
+
             for box in result.boxes:
                 label = self.get_label(box) # LABEL
                 confidence = self.get_confidence(box) # CONFIDENCE
-                x1, y1, x2, y2 = self.get_bbox(box) # BBOX
-                
-                img = cv2.imread(result.path)
-                input_filename = self.get_filename(result.path)
+                x1, y1, x2, y2 = self.get_bbox(box) # BBOX                                        
                 
                 # Lógica de CROP
                 cropped_img = self.crop_object(img, x1, y1, x2, y2)
-                self.save_crop(input_filename, cropped_img)
+                output_path = save_output(crops_folder, cropped_img, input_filename, "crops")
                     
         return {
             "label": label,
             "confidence": confidence,
-            "bbox": [x1, y1, x2, y2]
+            "bbox": [x1, y1, x2, y2],
+            "output_path": output_path,
+            "crops_folder": crops_folder,
+            "segmentation_folder": segmentation_folder
         }
 
 # ------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    detection = Detection('weights/yolo11x.pt', 'res', 'res')
+    detection = Detection('weights/yolo11x.pt', 'res/uploads', 'res/outputs')
     print(detection.run())

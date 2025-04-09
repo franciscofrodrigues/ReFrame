@@ -1,27 +1,18 @@
 import config
-from modules import segmentation, classification, concept, scene_graph
+from modules import Detection, Segmentation
 
-# def main(individual: bool, batch_mode: bool, debug: bool):
-def pipeline(img_paths):
-    
-    # Classificação
-    print("1. Classificação")
-    class_output_json = classification.classify(config.YOLO_WEIGHTS, img_paths, config.CLASS_OUPUTS)
-    
-    concepts = [label["label"] for label in class_output_json]
-    print(concepts)
+detection = Detection(config.YOLO_WEIGHTS, config.UPLOADS_PATH, config.OUTPUTS_PATH)
+detection_data = detection.run()
 
-    # Segmentação de Imagem
-    print("2. Segmentação")
-    segmentation.seg_fastsam(config.FASTSAM_WEIGHTS, img_paths, config.SEG_OUTPUTS)
+crops_folder = detection_data["crops_folder"]
+segmentation_folder = detection_data["segmentation_folder"]
 
-    # ConceptNet
-    print("3. Rede Conceptual")
-    # concepts = {"person", "cat", "dog", "horse", "book", "library", ""}    
-    edges = concept.conceptRelations(concepts)
-    # print(edges)
+segmentation = Segmentation(config.FASTSAM_WEIGHTS, crops_folder, segmentation_folder)
+segmentation_data = segmentation.run()
 
-    # Scene Graph
-    print("4. Scene Graph")
-    graph_json = scene_graph.drawGraph(concepts, edges)
-    print(graph_json)
+data = {
+    "detection": detection_data,
+    "segmentation": segmentation_data
+}
+
+print(data)
