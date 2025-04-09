@@ -1,8 +1,14 @@
 from utils.json_export import save_json
 from utils.file_export import get_filename
-
 import config
 from modules import Detection, Segmentation, Concept
+
+import uvicorn
+from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
+
+from typing import List
+import os
+
 
 def pipeline(uploads_path, outputs_path):
     # OBJECT DETECTION
@@ -28,6 +34,7 @@ def pipeline(uploads_path, outputs_path):
 
         # Estrutura do JSON
         data = {
+            "img_path": folder_data["input_path"],
             "detection": detection_data,
             "segmentation": segmentation_data,
             "concepts": concepts_data
@@ -39,5 +46,39 @@ def pipeline(uploads_path, outputs_path):
 
 # ------------------------------------------------------------------------------
 
+app = FastAPI()
+
+@app.get("/")
+def index():
+    return {"message": "index"}
+
+@app.post("/upload")
+def upload(background_tasks: BackgroundTasks, files: List[UploadFile] = File(...)):
+    for file in files:
+        try:
+            contents = file.file.read()
+            
+            # Pasta UPLOADS
+            path = os.path.join(config.UPLOADS_PATH, file.filename)
+
+            # Guardar ficheiro
+            with open(path, 'wb') as f:
+                f.write(contents)
+
+            # Executar PIPELINE
+            background_tasks.add_task(pipeline, config.UPLOADS_PATH, config.OUTPUTS_PATH)
+        except Exception:
+            raise HTTPException(status_code=500, detail='Something went wrong')
+        finally:
+            file.file.close()
+
+    return {"message": f"O ficheiro {[file.filename for file in files]} foi importado com sucesso."} 
+
+@app.get("/upload")
+def get_images():
+    return {"message": "done"}
+
+# ------------------------------------------------------------------------------
+
 if __name__ == "__main__":
-    pipeline(config.UPLOADS_PATH, config.OUTPUTS_PATH)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

@@ -1,3 +1,5 @@
 numpy==1.26.4
 opencv-python
 ultralytics==8.3.104
+fastapi
+"fastapi[standard]"

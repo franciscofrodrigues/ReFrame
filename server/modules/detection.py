@@ -54,6 +54,7 @@ class Detection:
             outputs_folder, crops_folder, segmentation_folder = folder_structure(self.outputs_path, input_filename)
 
             folders_data.append({
+                "input_path": input_file,
                 "outputs_folder": outputs_folder,
                 "crops_folder": crops_folder,
                 "segmentation_folder": segmentation_folder

@@ -1,7 +1,98 @@
-void setup() {
+import http.requests.*;
+import drop.*;
 
+Button button;
+SDrop drop;
+DListener dropListener;
+
+int sidebarW, mainW, paddingUI;
+color bgColor, fgColor, textColor; // UI
+color buttonLabelColor, buttonColor, buttonHoverColor; // BOTÕES
+color dropLabelColor, dropColor, dropHoverColor; // DROP FIELD
+
+String portAPI, endpointAPI; // API
+
+void setup() {
+  size(1280, 720);
+  
+  // API
+  portAPI = "8000";
+  endpointAPI = "http://127.0.0.1:" + portAPI;
+
+  // CORES
+  // UI
+  bgColor = color(255);
+  fgColor = color(30);
+  textColor = color(0);
+
+  // BOTÕES
+  buttonLabelColor = color(255);
+  buttonColor = color(0, 0, 200);
+  buttonHoverColor = color(0, 0, 150);
+
+  // DROP FIELD
+  dropLabelColor = color(255);
+  dropColor = color(0, 0, 200);
+  dropHoverColor = color(0, 0, 150);
+
+
+  // INIT
+  paddingUI = 10;
+  sidebarW = 100;
+  mainW = width - sidebarW - paddingUI*3;
+  
+  // BOTÕES
+  button = new Button(sidebarW/2 + paddingUI, height-15-paddingUI, sidebarW, 30, buttonColor, buttonHoverColor, buttonLabelColor, "GET"); // x, y, w, h, text_color, base_color, state_color, label
+
+  // DROP FIELD
+  drop = new SDrop(this);
+  dropListener = new DListener(sidebarW/2 + paddingUI, height/2-15-paddingUI/2, sidebarW, height-paddingUI*3-30, color(0, 0, 200), color(0, 0, 150), color(255), "DROP FILES HERE");
+  drop.addDropListener(dropListener);
 }
 
+
 void draw() {
-    
+  background(bgColor);
+  
+  fill(230);
+  rect(sidebarW + paddingUI*2, paddingUI, mainW, height-paddingUI*2, 5);
+
+  // BOTÕES
+  button.display();
+  button.update();
+
+  // DROP FIELD
+  dropListener.display();
+}
+
+
+void mousePressed() {
+  if (button.click()) {
+    //selectInput("Select a file:", "upload_img");
+    getImg();
+  }
+}
+
+
+void getImg() {
+  // GET REQUEST
+  GetRequest get = new GetRequest(endpointAPI + "/upload");
+  get.send();
+
+  //println("response: " + get.getContent());
+  //JSONObject response = parseJSONObject(get.getContent());
+  //println("detections: " + response.getString("detections"));
+  //println("segmentation: " + response.getJSONObject("segmentation"));
+  
+  //JSONObject detections = response.getJSONObject("detections");
+  //float conf = detections.getFloat("confidence");
+  //String label = detections.getString("label");
+  
+  //println(conf + ", " + label);
+
+  println(get.getContent()); // RESPONSE
+}
+
+
+void dropEvent(DropEvent theDropEvent) {
 }
