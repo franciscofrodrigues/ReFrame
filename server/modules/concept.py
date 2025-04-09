@@ -38,6 +38,6 @@ class Concept:
 # ------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    graph = Concept(["dog", "cat"])
-    edges = graph.run()
+    concept = Concept(["dog", "cat"])
+    edges = concept.run()
     print(edges)
