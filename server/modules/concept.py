@@ -10,9 +10,9 @@ class Concept:
     def related_concepts(self, word):
         try:
             response = requests.get(f'http://api.conceptnet.io/c/en/{word}').json()
-            return {edge['end']['label'] for edge in response['edges']}
+            return [edge['end']['label'] for edge in response['edges']]
         except requests.RequestException:
-            return {}
+            return []
 
     def get_concepts(self):
         self.related = {concept: self.related_concepts(concept) for concept in self.concepts}
@@ -22,7 +22,8 @@ class Concept:
     def check_relations(self):
         edges = []
         for c1, c2 in combinations(self.concepts, 2):
-            if self.related[c1] & self.related[c2]:
+            # if self.related[c1] & self.related[c2]:
+            if set(self.related[c1]) & set(self.related[c2]):
                 edges.append((c1, c2))  # Ligações do Gráfico
         return edges
 
@@ -30,10 +31,13 @@ class Concept:
         concepts = self.get_concepts()
         edges = self.check_relations()
 
-        return {
+        data = []
+        data.append({
             "concepts": concepts,
             "edges": edges
-        }
+        })
+
+        return data
 
 # ------------------------------------------------------------------------------
 

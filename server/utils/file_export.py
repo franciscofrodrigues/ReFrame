@@ -17,7 +17,7 @@ def folder_structure(outputs_path, filename):
     os.makedirs(crops_folder, exist_ok=True)
     os.makedirs(segmentation_folder, exist_ok=True)
 
-    return crops_folder, segmentation_folder
+    return outputs_folder, crops_folder, segmentation_folder
 
 # Nomenclatura de EXPORTAÇÃO
 def save_output(outputs_path, file, filename, label):

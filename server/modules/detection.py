@@ -42,13 +42,22 @@ class Detection:
         # Inferência
         results = self.model(self.input_files, device=self.device, save=self.save, imgsz=self.imgsz, conf=self.conf, iou=self.iou)
         
+        data = []
+        folders_data = []
+
         for result in results:
             input_file = result.path
             input_filename = get_filename(input_file)            
             img = cv2.imread(input_file)
             
             # Criação da estrutura de pastas
-            crops_folder, segmentation_folder = folder_structure(self.outputs_path, input_filename)
+            outputs_folder, crops_folder, segmentation_folder = folder_structure(self.outputs_path, input_filename)
+
+            folders_data.append({
+                "outputs_folder": outputs_folder,
+                "crops_folder": crops_folder,
+                "segmentation_folder": segmentation_folder
+            })
 
             for box in result.boxes:
                 label = self.get_label(box) # LABEL
@@ -59,14 +68,14 @@ class Detection:
                 cropped_img = self.crop_object(img, x1, y1, x2, y2)
                 output_path = save_output(crops_folder, cropped_img, input_filename, "crops")
                     
-        return {
-            "label": label,
-            "confidence": confidence,
-            "bbox": [x1, y1, x2, y2],
-            "output_path": output_path,
-            "crops_folder": crops_folder,
-            "segmentation_folder": segmentation_folder
-        }
+                data.append({
+                    "label": label,
+                    "confidence": confidence,
+                    "bbox": [x1, y1, x2, y2],
+                    "output_path": output_path,                    
+                })                
+
+        return folders_data, data
 
 # ------------------------------------------------------------------------------
 
