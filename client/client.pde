@@ -12,6 +12,9 @@ color dropLabelColor, dropColor, dropHoverColor; // DROP FIELD
 
 String portAPI, endpointAPI; // API
 
+String img_response;
+PImage img;
+
 void setup() {
   size(1280, 720);
   
@@ -57,29 +60,38 @@ void draw() {
   rect(sidebarW + paddingUI*2, paddingUI, mainW, height-paddingUI*2, 5);
 
   // BOTÕES
-  button.display();
+  button.draw();
   button.update();
 
   // DROP FIELD
-  dropListener.display();
+  dropListener.draw();
+  
+  if(img != null) image(img, sidebarW + paddingUI*2, paddingUI, img.width/2, img.height/2); 
 }
 
 
 void mousePressed() {
   if (button.click()) {
-    //selectInput("Select a file:", "upload_img");
-    getImg();
+    // selectInput("Select a file:", "upload_img");
+    
+    img_response = getImg();
+    //print(img_response);
+    
+    JSONArray img_array = parseJSONArray(img_response);
+    String img_path = img_array.getString(int(random(img_array.size())));
+    
+    img = loadImage("../" + img_path);
   }
 }
 
 
 String getImg() {
   // GET REQUEST
-  GetRequest get = new GetRequest(endpointAPI + "/upload/" + "1_1744238909");
+  GetRequest get = new GetRequest(endpointAPI + "/upload/" + "img19_1744270482");
   get.send();
 
   String response = get.getContent(); // RESPONSE
-  println(response);
+  //println(response);
   
   return response;
 }

@@ -45,9 +45,9 @@ def pipeline(uploads_path, outputs_path):
         filename = get_filename(outputs_folder)
         save_json(data, outputs_folder, filename)
 
+
 # ------------------------------------------------------------------------------
 
-mask_paths = []
 
 app = FastAPI()
 
@@ -75,7 +75,7 @@ def upload(background_tasks: BackgroundTasks, files: List[UploadFile] = File(...
         finally:
             file.file.close()
 
-    return {"message": f"O ficheiro {[file.filename for file in files]} foi importado com sucesso."} 
+    return {"message": f"Uploaded {[file.filename for file in files]}."} 
 
 @app.get("/upload/{filename}")
 def get_images(filename: str):
@@ -83,11 +83,13 @@ def get_images(filename: str):
     json_path = os.path.join(config.OUTPUTS_PATH, filename, f'{filename}.json')
     with open(json_path, 'r') as f:
         data = json.load(f)
-
-    paths = [segment["output_path"] for segment in data.get("segmentation", [])]
+    
+    paths = [mask["output_path"] for mask in data["segmentation"]]
     return paths
 
+
 # ------------------------------------------------------------------------------
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

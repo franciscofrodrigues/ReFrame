@@ -20,7 +20,7 @@ class Button {
     pos.y = y-h/2;
   }
 
-  void display() {
+  void draw() {
     // BOTÃO
     noStroke();
     fill(cButton);
