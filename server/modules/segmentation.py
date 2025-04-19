@@ -36,25 +36,24 @@ class Segmentation:
         # Inferência
         results = self.model(self.input_files, device=self.device, retina_masks=self.retina_masks, save=self.save, imgsz=self.imgsz, conf=self.conf, iou=self.iou)        
 
-        data = []
-
-        for result in results:
-            input_file = result.path
-            input_filename = get_filename(input_file)
-            original_img = cv2.imread(input_file)
-            
-            for mask in result.masks.data:                    
-                masked_img = self.mask_img(mask, original_img)                
-                output_path = save_output(self.outputs_path, masked_img, input_filename, "segmentation")
+        if results:
+            data = []
+            for result in results:
+                input_file = result.path
+                input_filename = get_filename(input_file)
+                original_img = cv2.imread(input_file)
                 
-                data.append({
-                    "input_filename": input_filename,
-                    "confidence": self.conf,
-                    # "mask": mask,
-                    "output_path": output_path                    
-                })  
-
-        return data
+                for mask in result.masks.data:                    
+                    masked_img = self.mask_img(mask, original_img)                
+                    output_path = save_output(self.outputs_path, masked_img, f'[{input_filename}]', "segmentation")
+                    
+                    data.append({
+                        "input_filename": input_filename,
+                        "confidence": self.conf,
+                        # "mask": mask,
+                        "output_path": output_path                    
+                    })  
+            return data
 
 # ------------------------------------------------------------------------------
 

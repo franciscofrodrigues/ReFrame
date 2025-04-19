@@ -23,7 +23,9 @@ class Detection:
         return self.model.names[int(box.cls.item())] 
     
     def get_confidence(self, box):
-        return float(box.conf.item())
+        raw_conf = float(box.conf.item())
+        conf = round(raw_conf*100)
+        return conf
 
     def get_bbox(self, box):
         box_coords = box.xyxy[0]
@@ -42,41 +44,48 @@ class Detection:
         # Inferência
         results = self.model(self.input_files, device=self.device, save=self.save, imgsz=self.imgsz, conf=self.conf, iou=self.iou)
         
-        data = []
-        folders_data = []
+        if results:
+            inputs_data = []
+            data = []
+            folders_data = []
 
-        for result in results:
-            input_file = result.path
-            input_filename = get_filename(input_file)            
-            img = cv2.imread(input_file)
-            
-            # Criação da estrutura de pastas
-            outputs_folder, crops_folder, segmentation_folder = folder_structure(self.outputs_path, input_filename)
+            for result in results:
+                input_file = result.path
+                input_filename = get_filename(input_file)            
+                img = cv2.imread(input_file)
+                img_height, img_width, _ = img.shape
 
-            folders_data.append({
-                "input_path": input_file,
-                "outputs_folder": outputs_folder,
-                "crops_folder": crops_folder,
-                "segmentation_folder": segmentation_folder
-            })
-
-            for box in result.boxes:
-                label = self.get_label(box) # LABEL
-                confidence = self.get_confidence(box) # CONFIDENCE
-                x1, y1, x2, y2 = self.get_bbox(box) # BBOX                                        
+                inputs_data.append({
+                    "path": input_file,
+                    "size": [img_width, img_height],
+                })
                 
-                # Lógica de CROP
-                cropped_img = self.crop_object(img, x1, y1, x2, y2)
-                output_path = save_output(crops_folder, cropped_img, f'x{x1}_y{y1}_x{x2}_y{y2}_conf{confidence}', "crops")
-                    
-                data.append({
-                    "label": label,
-                    "confidence": confidence,
-                    "bbox": [x1, y1, x2, y2],
-                    "output_path": output_path,                    
-                })                
+                # Criação da estrutura de pastas
+                outputs_folder, crops_folder, segmentation_folder = folder_structure(self.outputs_path, input_filename)
 
-        return folders_data, data
+                folders_data.append({
+                    "outputs_folder": outputs_folder,
+                    "crops_folder": crops_folder,
+                    "segmentation_folder": segmentation_folder
+                })
+
+                for box in result.boxes:
+                    label = self.get_label(box) # LABEL
+                    confidence = self.get_confidence(box) # CONFIDENCE
+                    x1, y1, x2, y2 = self.get_bbox(box) # BBOX                                        
+                    
+                    # Lógica de CROP
+                    cropped_img = self.crop_object(img, x1, y1, x2, y2)
+                    output_path = save_output(crops_folder, cropped_img, f'x{x1}_y{y1}_x{x2}_y{y2}_conf{confidence}', "crops")
+                        
+                    data.append({
+                        "label": label,
+                        "confidence": confidence,
+                        "bbox": [x1, y1, x2, y2],
+                        "output_path": output_path,                    
+                    })                
+
+            return folders_data, inputs_data, data
 
 # ------------------------------------------------------------------------------
 
