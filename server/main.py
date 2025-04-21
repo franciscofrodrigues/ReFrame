@@ -107,7 +107,8 @@ def upload(background_tasks: BackgroundTasks, files: List[UploadFile] = File(...
     # Executar PIPELINE
     background_tasks.add_task(pipeline, paths, group_path, group_data)
 
-    return {"Uploaded Files": [file.filename for file in files]}
+    # return {"Uploaded Files": [file.filename for file in files]}
+    return {"Os ficheiros foram importados com sucesso": [file.filename for file in files]}
 
 # @app.get("/upload/{filename}")
 # def get_images(filename: str):
@@ -119,15 +120,18 @@ def upload(background_tasks: BackgroundTasks, files: List[UploadFile] = File(...
 #     paths = [mask["output_path"] for mask in data["segmentation"]]
 #     return paths
 
-@app.get("/upload/{filename}")
-def get_images(filename):
+@app.get("/upload/{folder_name}")
+def get_images(folder_name):
     # Carregar JSON
+    json_path = os.path.join(config.OUTPUTS_PATH, folder_name, f'{folder_name}.json')
+    with open(json_path) as f:
+        d = json.load(f)
 
     # Extrair de cada imagem -> de cada deteção -> todos os "result_image_path (str)"
 
     # Obter o array de máscaras como array de imagens
-
-    return FileResponse(filename)
+        return {"message": d["segmentation"][1]["output_path"]}
+    # return FileResponse(filename)
 
 
 # ------------------------------------------------------------------------------

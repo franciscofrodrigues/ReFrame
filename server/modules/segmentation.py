@@ -17,9 +17,6 @@ class Segmentation:
         self.imgsz = 512
         self.conf = 0.4
         self.iou = 0.9
-
-    def get_confidence(self, box):
-        return float(box.conf.item())
     
     def mask_img(self, mask, original_img):
         mask_np = mask.cpu().numpy()  # Converter de tensor para numpy
@@ -38,25 +35,28 @@ class Segmentation:
 
         if results:
             data = []
-            for result in results:
+            for i, result in enumerate(results):
                 input_file = result.path
                 input_filename = get_filename(input_file)
                 original_img = cv2.imread(input_file)
-                
-                for mask in result.masks.data:                    
-                    masked_img = self.mask_img(mask, original_img)                
+
+                for j, mask in enumerate(result.masks.data):
+                    mask_xy = result.masks.xy[j]
+                    mask_coords = [contour.tolist() for contour in mask_xy]                           
+
+                    masked_img = self.mask_img(mask, original_img)
                     output_path = save_output(self.outputs_path, masked_img, f'[{input_filename}]', "segmentation")
                     
                     data.append({
-                        "input_filename": input_filename,
-                        "confidence": self.conf,
-                        # "mask": mask,
-                        "output_path": output_path                    
-                    })  
+                        "detection_index": i,
+                        "mask": mask_coords,
+                        "result_image_path": output_path
+                    })
+                    
             return data
 
 # ------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    segmentation = Segmentation('weights/FastSAM-x.pt', 'res/uploads', 'res/outputs')
+    segmentation = Segmentation('weights/FastSAM-x.pt', 'res/uploads', 'res/outputs/testing')
     print(segmentation.run())

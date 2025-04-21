@@ -49,7 +49,7 @@ class Detection:
             data = []
             folders_data = []
 
-            for result in results:
+            for i, result in enumerate(results):
                 input_file = result.path
                 input_filename = get_filename(input_file)            
                 img = cv2.imread(input_file)
@@ -79,10 +79,11 @@ class Detection:
                     output_path = save_output(crops_folder, cropped_img, f'x{x1}_y{y1}_x{x2}_y{y2}_conf{confidence}', "crops")
                         
                     data.append({
+                        "input_image_index": i,
                         "label": label,
                         "confidence": confidence,
                         "bbox": [x1, y1, x2, y2],
-                        "output_path": output_path,                    
+                        "result_image_path": output_path,                    
                     })                
 
             return folders_data, inputs_data, data

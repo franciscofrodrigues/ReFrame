@@ -33,7 +33,7 @@ class Concept:
 
         data = []
         data.append({
-            "concepts": concepts,
+            "related_concepts": concepts,
             "edges": edges
         })
 
