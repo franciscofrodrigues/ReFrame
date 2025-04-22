@@ -58,5 +58,5 @@ class Segmentation:
 # ------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    segmentation = Segmentation('weights/FastSAM-x.pt', 'res/uploads', 'res/outputs/testing')
+    segmentation = Segmentation('weights/FastSAM-x.pt', 'res/uploads', 'res/outputs')
     print(segmentation.run())
