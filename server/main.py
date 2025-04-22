@@ -131,7 +131,7 @@ def get_image_paths(folder_name):
     return paths
 
 @app.get("/masks/{folder_name}/{index}")
-async def get_image_file(folder_name: str, index: int):
+def get_image_file(folder_name: str, index: int):
     # Carregar JSON
     json_path = os.path.join(config.OUTPUTS_PATH, folder_name, f'{folder_name}.json')
     with open(json_path) as f:
