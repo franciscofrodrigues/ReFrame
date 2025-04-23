@@ -5,10 +5,11 @@ import numpy as np
 from ultralytics import FastSAM
 
 class Segmentation:
-    def __init__(self, weights_path, input_files, outputs_path):
+    def __init__(self, weights_path, input_files, outputs_path, input_counter):
         self.model = FastSAM(weights_path)
         self.input_files = input_files
         self.outputs_path = outputs_path
+        self.input_counter = input_counter
 
         # Configuração do modelo
         self.device = 'cpu'
@@ -18,15 +19,17 @@ class Segmentation:
         self.conf = 0.4
         self.iou = 0.9
     
-    def mask_img(self, mask, original_img):
-        mask_np = mask.cpu().numpy()  # Converter de tensor para numpy
-        mask_binary = (mask_np > 0).astype(np.uint8) * 255  # Máscara binária
-
-        result_img = cv2.bitwise_and(original_img, original_img, mask=mask_binary) # Máscara de corte à imagem
+    def mask_img(self, binary_mask, original_img):
+        result_img = cv2.bitwise_and(original_img, original_img, mask=binary_mask) # Máscara de corte à imagem
         
         result_img_rgba = cv2.cvtColor(result_img, cv2.COLOR_BGR2BGRA)        
-        result_img_rgba[mask_binary == 0] = [0, 0, 0, 0] # Preto para transparente
+        result_img_rgba[binary_mask == 0] = [0, 0, 0, 0] # Preto para transparente
         return result_img_rgba
+
+    def get_binary_mask(self, mask):
+        mask_np = mask.cpu().numpy()  # Converter de tensor para numpy
+        mask_binary = (mask_np > 0).astype(np.uint8) * 255  # Máscara binária     
+        return mask_binary
 
     # SEGMENTAÇÃO DE IMAGEM de VÁRIAS imagens
     def run(self):
@@ -44,12 +47,18 @@ class Segmentation:
                     mask_xy = result.masks.xy[j]
                     mask_coords = [contour.tolist() for contour in mask_xy]                           
 
-                    masked_img = self.mask_img(mask, original_img)
-                    output_path = save_output(self.outputs_path, masked_img, f'[{input_filename}]', "segmentation")
-                    
+                    mask_binary = self.get_binary_mask(mask)
+                    white_count = int(np.sum(mask_binary == 255))
+
+                    # Aplicar MÁSCARA a IMAGEM ORIGINAL
+                    masked_img = self.mask_img(mask_binary, original_img)
+                    output_path = save_output(self.outputs_path, masked_img, f'[{input_filename}]', "segmentation")                    
+                        
                     data.append({
+                        "input_image_index": self.input_counter,
                         "detection_index": i,
                         "mask": mask_coords,
+                        "mask_pixels": white_count,
                         "result_image_path": output_path
                     })
                     
@@ -58,5 +67,6 @@ class Segmentation:
 # ------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    segmentation = Segmentation('weights/FastSAM-x.pt', 'res/uploads', 'res/outputs')
+    segmentation = Segmentation('weights/FastSAM-x.pt', 'res/uploads', 'res/outputs', 0)
     print(segmentation.run())
+    # segmentation.run()

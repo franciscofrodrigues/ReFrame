@@ -5,21 +5,13 @@ from modules import Detection, Segmentation, Concept
 
 import uvicorn
 from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 
 from typing import List
 import os
 import json
 
-
-'''
-1. Criar PASTA LOTE
-2. Criar JSON LOTE
-3. Devolver path da PASTA e JSON
-4. Executar PIPELINE na PASTA
-5. Escrever DADOS no JSON
-6. Devolver JSON ao CLIENT-SIDE
-'''
+# ------------------------------------------------------------------------------
 
 # Criar pasta e JSON de LOTE
 def create_group():
@@ -34,7 +26,7 @@ def create_group():
         "segmentation": [],
         "concepts": []
     }
-    return group_path, group_data
+    return folder_name, group_path, group_data
 
 def pipeline(uploads_path, outputs_path, json_structure):
     # OBJECT DETECTION
@@ -43,32 +35,35 @@ def pipeline(uploads_path, outputs_path, json_structure):
     
     # Estrutura do JSON (INPUTS e módulo OBJECT DETECTION)
     json_structure["input_images"].extend(inputs_data)
-    json_structure["detection"].extend(detection_data)
-
+    json_structure["detection"].extend(detection_data)    
+        
     # Instâncias da pasta UPLOADS_PATH
-    for folder_data in folders_data:
+    for i, folder_data in enumerate(folders_data):
 
         # Pastas de determinado output
-        outputs_folder = folder_data["outputs_folder"]
         crops_folder = folder_data["crops_folder"]
         segmentation_folder = folder_data["segmentation_folder"]
 
-        # SEGMENTAÇÃO
-        segmentation = Segmentation(config.FASTSAM_WEIGHTS, crops_folder, segmentation_folder)
-        segmentation_data = segmentation.run()
+        # Se existirem deteções na pasta CROPS
+        if len(os.listdir(crops_folder)) != 0:
+            # SEGMENTAÇÃO
+            segmentation = Segmentation(config.FASTSAM_WEIGHTS, crops_folder, segmentation_folder, i)
+            segmentation_data = segmentation.run()
 
-        # CONCEPT NET
-        labels_list = [detection["label"] for detection in detection_data]
-        concepts = Concept(labels_list)
-        concepts_data = concepts.run()
-        
-        # Estrutura do JSON (Módulos SEGMENTAÇÃO e CONCEPT NET)
-        json_structure["segmentation"].extend(segmentation_data)
-        json_structure["concepts"].extend(concepts_data)
+            # CONCEPT NET
+            labels_list = [detection["label"] for detection in detection_data]
+            concepts = Concept(labels_list)
+            concepts_data = concepts.run()
+            
+            # Estrutura do JSON (Módulos SEGMENTAÇÃO e CONCEPT NET)
+            json_structure["segmentation"].extend(segmentation_data)
+            json_structure["concepts"].extend(concepts_data)
 
     # Exportar ficheiro JSON de LOTE
     filename = get_filename(outputs_path)
     save_json(json_structure, outputs_path, filename)
+
+    return {"message": "As imagens foram processadas."}
 
 
 # ------------------------------------------------------------------------------
@@ -81,7 +76,7 @@ def index():
     return {"message": "index"}
 
 @app.post("/upload")
-def upload(background_tasks: BackgroundTasks, files: List[UploadFile] = File(...)):    
+def upload_images(background_tasks: BackgroundTasks, files: List[UploadFile] = File(...)):    
     # Guardar FICHEIROS de UPLOAD
     paths = []
     for file in files:
@@ -102,35 +97,29 @@ def upload(background_tasks: BackgroundTasks, files: List[UploadFile] = File(...
             file.file.close()
 
     # Criar pasta de LOTE
-    group_path, group_data = create_group()
+    folder_name, group_path, group_data = create_group()
 
     # Executar PIPELINE
     background_tasks.add_task(pipeline, paths, group_path, group_data)
 
-    return {"Os ficheiros importados": [file.filename for file in files]}
+    # return {"Os ficheiros foram importados": [file.filename for file in files]}
+    return folder_name
 
-# @app.get("/upload/{filename}")
-# def get_images(filename: str):
-#     # Carregar o JSON
-#     json_path = os.path.join(config.OUTPUTS_PATH, filename, f'{filename}.json')
-#     with open(json_path, 'r') as f:
-#         data = json.load(f)
-    
-#     paths = [mask["output_path"] for mask in data["segmentation"]]
-#     return paths
-
+# Obter os PATHS das máscaras
 @app.get("/masks/{folder_name}")
-def get_image_paths(folder_name):
+def get_image_paths(folder_name: str):
     # Carregar JSON
     json_path = os.path.join(config.OUTPUTS_PATH, folder_name, f'{folder_name}.json')
-    with open(json_path) as f:
+    with open(json_path, 'r') as f:
         data = json.load(f)
 
     # Obter todos os "result_image_path"
-    paths = [mask["result_image_path"] for mask in data["segmentation"]]
-    return paths
+    # paths = [mask["result_image_path"] for mask in data["segmentation"]]
+    # return len(paths)
+    return JSONResponse(content=data)
 
-@app.get("/masks/{folder_name}/{index}")
+# Obter FICHEIROS de máscaras
+@app.get("/masks/{folder_name}/{index}.png")
 def get_image_file(folder_name: str, index: int):
     # Carregar JSON
     json_path = os.path.join(config.OUTPUTS_PATH, folder_name, f'{folder_name}.json')
@@ -139,7 +128,7 @@ def get_image_file(folder_name: str, index: int):
 
     # Obter "result_image_path" para o index especificado
     path = data["segmentation"][index]["result_image_path"]
-    return FileResponse(path)
+    return FileResponse(path, media_type="image/png", filename=f'{index}.png')
 
 
 # ------------------------------------------------------------------------------

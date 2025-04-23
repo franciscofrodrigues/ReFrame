@@ -51,16 +51,22 @@ class DListener extends DropListener {
   }
 
   // --------API--------
-  
+
   // CARREGAR FICHEIROS PARA BACKEND
   void uploadFile(File[] files) {
+    // POST REQUEST
+    PostRequest post = new PostRequest(endpointAPI + "/upload");
+    
     for (int i=0; i<files.length; i++) {
-        // POST REQUEST
-        PostRequest post = new PostRequest(endpointAPI + "/upload");
-        post.addFile("files", files[i]);
-        post.send();
-
-        println(post.getContent()); // RESPONSE
+      post.addFile("files", files[i]);
     }
+    
+    post.send();
+
+    //println(post.getContent()); // RESPONSE
+    String response = post.getContent();
+    String response_substring = response.substring(1, response.length() - 1);
+    folder_name = response_substring;
+    //folder_name = response_substring.replace(" ", "%");
   }
 }

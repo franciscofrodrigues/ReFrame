@@ -9,7 +9,7 @@ def get_filename(path):
 
 def get_date():
     current_time = datetime.datetime.now()
-    date = current_time.strftime('%y-%m-%d %H-%M-%S-%f')
+    date = current_time.strftime('%y-%m-%d_%H-%M-%S-%f')
     return date
 
 # Criar PASTA
@@ -22,7 +22,7 @@ def create_folder(folder_location, folder_name):
 # Pastas para exportação de outputs da pipeline
 def folder_structure(outputs_path, filename):    
     # PASTA IMG
-    outputs_folder = create_folder(outputs_path, f'{filename} {get_date()}')
+    outputs_folder = create_folder(outputs_path, f'{filename}_{get_date()}')
     # PASTA CROPS
     crops_folder = create_folder(outputs_folder, 'crops')
     # PASTA SEGMENTATION
@@ -35,7 +35,7 @@ def save_output(outputs_path, file, filename, label):
     date = get_date()
 
     if label in ("segmentation", "crops"):
-        path = os.path.join(outputs_path, f'{date} {label}_{filename}.png')            
+        path = os.path.join(outputs_path, f'{date}_{label}_{filename}.png')            
         cv2.imwrite(path, file)
 
     return path
