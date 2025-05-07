@@ -52,28 +52,28 @@ def pipeline(uploads_path, outputs_path, json_structure):
             segmentation = Segmentation(
                 config.FASTSAM_WEIGHTS, crops_folder, segmentation_folder, i
             )
-            segmentation_data = segmentation.run()
-
-            # CONCEPT NET
-            labels_data = []
-            for segmentation in segmentation_data:
-                detection_index = segmentation["detection_index"]
-
-                labels_data.append(
-                    {
-                        "input_image_index": segmentation["input_image_index"],
-                        "detection_index": detection_index,
-                        "mask_index": segmentation["mask_index"],
-                        "label": detection_data[detection_index]["label"],
-                    }
-                )
-           
-            concepts = Concept(labels_data)
-            concepts_data = concepts.run()
-
-            # Estrutura do JSON (Módulos SEGMENTAÇÃO e CONCEPT NET)
+            segmentation_data = segmentation.run()    
             json_structure["segmentation"].extend(segmentation_data)
-            json_structure["concepts"] = concepts_data
+
+    # CONCEPT NET
+    labels_data = []
+    for segmentation in json_structure["segmentation"]:
+        detection_index = segmentation["detection_index"]
+
+        labels_data.append(
+            {
+                "input_image_index": segmentation["input_image_index"],
+                "detection_index": detection_index,
+                "mask_index": segmentation["mask_index"],
+                "label": detection_data[detection_index]["label"],
+            }
+        )
+    
+    concepts = Concept(labels_data)
+    concepts_data = concepts.run()
+
+    # Estrutura do JSON (Módulos SEGMENTAÇÃO e CONCEPT NET)    
+    json_structure["concepts"].append(concepts_data)
 
     # Exportar ficheiro JSON de LOTE
     filename = get_filename(outputs_path)
