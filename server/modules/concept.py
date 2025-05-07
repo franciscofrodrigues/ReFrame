@@ -26,7 +26,7 @@ class Concept:
                 {
                     "input_image_index": label_data["input_image_index"],
                     "detection_index": label_data["detection_index"],
-                    "label_index": label_data["label_index"],
+                    "mask_index": label_data["mask_index"],
                     "label": label_data["label"],
                     "related_concepts": related_concepts,
                 }
@@ -47,7 +47,15 @@ class Concept:
                 # Criar estrutura de dados
                 intersections.append(
                     {
-                        "indexes": [label_1["mask_index"], label_2["mask_index"]],
+                        "input_image_indexes": [
+                            label_1["input_image_index"],
+                            label_2["input_image_index"],
+                        ],
+                        "detection_indexes": [
+                            label_1["detection_index"],
+                            label_2["detection_index"],
+                        ],
+                        "mask_indexes": [label_1["mask_index"], label_2["mask_index"]],
                         "labels": [label_1["label"], label_2["label"]],
                         "concepts": common_concepts,
                     }
@@ -62,20 +70,34 @@ class Concept:
             # Criar estrutura inicial
             for label in intersection["labels"]:
                 if label not in related_dict:
-                    related_dict[label] = {"labels": [], "indexes": []}
+                    related_dict[label] = {
+                        "labels": [],
+                        "input_image_indexes": [],
+                        "detection_indexes": [],
+                        "mask_indexes": [],
+                    }
 
             # Obter as labels e indexes
             label_1, label_2 = intersection["labels"]
-            index_1, index_2 = intersection["indexes"]
+            mask_index_1, mask_index_2 = intersection["mask_indexes"]
+            detection_index_1, detection_index_2 = intersection["detection_indexes"]
+            input_index_1, input_index_2 = intersection["input_image_indexes"]
 
             # Verificar se o index já se encontra no "related_dict"
             # Adicionar labels e indexes
-            if index_2 not in related_dict[label_1]["indexes"]:
+            if mask_index_2 not in related_dict[label_1]["mask_indexes"]:
                 related_dict[label_1]["labels"].append(label_2)
-                related_dict[label_1]["indexes"].append(index_2)
-            if index_1 not in related_dict[label_2]["indexes"]:
+
+                related_dict[label_1]["input_image_indexes"].append(input_index_2)
+                related_dict[label_1]["detection_indexes"].append(detection_index_2)
+                related_dict[label_1]["mask_indexes"].append(mask_index_2)
+
+            if mask_index_1 not in related_dict[label_2]["mask_indexes"]:
                 related_dict[label_2]["labels"].append(label_1)
-                related_dict[label_2]["indexes"].append(index_1)
+
+                related_dict[label_2]["input_image_indexes"].append(input_index_1)
+                related_dict[label_2]["detection_indexes"].append(detection_index_1)
+                related_dict[label_2]["mask_indexes"].append(mask_index_1)
 
         # Para cada label que contenha interseções
         for label, related in related_dict.items():
@@ -85,7 +107,9 @@ class Concept:
                     "label": label,
                     "related": {
                         "labels": related["labels"],
-                        "indexes": related["indexes"],
+                        "input_image_indexes": related["input_image_indexes"],
+                        "detection_indexes": related["detection_indexes"],
+                        "mask_indexes": related["mask_indexes"],
                     },
                 }
             )

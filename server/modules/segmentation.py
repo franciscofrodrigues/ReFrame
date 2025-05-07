@@ -57,6 +57,7 @@ class Segmentation:
                     data.append({
                         "input_image_index": self.input_counter,
                         "detection_index": i,
+                        "mask_index": j,
                         "mask": mask_coords,
                         "mask_pixels": white_count,
                         "result_image_path": output_path

@@ -56,14 +56,14 @@ def pipeline(uploads_path, outputs_path, json_structure):
 
             # CONCEPT NET
             labels_data = []
-            for j, segmentation in enumerate(segmentation_data):
+            for segmentation in segmentation_data:
                 detection_index = segmentation["detection_index"]
 
                 labels_data.append(
                     {
                         "input_image_index": segmentation["input_image_index"],
-                        "detection_index": segmentation["detection_index"],
-                        "label_index": j,
+                        "detection_index": detection_index,
+                        "mask_index": segmentation["mask_index"],
                         "label": detection_data[detection_index]["label"],
                     }
                 )
