@@ -55,14 +55,6 @@ def pipeline(uploads_path, outputs_path, json_structure):
             segmentation_data = segmentation.run()
 
             # CONCEPT NET
-
-            # input_image_indexes = []
-            # labels_list = []
-            # for detection in detection_data:
-            #     input_image_indexes.append(detection["input_image_index"])
-            #     labels_list.append(detection["label"])
-
-            keys = list(detection_data)
             labels_data = []
             for j, segmentation in enumerate(segmentation_data):
                 detection_index = segmentation["detection_index"]
@@ -71,22 +63,17 @@ def pipeline(uploads_path, outputs_path, json_structure):
                     {
                         "input_image_index": segmentation["input_image_index"],
                         "detection_index": segmentation["detection_index"],
-                        "mask_index": j,
-                        "label": keys[detection_index]["label"],
+                        "label_index": j,
+                        "label": detection_data[detection_index]["label"],
                     }
                 )
-
-            # concepts = Concept(labels_data)
-            # concepts_data = concepts.run()
-            # print(concepts_data)
-
-            # labels_list = [detection["label"] for detection in detection_data]
-            # concepts = Concept(labels_list)
-            # concepts_data = concepts.run()
+           
+            concepts = Concept(labels_data)
+            concepts_data = concepts.run()
 
             # Estrutura do JSON (Módulos SEGMENTAÇÃO e CONCEPT NET)
             json_structure["segmentation"].extend(segmentation_data)
-            # json_structure["concepts"].extend(concepts_data)
+            json_structure["concepts"] = concepts_data
 
     # Exportar ficheiro JSON de LOTE
     filename = get_filename(outputs_path)

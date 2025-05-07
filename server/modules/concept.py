@@ -26,7 +26,7 @@ class Concept:
                 {
                     "input_image_index": label_data["input_image_index"],
                     "detection_index": label_data["detection_index"],
-                    "mask_index": label_data["mask_index"],
+                    "label_index": label_data["label_index"],
                     "label": label_data["label"],
                     "related_concepts": related_concepts,
                 }
