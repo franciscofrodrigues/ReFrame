@@ -5,9 +5,9 @@ int[] get_mask_indexes(String folder_name) {
   JSONObject response = parseJSONObject(get.getContent());
 
   JSONArray input_images = response.getJSONArray("input_images");
-  //JSONArray detection = response.getJSONArray("detection");
+  JSONArray detection = response.getJSONArray("detection");
   JSONArray segmentation = response.getJSONArray("segmentation");
-  //JSONArray concepts = response.getJSONArray("concepts");
+  JSONArray concepts = response.getJSONArray("concepts");
 
   int input_images_size = input_images.size();
   int[] largest_mask = new int[input_images_size];

@@ -71,7 +71,7 @@ class Detection:
                 for box in result.boxes:
                     label = self.get_label(box) # LABEL
                     confidence = self.get_confidence(box) # CONFIDENCE
-                    x1, y1, x2, y2 = self.get_bbox(box) # BBOX                                        
+                    x1, y1, x2, y2 = self.get_bbox(box) # BBOX                                     
                     
                     # Lógica de CROP
                     cropped_img = self.crop_object(img, x1, y1, x2, y2)

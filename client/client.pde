@@ -20,7 +20,8 @@ String folder_name;
 
 void settings() {
   //size(1280, 720);
-  size(800, 900);
+  //size(800, 900);
+  size(600, 720);
 }
 
 void setup() {
