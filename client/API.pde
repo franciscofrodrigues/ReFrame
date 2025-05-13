@@ -43,3 +43,17 @@ PImage[] get_masks(int[] indexes) {
   }
   return result_masks;
 }
+
+int[] get_related_masks_indexes() {
+  GetRequest get = new GetRequest(endpointAPI + "/masks/" + folder_name + "/related");
+  get.send();
+
+  JSONArray response = parseJSONArray(get.getContent());
+  int[] masks_indexes = new int[response.size()];
+  
+  for(int i=0; i<response.size(); i++) {
+    masks_indexes[i] = response.getInt(i);
+  }
+
+  return masks_indexes;
+}

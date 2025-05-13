@@ -52,7 +52,9 @@ def pipeline(uploads_path, outputs_path, json_structure):
             segmentation = Segmentation(
                 config.FASTSAM_WEIGHTS, crops_folder, segmentation_folder, i
             )
-            segmentation_data = segmentation.run()    
+            segmentation_data = segmentation.run()
+
+            # Estrutura do JSON (Módulos de SEGMENTAÇÃO DE IMAGEM)
             json_structure["segmentation"].extend(segmentation_data)
 
     # CONCEPT NET
@@ -65,14 +67,14 @@ def pipeline(uploads_path, outputs_path, json_structure):
                 "input_image_index": segmentation["input_image_index"],
                 "detection_index": detection_index,
                 "mask_index": segmentation["mask_index"],
-                "label": detection_data[detection_index]["label"],
+                "label": detection_data[detection_index]["label"]
             }
         )
-    
+
     concepts = Concept(labels_data)
     concepts_data = concepts.run()
 
-    # Estrutura do JSON (Módulos SEGMENTAÇÃO e CONCEPT NET)    
+    # Estrutura do JSON (Módulos de Semântica (CONCEPT NET))
     json_structure["concepts"].append(concepts_data)
 
     # Exportar ficheiro JSON de LOTE
@@ -151,6 +153,31 @@ def get_image_file(folder_name: str, index: int):
     # Obter "result_image_path" para o index especificado
     path = data["segmentation"][index]["result_image_path"]
     return FileResponse(path, media_type="image/png", filename=f"{index}.png")
+
+
+@app.get("/masks/{folder_name}/related")
+def get_related_masks(folder_name: str):
+    # Carregar JSON
+    json_path = os.path.join(config.OUTPUTS_PATH, folder_name, f"{folder_name}.json")
+    with open(json_path) as f:
+        data = json.load(f)
+
+    for relation in data["concepts"][0]["relations"]:
+        related_input_indexes = relation["related"]["input_image_indexes"]
+        related_detection_indexes = relation["related"]["detection_indexes"]
+        related_mask_indexes = relation["related"]["mask_indexes"]
+
+        masks_indexes = []
+        for i in range(len(related_mask_indexes)):
+            for mask_index, segmentation in enumerate(data["segmentation"]):
+                if (
+                    segmentation["input_image_index"] == related_input_indexes[i]
+                    and segmentation["detection_index"] == related_detection_indexes[i]
+                    and segmentation["mask_index"] == related_mask_indexes[i]
+                ):
+                    masks_indexes.append(mask_index)
+
+        return masks_indexes
 
 
 # ------------------------------------------------------------------------------

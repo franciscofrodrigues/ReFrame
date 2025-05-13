@@ -1,4 +1,5 @@
 from itertools import combinations
+import random
 import requests
 
 
@@ -74,7 +75,7 @@ class Concept:
                         "labels": [],
                         "input_image_indexes": [],
                         "detection_indexes": [],
-                        "mask_indexes": [],
+                        "mask_indexes": []                        
                     }
 
             # Obter as labels e indexes
@@ -109,8 +110,12 @@ class Concept:
                         "labels": related["labels"],
                         "input_image_indexes": related["input_image_indexes"],
                         "detection_indexes": related["detection_indexes"],
-                        "mask_indexes": related["mask_indexes"],
+                        "mask_indexes": related["mask_indexes"]
                     },
+                    "positioning_probs": {
+                        "horizontal": random.random(),
+                        "vertical": random.random()
+                    }
                 }
             )
 
@@ -122,7 +127,7 @@ class Concept:
         relations = self.get_relations_structure(intersections)
 
         data = {
-            "related_concepts": concepts,
+            "concepts": concepts,
             "intersections": intersections,
             "relations": relations,
         }

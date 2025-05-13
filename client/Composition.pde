@@ -22,10 +22,15 @@ class Composition {
     this.std = std;
     this.label = label;
 
-    canvas_left = sidebarW + paddingUI*2;
-    canvas_top = paddingUI;
-    canvas_width = mainW;
-    canvas_height = height-paddingUI*2;
+    //canvas_left = sidebarW + paddingUI*2;
+    //canvas_top = paddingUI;
+    //canvas_width = mainW;
+    //canvas_height = height-paddingUI*2;
+    
+    canvas_left = 0;
+    canvas_top = 0;
+    canvas_width = width;
+    canvas_height = height;
 
     mean_width_1 = canvas_width/3;
     mean_width_2 = 2*(canvas_width/3);
@@ -59,30 +64,14 @@ class Composition {
       pos.y = randomGaussian() * std + mean_height_2;
     }
 
-    pos.z = random(canvas_height/5, canvas_height/3);
+    pos.z = random(canvas_height/5, canvas_height/2);
 
     return pos;
   }
 
   void draw() {
-    //if (masks != null) {
-    //  for (int i=0; i<masks.length; i++) {
-    //    if (masks_images[i] != null) {
-    //      //img_ratio = (float) masks[i].height / masks[i].width;
-    //      //img_width = 100;
-    //      //img_height = img_width*img_ratio;
-
-    //      img_ratio = (float) masks[i].width / masks[i].height;
-    //      img_height = pos[i].z;
-    //      img_width = img_height*img_ratio;
-
-    //      image(masks[i], canvas_left + (pos[i].x-img_width/2), canvas_top + (pos[i].y-img_height/2), img_width, img_height);
-    //    }
-    //  }
-    //}
-
     pg.beginDraw();
-    pg.background(255);
+    pg.clear();
 
     if (masks != null) {
       for (int i=0; i<chosen_masks.length; i++) {
