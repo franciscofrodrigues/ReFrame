@@ -67,7 +67,7 @@ def pipeline(uploads_path, outputs_path, json_structure):
                 "input_image_index": segmentation["input_image_index"],
                 "detection_index": detection_index,
                 "mask_index": segmentation["mask_index"],
-                "label": detection_data[detection_index]["label"]
+                "label": detection_data[detection_index]["label"],
             }
         )
 
@@ -128,13 +128,19 @@ def upload_images(
     return folder_name
 
 
-# Obter os PATHS das máscaras
-@app.get("/masks/{folder_name}")
-def get_image_paths(folder_name: str):
+def read_json(folder_name):
     # Carregar JSON
     json_path = os.path.join(config.OUTPUTS_PATH, folder_name, f"{folder_name}.json")
     with open(json_path, "r") as f:
         data = json.load(f)
+    return data
+
+
+# Obter os PATHS das máscaras
+@app.get("/masks/{folder_name}")
+def get_image_paths(folder_name: str):
+    # Carregar JSON
+    data = read_json(folder_name)
 
     # Obter todos os "result_image_path"
     # paths = [mask["result_image_path"] for mask in data["segmentation"]]
@@ -146,9 +152,7 @@ def get_image_paths(folder_name: str):
 @app.get("/masks/{folder_name}/{index}.png")
 def get_image_file(folder_name: str, index: int):
     # Carregar JSON
-    json_path = os.path.join(config.OUTPUTS_PATH, folder_name, f"{folder_name}.json")
-    with open(json_path) as f:
-        data = json.load(f)
+    data = read_json(folder_name)
 
     # Obter "result_image_path" para o index especificado
     path = data["segmentation"][index]["result_image_path"]
@@ -158,9 +162,7 @@ def get_image_file(folder_name: str, index: int):
 @app.get("/masks/{folder_name}/related")
 def get_related_masks(folder_name: str):
     # Carregar JSON
-    json_path = os.path.join(config.OUTPUTS_PATH, folder_name, f"{folder_name}.json")
-    with open(json_path) as f:
-        data = json.load(f)
+    data = read_json(folder_name)
 
     for relation in data["concepts"][0]["relations"]:
         related_input_indexes = relation["related"]["input_image_indexes"]
