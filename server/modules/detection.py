@@ -65,10 +65,10 @@ class Detection:
 
                 folders_data.append({
                     "crops_folder": crops_folder,
-                    "segmentation_folder": segmentation_folder
+                    "segmentation_folder": segmentation_folder,
                 })
 
-                for box in result.boxes:
+                for j, box in enumerate(result.boxes):
                     label = self.get_label(box) # LABEL
                     confidence = self.get_confidence(box) # CONFIDENCE
                     x1, y1, x2, y2 = self.get_bbox(box) # BBOX                                     
@@ -79,6 +79,7 @@ class Detection:
                         
                     data.append({
                         "input_image_index": i,
+                        "detection_index": j,
                         "label": label,
                         "confidence": confidence,
                         "bbox": [x1, y1, x2, y2],

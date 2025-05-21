@@ -16,7 +16,7 @@ String info;
 
 String portAPI, endpointAPI; // API
 
-PImage[] masks_images;
+ArrayList<Mask> masks;
 String folder_name;
 
 void settings() {
@@ -27,7 +27,9 @@ void setup() {
   // API
   portAPI = "8000";
   endpointAPI = "http://127.0.0.1:" + portAPI;
-  folder_name = "25-05-12_13-10-14-272224";
+  folder_name = "25-05-21_22-30-53-156262";
+  
+  masks = new ArrayList<Mask>();
 
   // CORES
   // UI
@@ -84,7 +86,7 @@ void draw() {
   }
 
   // MASKS
-  if (masks_images != null) composition.draw();
+  if (masks != null) composition.draw();  
 }
 
 
@@ -92,14 +94,16 @@ void mousePressed() {
   if (button.click()) {
     // selectInput("Select a file:", "upload_img");
 
+    masks = get_result_masks();
+
     // OBTER MÁSCARAS  
     //info = "A carregar máscaras...";
-    int[] mask_indexes = get_mask_indexes(folder_name);
+    //int[] mask_indexes = get_mask_indexes(folder_name);
     //int[] mask_indexes = get_related_masks_indexes();
-    masks_images = get_masks(mask_indexes);
+    //masks_images = get_masks(mask_indexes);
 
     // COMPOSITION
-    composition = new Composition(masks_images, int(random(2, masks_images.length)), 1, random(10, 100), "person");
+    //composition = new Composition(masks_images, int(random(2, masks_images.length)), 1, random(10, 100), "person");
     //composition = new Composition(masks_images, masks_images.length, 1, random(10, 100), "person");
   }
 }

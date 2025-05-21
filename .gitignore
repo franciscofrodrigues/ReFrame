@@ -6,3 +6,7 @@ server/res/outputs
 
 server/weights/FastSAM-x.pt
 server/weights/yolo11x.pt
+client/API.pde
+client/client.pde
+client/Composition.pde
+client/Mask.pde

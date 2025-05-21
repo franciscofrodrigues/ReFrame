@@ -57,3 +57,27 @@ int[] get_related_masks_indexes() {
 
   return masks_indexes;
 }
+
+
+
+ArrayList<Mask> get_result_masks() {
+  ArrayList<Mask> masks = new ArrayList<Mask>();
+  
+  GetRequest get = new GetRequest(endpointAPI + "/masks/" + folder_name + "/results");
+  get.send();
+
+  JSONArray response = parseJSONArray(get.getContent());
+  
+  for(int i=0; i<response.size(); i++) {
+    JSONObject item = response.getJSONObject(i);
+    
+    String result_image_path = item.getString("result_image_path");
+    PImage mask = loadImage("../" + result_image_path);
+    
+    String label = item.getString("label");
+    
+    masks.add(new Mask(mask, label));
+  }
+  
+  return masks;
+}

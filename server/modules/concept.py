@@ -1,5 +1,4 @@
 from itertools import combinations
-import random
 import requests
 
 
@@ -8,8 +7,8 @@ class Concept:
         self.labels_data = labels_data
 
     def get_related_concepts(self, label):
-        try:
-            # Obter todos os conceitos relacionados para determinada label
+        # Obter todos os conceitos relacionados para determinada label
+        try:            
             response = requests.get(f"http://api.conceptnet.io/c/en/{label}").json()
             return [edge["end"]["label"] for edge in response["edges"]]
         except requests.RequestException:
@@ -111,10 +110,6 @@ class Concept:
                         "input_image_indexes": related["input_image_indexes"],
                         "detection_indexes": related["detection_indexes"],
                         "mask_indexes": related["mask_indexes"]
-                    },
-                    "positioning_probs": {
-                        "horizontal": random.random(),
-                        "vertical": random.random()
                     }
                 }
             )
@@ -126,11 +121,12 @@ class Concept:
         intersections = self.get_intersections_structure(concepts)
         relations = self.get_relations_structure(intersections)
 
-        data = {
+        data = []
+        data.append({
             "concepts": concepts,
             "intersections": intersections,
             "relations": relations,
-        }
+        })
 
         return data
 

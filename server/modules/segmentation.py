@@ -4,6 +4,8 @@ import cv2
 import numpy as np
 from ultralytics import FastSAM
 
+import os
+
 class Segmentation:
     def __init__(self, weights_path, input_files, outputs_path, input_counter):
         self.model = FastSAM(weights_path)
@@ -41,13 +43,10 @@ class Segmentation:
             for i, result in enumerate(results):
                 input_file = result.path
                 input_filename = get_filename(input_file)
-                original_img = cv2.imread(input_file)
+                original_img = cv2.imread(input_file)                                                            
 
-                for j, mask in enumerate(result.masks.data):
-                    mask_xy = result.masks.xy[j]
-                    mask_coords = [contour.tolist() for contour in mask_xy]                           
-
-                    mask_binary = self.get_binary_mask(mask)
+                for j, mask in enumerate(result.masks.data):                    
+                    mask_binary = self.get_binary_mask(mask)                
                     white_count = int(np.sum(mask_binary == 255))
 
                     # Aplicar MÁSCARA a IMAGEM ORIGINAL
@@ -58,16 +57,16 @@ class Segmentation:
                         "input_image_index": self.input_counter,
                         "detection_index": i,
                         "mask_index": j,
-                        "mask": mask_coords,
+                        "mask": mask_binary.tolist(),
                         "mask_pixels": white_count,
                         "result_image_path": output_path
-                    })
+                    })                            
                     
             return data
 
 # ------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    segmentation = Segmentation('weights/FastSAM-x.pt', 'res/uploads', 'res/outputs', 0)
-    print(segmentation.run())
-    # segmentation.run()
+    segmentation = Segmentation('weights/FastSAM-x.pt', 'res/uploads/RP-F-00-1507.jpg', 'res/outputs', 0)
+    segmentation_data = segmentation.run()
+    print(segmentation_data)

@@ -1,7 +1,7 @@
 from utils.json_export import save_json
-from utils.file_export import get_filename, get_date, create_folder
+from utils.file_export import get_filename, get_date, create_folder, filter_folder_structure
 import config
-from modules import Detection, Segmentation, Concept
+from modules import Detection, Segmentation, Concept, MaskFilter
 
 import uvicorn
 from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
@@ -26,8 +26,9 @@ def create_group():
         "detection": [],
         "segmentation": [],
         "concepts": [],
+        "result": []
     }
-    return folder_name, group_path, group_data
+    return group_path, group_data
 
 
 def pipeline(uploads_path, outputs_path, json_structure):
@@ -49,9 +50,7 @@ def pipeline(uploads_path, outputs_path, json_structure):
         # Se existirem deteções na pasta CROPS
         if len(os.listdir(crops_folder)) != 0:
             # SEGMENTAÇÃO
-            segmentation = Segmentation(
-                config.FASTSAM_WEIGHTS, crops_folder, segmentation_folder, i
-            )
+            segmentation = Segmentation(config.FASTSAM_WEIGHTS, crops_folder, segmentation_folder, i)
             segmentation_data = segmentation.run()
 
             # Estrutura do JSON (Módulos de SEGMENTAÇÃO DE IMAGEM)
@@ -73,15 +72,23 @@ def pipeline(uploads_path, outputs_path, json_structure):
 
     concepts = Concept(labels_data)
     concepts_data = concepts.run()
+    
+    # Estrutura do JSON (Módulo de Semântica (CONCEPT NET))
+    json_structure["concepts"].extend(concepts_data)
+    
+    inverse_folder, contained_folder = filter_folder_structure(outputs_path)
+    # # MASK FILTER
+    mask_filter = MaskFilter(json_structure["detection"], json_structure["segmentation"], json_structure["concepts"], inverse_folder, contained_folder)
+    mask_filter_data = mask_filter.run()
 
-    # Estrutura do JSON (Módulos de Semântica (CONCEPT NET))
-    json_structure["concepts"].append(concepts_data)
+    # Estrutura do JSON (Módulo de Filtragem de Máscaras (MASK FILTER))
+    json_structure["result"].extend(mask_filter_data)
 
     # Exportar ficheiro JSON de LOTE
     filename = get_filename(outputs_path)
     save_json(json_structure, outputs_path, filename)
 
-    return {"message": "As imagens foram processadas."}
+    return {"Os ficheiros foram processados."}
 
 
 # ------------------------------------------------------------------------------
@@ -119,13 +126,12 @@ def upload_images(
             file.file.close()
 
     # Criar pasta de LOTE
-    folder_name, group_path, group_data = create_group()
+    group_path, group_data = create_group()
 
     # Executar PIPELINE
     background_tasks.add_task(pipeline, paths, group_path, group_data)
 
-    # return {"Os ficheiros foram importados": [file.filename for file in files]}
-    return folder_name
+    return {"Os ficheiros foram importados": [file.filename for file in files]}
 
 
 def read_json(folder_name):
@@ -142,9 +148,7 @@ def get_image_paths(folder_name: str):
     # Carregar JSON
     data = read_json(folder_name)
 
-    # Obter todos os "result_image_path"
-    # paths = [mask["result_image_path"] for mask in data["segmentation"]]
-    # return len(paths)
+    # Obter o ficheiro JSON para determinado "folder_name"
     return JSONResponse(content=data)
 
 
@@ -181,6 +185,13 @@ def get_related_masks(folder_name: str):
 
         return masks_indexes
 
+
+@app.get("/masks/{folder_name}/results")
+def get_result_masks(folder_name: str):
+    # Carregar JSON
+    data = read_json(folder_name)
+    return data["result"]
+        
 
 # ------------------------------------------------------------------------------
 

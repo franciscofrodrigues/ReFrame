@@ -2,10 +2,10 @@ class Composition {
 
   PGraphics pg;
 
+  //ArrayList<Mask> masks;
   PImage[] masks;
   int[] chosen_masks;
   int num_masks;
-  String label;
 
   int canvas_left, canvas_top, canvas_width, canvas_height;
 
@@ -15,12 +15,11 @@ class Composition {
   float std, mean_width_1, mean_width_2, mean_height_1, mean_height_2;
   PVector[] pos;
 
-  Composition(PImage[] masks, int num_masks, float scale_factor, float std, String label) {
+  Composition(PImage[] masks, int num_masks, float scale_factor, float std) {
     this.masks = masks;
     this.num_masks = num_masks;
     this.scale_factor = scale_factor;
     this.std = std;
-    this.label = label;
 
     //canvas_left = sidebarW + paddingUI*2;
     //canvas_top = paddingUI;
