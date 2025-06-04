@@ -26,7 +26,7 @@ function setup() {
   masks = [];
   semantic_groups = [];
 
-  composition = new Composition(0, 0, width, height, 0);
+  composition = new Composition(0, 0, width, height, 2);
   composition.semantic_groups = semantic_groups;
 
   let composition_btn = select("#composition_btn");

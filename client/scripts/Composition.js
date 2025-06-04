@@ -11,9 +11,6 @@ class Composition {
     this.max_group_w = this.w / 2;
     this.min_group_h = this.h / 4;
     this.max_group_h = this.h / 2;
-
-    // Random Point Grid
-    this.random_point = createVector(random(100, this.w - 100), random(100, this.h - 100));
   }
 
   run() {
@@ -22,14 +19,14 @@ class Composition {
   }
 
   render() {
-    push();
-    translate(this.x + this.w / 2, this.y + this.h / 2);
+    // push();
+    // translate(this.x + this.w / 2, this.y + this.h / 2);
 
-    noFill();
-    stroke(accent_color);
-    strokeWeight(1);
-    rect(0, 0, this.w, this.h);
-    pop();
+    // noFill();
+    // stroke(accent_color);
+    // strokeWeight(1);
+    // rect(0, 0, this.w, this.h);
+    // pop();
 
     for (let semantic_group of this.semantic_groups) {
       semantic_group.run();
@@ -39,15 +36,21 @@ class Composition {
   update() {}
 
   recompose() {
+    // Recalcular o posicionamento do "random_point"
     this.random_point = createVector(random(100, this.w - 100), random(100, this.h - 100));
-    for (let i = 0; i < this.semantic_groups.length; i++) {
-      // let pos = this.thirds_grid();
-      // let pos = this.center_grid(i);
-      let pos = this.random_point_grid(i);
 
+    for (let i = 0; i < this.semantic_groups.length; i++) {
+      // Grid Type
+      let pos;
+      if (this.grid_type == 0) pos = this.thirds_grid();
+      else if (this.grid_type == 1) pos = this.center_grid(i);
+      else if (this.grid_type == 2) pos = this.random_point_grid(i);
+
+      // Tamanho dos "SemanticGroup"
       let group_w = map(i, 0, this.semantic_groups.length - 1, this.min_group_w, this.max_group_w);
       let group_h = map(i, 0, this.semantic_groups.length - 1, this.min_group_h, this.max_group_h);
 
+      // Atualizar Posição, Tamanho e Ângulo
       this.semantic_groups[i].x = pos.x;
       this.semantic_groups[i].y = pos.y;
       this.semantic_groups[i].w = group_w;
@@ -92,10 +95,12 @@ class Composition {
     let ang = random(TWO_PI);
     let ang_inc = 0.01;
 
+    // Elemento Central
     if (index == this.semantic_groups.length - 1) {
       pos.x = this.w / 2;
       pos.y = this.h / 2;
     } else {
+      // Elementos ao Redor do Elemento Central
       pos.x = this.w / 2 + (cos(ang + index * ang_inc) * this.max_group_w) / 2;
       pos.y = this.h / 2 + (sin(ang + index * ang_inc) * this.max_group_h) / 2;
     }
@@ -105,13 +110,17 @@ class Composition {
   random_point_grid(index) {
     let pos = createVector(0, 0, 0);
 
+    // Cantos "Composition"
     let corners = [createVector(0, 0), createVector(0, this.h), createVector(this.w, this.h), createVector(this.w, 0)];
     corners = shuffle(corners);
 
+    // Calcular orientação do "SemanticGroup"
     let dir = p5.Vector.sub(this.random_point, corners[index]);
     pos.z = PI / 2 + atan2(dir.y, dir.x);
 
     // let dist = dist(random_point.x, random_point.y, corners[index].x, corners[index].y);
+
+    // Calcular a posição central entre os "corners" e o "random_point"
     pos.x = (this.random_point.x + corners[index].x) / 2;
     pos.y = (this.random_point.y + corners[index].y) / 2;
     return pos;

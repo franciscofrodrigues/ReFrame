@@ -1,24 +1,44 @@
+:root {
+  --bg-color: #f0f0f0;
+  --sidebar-color: #ffffff;
+  --btn-color: #000000;
+  --btn-hover-color: #ffffff;
+  --flex_gap: 10px;
+}
+
+@font-face {
+  font-family: "Roboto", sans-serif;
+  src: url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+}
+
 * {
   margin: 0;
   padding: 0;
+  font-family: "Roboto", sans-serif;
+  font-size: 10pt;
 }
 
 body {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 10px;
+  gap: var(--flex_gap);
 
   width: 100vw;
   height: 100vh;
 }
 
 main {
-  background-color: rgb(195, 195, 195);
+  background-color: var(--bg-color);
   flex-grow: 2;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+main > canvas {
+  /* box-shadow: 0 0 3px #2236441a,5px 10px 20px #2236441a,10px 20px 20px #2236441a; */
+  box-shadow: 10px 10px 20px 5px #2236441a;
 }
 
 /* Sidebar */
@@ -28,7 +48,7 @@ main {
 
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--flex_gap);
 }
 
 #right_sidebar {
@@ -40,11 +60,13 @@ main {
 .btn {
   width: 100%;
   padding: 0.5rem;
-  background-color: rgb(255, 130, 0);
-  color: #fff;
-  border: none;
+  background-color: var(--btn-color);
+  color: var(--btn-hover-color);
+  border: 1px solid var(--btn-color);
   border-radius: 5px;
 }
 .btn:hover {
-  background-color: rgb(241, 125, 0);
+  background-color: var(--btn-hover-color);
+  color: var(--btn-color);
+  border: 1px solid var(--btn-color);
 }

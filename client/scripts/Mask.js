@@ -26,7 +26,12 @@ class Mask {
     // strokeWeight(1);
     // rect(this.x, this.y, this.w, this.h);
 
+    fill(0);
+    noStroke();
+    text(this.label, this.x-this.w/2, this.y-this.h/2);
+
     image(this.mask, this.x, this.y, this.w, this.h);
+    this.mask.filter(GRAY);
 
     push();
     blendMode(MULTIPLY);
