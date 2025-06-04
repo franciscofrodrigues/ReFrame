@@ -1,11 +1,17 @@
 from utils.json_export import save_json
-from utils.file_export import get_filename, get_date, create_folder, filter_folder_structure
+from utils.file_export import (
+    get_filename,
+    get_date,
+    create_folder,
+    filter_folder_structure,
+)
 import config
 from modules import Detection, Segmentation, Concept, MaskFilter
 
 import uvicorn
 from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from typing import List
 import os
@@ -26,7 +32,7 @@ def create_group():
         "detection": [],
         "segmentation": [],
         "concepts": [],
-        "result": []
+        "result": [],
     }
     return group_path, group_data
 
@@ -50,7 +56,9 @@ def pipeline(uploads_path, outputs_path, json_structure):
         # Se existirem deteções na pasta CROPS
         if len(os.listdir(crops_folder)) != 0:
             # SEGMENTAÇÃO
-            segmentation = Segmentation(config.FASTSAM_WEIGHTS, crops_folder, segmentation_folder, i)
+            segmentation = Segmentation(
+                config.FASTSAM_WEIGHTS, crops_folder, segmentation_folder, i
+            )
             segmentation_data = segmentation.run()
 
             # Estrutura do JSON (Módulos de SEGMENTAÇÃO DE IMAGEM)
@@ -72,13 +80,19 @@ def pipeline(uploads_path, outputs_path, json_structure):
 
     concepts = Concept(labels_data)
     concepts_data = concepts.run()
-    
+
     # Estrutura do JSON (Módulo de Semântica (CONCEPT NET))
     json_structure["concepts"].extend(concepts_data)
-    
+
     inverse_folder, contained_folder = filter_folder_structure(outputs_path)
     # # MASK FILTER
-    mask_filter = MaskFilter(json_structure["detection"], json_structure["segmentation"], json_structure["concepts"], inverse_folder, contained_folder)
+    mask_filter = MaskFilter(
+        json_structure["detection"],
+        json_structure["segmentation"],
+        json_structure["concepts"],
+        inverse_folder,
+        contained_folder,
+    )
     mask_filter_data = mask_filter.run()
 
     # Estrutura do JSON (Módulo de Filtragem de Máscaras (MASK FILTER))
@@ -97,9 +111,7 @@ def pipeline(uploads_path, outputs_path, json_structure):
 app = FastAPI()
 
 
-@app.get("/")
-def index():
-    return {"message": "index"}
+app.mount("/static", StaticFiles(directory=config.CLIENT_PATH, html=True), name="static")
 
 
 @app.post("/upload")
@@ -163,38 +175,48 @@ def get_image_file(folder_name: str, index: int):
     return FileResponse(path, media_type="image/png", filename=f"{index}.png")
 
 
-@app.get("/masks/{folder_name}/related")
-def get_related_masks(folder_name: str):
-    # Carregar JSON
-    data = read_json(folder_name)
-
-    for relation in data["concepts"][0]["relations"]:
-        related_input_indexes = relation["related"]["input_image_indexes"]
-        related_detection_indexes = relation["related"]["detection_indexes"]
-        related_mask_indexes = relation["related"]["mask_indexes"]
-
-        masks_indexes = []
-        for i in range(len(related_mask_indexes)):
-            for mask_index, segmentation in enumerate(data["segmentation"]):
-                if (
-                    segmentation["input_image_index"] == related_input_indexes[i]
-                    and segmentation["detection_index"] == related_detection_indexes[i]
-                    and segmentation["mask_index"] == related_mask_indexes[i]
-                ):
-                    masks_indexes.append(mask_index)
-
-        return masks_indexes
-
-
-@app.get("/masks/{folder_name}/results")
-def get_result_masks(folder_name: str):
+@app.get("/masks/{folder_name}/result")
+def get_result_data(folder_name: str):
     # Carregar JSON
     data = read_json(folder_name)
     return data["result"]
-        
+
+
+@app.get("/masks/{folder_name}/result/{group_index}/{result_index}.png")
+def get_result_mask(
+    folder_name: str, group_index: int, result_index: int, inverse: bool
+):
+    # Carregar JSON
+    data = read_json(folder_name)
+
+    # Obter "result_image_path"/"inverse" para os indexes especificados
+    if not inverse:
+        path = data["result"][group_index][result_index]["result_image_path"]
+    else:
+        path = data["result"][group_index][result_index]["inverse"]
+    filename = get_filename(path)
+
+    return FileResponse(path, media_type="image/png", filename=f"{filename}.png")
+
+
+@app.get(
+    "/masks/{folder_name}/result/{group_index}/{result_index}/contained/{contained_index}.png"
+)
+def get_result_contained(
+    folder_name: str, group_index: int, result_index: int, contained_index: int
+):
+    # Carregar JSON
+    data = read_json(folder_name)
+
+    # Obter "contained" para os indexes especificados
+    path = data["result"][group_index][result_index]["contained"][contained_index]
+    filename = get_filename(path)
+
+    return FileResponse(path, media_type="image/png", filename=f"{filename}.png")
+
 
 # ------------------------------------------------------------------------------
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, reload_dirs=[config.CLIENT_PATH])
