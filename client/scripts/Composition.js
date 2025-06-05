@@ -1,5 +1,6 @@
 class Composition {
-  constructor(x, y, w, h, grid_type) {
+  constructor(pg, x, y, w, h, grid_type) {
+    this.pg = pg;
     this.x = x;
     this.y = y;
     this.w = w;
@@ -11,6 +12,8 @@ class Composition {
     this.max_group_w = this.w / 2;
     this.min_group_h = this.h / 4;
     this.max_group_h = this.h / 2;
+
+    this.calc_random_point();
   }
 
   run() {
@@ -29,15 +32,19 @@ class Composition {
     // pop();
 
     for (let semantic_group of this.semantic_groups) {
-      semantic_group.run();
+      semantic_group.run(this.pg);
     }
   }
 
   update() {}
 
+  calc_random_point() {    
+    this.random_point = createVector(random(100, this.w - 100), random(100, this.h - 100));
+  }
+
   recompose() {
     // Recalcular o posicionamento do "random_point"
-    this.random_point = createVector(random(100, this.w - 100), random(100, this.h - 100));
+    this.calc_random_point();
 
     for (let i = 0; i < this.semantic_groups.length; i++) {
       // Grid Type
@@ -56,6 +63,7 @@ class Composition {
       this.semantic_groups[i].w = group_w;
       this.semantic_groups[i].h = group_h;
       this.semantic_groups[i].ang = pos.z;
+      this.semantic_groups[i].recompose();
     }
   }
 
@@ -68,7 +76,7 @@ class Composition {
   // GRID
   thirds_grid() {
     let pos = createVector(0, 0);
-    let std = 0;
+    let std = this.w/6;
     let mean_width_1 = this.w / 3;
     let mean_width_2 = 2 * (this.w / 3);
     let mean_height_1 = this.h / 3;

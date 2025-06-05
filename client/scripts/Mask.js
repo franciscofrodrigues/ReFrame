@@ -8,44 +8,53 @@ class Mask {
 
     this.x = 0;
     this.y = 0;
-    this.w = 100;
-    this.h = 100;
+    this.w = 0;
+    this.h = 0;
     this.mask_ratio = 0;
+
+    this.chosen_contained = random(this.contained_masks.length);
+    this.contained_mask_copy = this.mask_to_shape(this.contained_masks[0], color(360, 100, 100, 255));
 
     this.inverted_mask_copy = this.mask_to_shape(this.inverted_mask, color(360, 100, 100, 255));
   }
 
-  run() {
-    this.update();
-    this.render();
+  run(pg) {
+    this.update(pg);
+    this.render(pg);
   }
 
-  render() {
+  render(pg) {
     // noFill();
     // stroke(accent_color);
     // strokeWeight(1);
     // rect(this.x, this.y, this.w, this.h);
 
-    fill(0);
-    noStroke();
-    text(this.label, this.x-this.w/2, this.y-this.h/2);
+    // fill(0);
+    // noStroke();
+    // text(this.label, this.x - this.w / 2, this.y - this.h / 2);
 
-    image(this.mask, this.x, this.y, this.w, this.h);
+    pg.image(this.mask, this.x, this.y, this.w, this.h);
     this.mask.filter(GRAY);
 
-    push();
-    blendMode(MULTIPLY);
-    image(this.inverted_mask_copy, this.x, this.y, this.w, this.h);
-    pop();
+    pg.push();
+    pg.blendMode(MULTIPLY);
+    // pg.image(this.inverted_mask_copy, this.x, this.y, this.w*2, this.h*2);
+    pg.image(this.contained_mask_copy, this.x, this.y, this.w, this.h);
+    pg.pop();
   }
 
-  update() {
+  update(pg) {
     this.mask_ratio = this.mask.width / this.mask.height;
     this.w = this.h * this.mask_ratio;
     // this.mask_ratio = this.mask.height / this.mask.width;
     // this.h = this.w * this.mask_ratio;
+  }
 
-    // this.inverted_mask_copy = this.mask_to_shape(this.inverted_mask, color(360, 100, 100, 255));
+  recompose() {
+    this.chosen_contained = int(random(this.contained_masks.length));
+    this.contained_mask_copy = this.mask_to_shape(this.contained_masks[this.chosen_contained], color(360, 100, 100, 255));
+
+    this.inverted_mask_copy = this.mask_to_shape(this.inverted_mask, color(200, 100, 100, 255));
   }
 
   mask_to_shape(img, c) {

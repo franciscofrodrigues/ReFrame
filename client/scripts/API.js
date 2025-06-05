@@ -19,6 +19,12 @@ function get_mask_img(group_index, result_index, inverse) {
   return img;
 }
 
+function get_contained_mask_img(group_index, result_index, contained_index) {
+  const url = `${endpoint_api}/masks/${folder_name}/result/${group_index}/${result_index}/contained/${contained_index}.png`;
+  const img = loadImage(url);
+  return img;
+}
+
 async function get_masks() {
   result_json = await get_result_data();
 
@@ -26,7 +32,11 @@ async function get_masks() {
     for (let j = 0; j < result_json[i].length; j++) {
       let mask = get_mask_img(i, j, false);
       let inverted_mask = get_mask_img(i, j, true);
-      let contained_masks = get_mask_img(i, j, true);
+
+      let contained_masks = [];
+      for (let k = 0; k < result_json[i][j]["contained"].length; k++) {
+        contained_masks.push(get_contained_mask_img(i, j, k));
+      }
 
       let label = result_json[i][j]["label"];
       let semantic_group = i;
