@@ -43,7 +43,7 @@ main {
 }
 
 main > #canvas {
-  flex-grow: 10;
+  flex-grow: 11;
 }
 
 /* Sidebar */
