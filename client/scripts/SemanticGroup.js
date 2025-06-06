@@ -21,10 +21,10 @@ class SemanticGroup {
     pg.translate(this.x, this.y);
     pg.rotate(this.ang);
 
-    // noFill();
-    // stroke(accent_color);
-    // strokeWeight(1);
-    // rect(0, 0, this.w, this.h);
+    // pg.noFill();
+    // pg.stroke(accent_color);
+    // pg.strokeWeight(1);
+    // pg.rect(0, 0, this.w, this.h);
 
     // for (let mask of this.masks) {
     //   mask.run();
@@ -41,14 +41,16 @@ class SemanticGroup {
 
   update(pg) {
     for (let i = 0; i < this.masks.length; i++) {
-      this.masks[i].h = this.h;
-      // this.masks[i].w = this.w / this.masks.length;
+      let scl = min(this.w / this.masks[i].mask.width, this.h / this.masks[i].mask.height);
+      this.masks[i].h = this.masks[i].mask.height * scl;
+
+      // this.masks[i].h = this.h;
       this.mask_inc = this.w / this.masks.length;
     }
   }
 
-  recompose() {    
-    for(let mask of this.masks) {
+  recompose() {
+    for (let mask of this.masks) {
       mask.recompose();
     }
   }

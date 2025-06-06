@@ -32,7 +32,7 @@ function setup() {
   // API
   port_api = "8000";
   endpoint_api = `http://localhost:${port_api}`;
-  folder_name = "25-05-30_15-25-54-936976";
+  folder_name = "25-06-06_10-14-26-287163";
 
   // Inicializar "masks" e "semantic_groups"
   masks = [];
@@ -48,7 +48,7 @@ function setup() {
   comp_graphics.imageMode(CENTER);
   comp_graphics.rectMode(CENTER);
 
-  composition = new Composition(comp_graphics, 0, 0, comp_graphics_w, comp_graphics_h, 1);
+  composition = new Composition(comp_graphics, 0, 0, comp_graphics_w, comp_graphics_h, 0);
   composition.semantic_groups = semantic_groups;
 
   // Mask Pool
@@ -76,7 +76,7 @@ function draw() {
   } else {
     comp_graphics.background(comp_bg_color);
     composition.run();
-    addGrain(comp_graphics, 10);
+    // add_grain(comp_graphics, 10);
 
     // Drop Shadow
     push();
@@ -94,7 +94,10 @@ function draw() {
 
 function keyPressed() {
   if (key === "s") {
-    save(comp_graphics, "canvas.png");
+    let grain_output = createGraphics(comp_graphics.width, comp_graphics.height);
+    grain_output.copy(comp_graphics, 0, 0, width, height, 0, 0, grain_output.width, grain_output.height);
+    add_grain(grain_output, 10);
+    save(grain_output, "canvas.png");
   }
 
   if (key === "p") {
@@ -103,7 +106,7 @@ function keyPressed() {
 }
 
 // https://editor.p5js.org/ogt/sketches/sk1qsRr_n
-function addGrain(pg, num) {
+function add_grain(pg, num) {
   pg.loadPixels();
   for (let i = 0; i < pg.width * pixelDensity() * (pg.height * pixelDensity()) * 4; i += 4) {
     let noise = map(random(), 0, 1, -num, num);

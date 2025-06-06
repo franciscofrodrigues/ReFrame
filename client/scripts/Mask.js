@@ -6,16 +6,18 @@ class Mask {
     this.label = label;
     this.semantic_group = semantic_group;
 
-    this.x = 0;
-    this.y = 0;
-    this.w = 0;
-    this.h = 0;
-    this.mask_ratio = 0;
+    this.x = -10;
+    this.y = -10;
+    this.w = 10;
+    this.h = 10;
+    this.mask_ratio = 1;
+
+    this.accent_color = accent_color;
 
     this.chosen_contained = random(this.contained_masks.length);
-    this.contained_mask_copy = this.mask_to_shape(this.contained_masks[0], color(360, 100, 100, 255));
+    this.contained_mask_copy = this.mask_to_shape(this.contained_masks[0], this.accent_color);
 
-    this.inverted_mask_copy = this.mask_to_shape(this.inverted_mask, color(360, 100, 100, 255));
+    this.inverted_mask_copy = this.mask_to_shape(this.inverted_mask, this.accent_color);
   }
 
   run(pg) {
@@ -46,15 +48,13 @@ class Mask {
   update(pg) {
     this.mask_ratio = this.mask.width / this.mask.height;
     this.w = this.h * this.mask_ratio;
-    // this.mask_ratio = this.mask.height / this.mask.width;
-    // this.h = this.w * this.mask_ratio;
   }
 
   recompose() {
     this.chosen_contained = int(random(this.contained_masks.length));
-    this.contained_mask_copy = this.mask_to_shape(this.contained_masks[this.chosen_contained], color(360, 100, 100, 255));
+    this.contained_mask_copy = this.mask_to_shape(this.contained_masks[this.chosen_contained], this.accent_color);
 
-    this.inverted_mask_copy = this.mask_to_shape(this.inverted_mask, color(200, 100, 100, 255));
+    this.inverted_mask_copy = this.mask_to_shape(this.inverted_mask, this.accent_color);
   }
 
   mask_to_shape(img, c) {

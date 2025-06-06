@@ -67,14 +67,19 @@ def pipeline(uploads_path, outputs_path, json_structure):
     # CONCEPT NET
     labels_data = []
     for segmentation in json_structure["segmentation"]:
-        detection_index = segmentation["detection_index"]
+
+        key = (segmentation["input_image_index"], segmentation["detection_index"])
+        label = ""
+        for detection in detection_data:
+            if (detection["input_image_index"], detection["detection_index"]) == key:
+                label = detection["label"]
 
         labels_data.append(
             {
                 "input_image_index": segmentation["input_image_index"],
-                "detection_index": detection_index,
+                "detection_index": segmentation["detection_index"],
                 "mask_index": segmentation["mask_index"],
-                "label": detection_data[detection_index]["label"],
+                "label": label,
             }
         )
 
@@ -84,8 +89,8 @@ def pipeline(uploads_path, outputs_path, json_structure):
     # Estrutura do JSON (Módulo de Semântica (CONCEPT NET))
     json_structure["concepts"].extend(concepts_data)
 
+    # MASK FILTER
     inverse_folder, contained_folder = filter_folder_structure(outputs_path)
-    # # MASK FILTER
     mask_filter = MaskFilter(
         json_structure["detection"],
         json_structure["segmentation"],
@@ -115,9 +120,7 @@ app.mount("/static", StaticFiles(directory=config.CLIENT_PATH, html=True), name=
 
 
 @app.post("/upload")
-def upload_images(
-    background_tasks: BackgroundTasks, files: List[UploadFile] = File(...)
-):
+def upload_images(background_tasks: BackgroundTasks, files: List[UploadFile] = File(...)):
     # Guardar FICHEIROS de UPLOAD
     paths = []
     for file in files:
@@ -159,7 +162,6 @@ def read_json(folder_name):
 def get_image_paths(folder_name: str):
     # Carregar JSON
     data = read_json(folder_name)
-
     # Obter o ficheiro JSON para determinado "folder_name"
     return JSONResponse(content=data)
 
@@ -183,9 +185,7 @@ def get_result_data(folder_name: str):
 
 
 @app.get("/masks/{folder_name}/result/{group_index}/{result_index}.png")
-def get_result_mask(
-    folder_name: str, group_index: int, result_index: int, inverse: bool
-):
+def get_result_mask(folder_name: str, group_index: int, result_index: int, inverse: bool):
     # Carregar JSON
     data = read_json(folder_name)
 
@@ -199,12 +199,8 @@ def get_result_mask(
     return FileResponse(path, media_type="image/png", filename=f"{filename}.png")
 
 
-@app.get(
-    "/masks/{folder_name}/result/{group_index}/{result_index}/contained/{contained_index}.png"
-)
-def get_result_contained(
-    folder_name: str, group_index: int, result_index: int, contained_index: int
-):
+@app.get("/masks/{folder_name}/result/{group_index}/{result_index}/contained/{contained_index}.png")
+def get_result_contained(folder_name: str, group_index: int, result_index: int, contained_index: int):
     # Carregar JSON
     data = read_json(folder_name)
 
@@ -219,4 +215,10 @@ def get_result_contained(
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, reload_dirs=[config.CLIENT_PATH])
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+        reload_dirs=[config.CLIENT_PATH],
+    )
