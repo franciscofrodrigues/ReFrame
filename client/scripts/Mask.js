@@ -26,14 +26,14 @@ class Mask {
   }
 
   render(pg) {
-    // noFill();
-    // stroke(accent_color);
-    // strokeWeight(1);
-    // rect(this.x, this.y, this.w, this.h);
+    // pg.noFill();
+    // pg.stroke(accent_color);
+    // pg.strokeWeight(1);
+    // pg.rect(this.x, this.y, this.w, this.h);
 
-    // fill(0);
-    // noStroke();
-    // text(this.label, this.x - this.w / 2, this.y - this.h / 2);
+    // pg.fill(0);
+    // pg.noStroke();
+    // pg.text(this.label, this.x - this.w / 2, this.y - this.h / 2);
 
     pg.image(this.mask, this.x, this.y, this.w, this.h);
     this.mask.filter(GRAY);

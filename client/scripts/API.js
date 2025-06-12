@@ -1,3 +1,38 @@
+const upload_image_form = document.getElementById("upload_image_form");
+upload_image_form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  upload_images(upload_image_form);
+});
+
+const upload_image_input = document.querySelector('#upload_image_form input[type="file"]');
+const upload_image_message = document.getElementById('upload_image_message');
+upload_image_input.addEventListener("change", () => {
+  const count = upload_image_input.files.length;
+  upload_image_message.textContent = `${count} file(s) selected.`;
+});
+
+async function upload_images(form) {
+  const url = `${endpoint_api}/upload`;
+  const form_data = new FormData(form);
+
+  const request = new Request(url, {
+    method: "POST",
+    body: form_data,
+  });
+
+  try {
+    const response = await fetch(request);
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log("Success:", result);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
 async function get_result_data() {
   const url = `${endpoint_api}/masks/${folder_name}/result`;
   try {

@@ -1,4 +1,4 @@
-from utils.file_export import save_output, png_to_base64
+from utils.file_export import save_output
 
 import numpy as np
 import cv2
@@ -59,8 +59,7 @@ class MaskFilter:
 
     # Verificar se a máscara está contida na "largest_mask"
     def check_contained(self, current_mask, largest_mask):
-        result = np.isin(current_mask, largest_mask)
-        return np.all(result)
+        return np.all((current_mask == 255) <= (largest_mask == 255))
 
     def run(self):
         groups = self.create_key_groups(self.segmentation_data, self.concepts_data)
@@ -73,11 +72,11 @@ class MaskFilter:
                 largest_mask = self.get_largest_mask(masks)            
 
                 # Obter máscara binária
-                largest_mask_mask = np.array(largest_mask["mask"])
-                largest_binary_mask = largest_mask_mask.astype(np.uint8)
+                largest_mask_binary = cv2.imread(largest_mask["mask"])
+                ret, largest_mask_mask = cv2.threshold(largest_mask_binary, 127, 255, cv2.THRESH_BINARY)
 
                 # Inverter a máscara
-                largest_mask_inverted = cv2.bitwise_not(largest_binary_mask)
+                largest_mask_inverted = cv2.bitwise_not(largest_mask_mask)
                 inverse_output_path = save_output(
                     self.inverse_outputs_path,
                     largest_mask_inverted,
@@ -98,15 +97,15 @@ class MaskFilter:
                 )
 
                 for mask in masks:
-                    current_mask_mask = np.array(mask["mask"])
+                    current_mask_binary = cv2.imread(mask["mask"])
+                    ret, current_mask_mask = cv2.threshold(current_mask_binary, 127, 255, cv2.THRESH_BINARY)
 
                     # Quando não se trata da "largest_mask"
                     if not np.array_equal(current_mask_mask, largest_mask_mask):
                         # Obter a máscara atual
-                        current_binary_mask = current_mask_mask.astype(np.uint8)
                         contained_output_path = save_output(
                             self.contained_outputs_path,
-                            current_binary_mask,
+                            current_mask_mask,
                             f'[{key[0]}_{key[1]}_{largest_mask["mask_index"]}]',
                             "contained",
                         )

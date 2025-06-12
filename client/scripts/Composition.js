@@ -8,10 +8,15 @@ class Composition {
     this.grid_type = grid_type;
 
     this.semantic_groups = [];
-    this.min_group_w = this.w / 4;
-    this.max_group_w = this.w / 2;
-    this.min_group_h = this.h / 4;
-    this.max_group_h = this.h / 2;
+    // this.min_group_w = this.w / 4;
+    // this.max_group_w = this.w / 2;
+    // this.min_group_h = this.h / 4;
+    // this.max_group_h = this.h / 2;
+
+    this.min_group_w = this.w*0.5;
+    this.max_group_w = this.w*1.2;
+    this.min_group_h = this.h*0.5;
+    this.max_group_h = this.h*1.2;
 
     this.calc_random_point();
   }
@@ -22,14 +27,14 @@ class Composition {
   }
 
   render() {
-    // push();
-    // translate(this.x + this.w / 2, this.y + this.h / 2);
+    // pg.push();
+    // pg.translate(this.x + this.w / 2, this.y + this.h / 2);
 
-    // noFill();
-    // stroke(accent_color);
-    // strokeWeight(1);
-    // rect(0, 0, this.w, this.h);
-    // pop();
+    // pg.noFill();
+    // pg.stroke(accent_color);
+    // pg.strokeWeight(1);
+    // pg.rect(0, 0, this.w, this.h);
+    // pg.pop();
 
     for (let semantic_group of this.semantic_groups) {
       semantic_group.run(this.pg);
@@ -54,8 +59,8 @@ class Composition {
       else if (this.grid_type == 2) pos = this.random_point_grid(i);
 
       // Tamanho dos "SemanticGroup"
-      let group_w = map(i, 0, this.semantic_groups.length - 1, this.min_group_w, this.max_group_w);
-      let group_h = map(i, 0, this.semantic_groups.length - 1, this.min_group_h, this.max_group_h);
+      let group_w = map(i, 0, this.semantic_groups.length, this.min_group_w, this.max_group_w);
+      let group_h = map(i, 0, this.semantic_groups.length, this.min_group_h, this.max_group_h);
 
       // Atualizar Posição, Tamanho e Ângulo
       this.semantic_groups[i].x = pos.x;
@@ -76,7 +81,7 @@ class Composition {
   // GRID
   thirds_grid() {
     let pos = createVector(0, 0);
-    let std = this.w/6;
+    let std = this.w/10;
     let mean_width_1 = this.w / 3;
     let mean_width_2 = 2 * (this.w / 3);
     let mean_height_1 = this.h / 3;

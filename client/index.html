@@ -10,7 +10,43 @@
   </head>
   <body>
     <main>
-      <div class="sidebar" id="left_sidebar">
+      <div id="sidebar">
+        <div class="section_container" id="logo_container">
+          <h3>Decomposing Visual Information</h3>
+        </div>
+
+        <!--Secção "Import" -->
+        <div class="section_title_container" id="import_title_container">
+          <h4>Import</h4>
+        </div>
+
+        <div class="section_container" id="import_container">
+          <form id="upload_image_form">
+            <label class="btn">
+              Select Files
+              <input type="file" name="files" accept="image/*" multiple />
+            </label>
+            <button class="btn" type="submit">Upload</button>
+            <p id="upload_image_message">&nbsp;</p>
+          </form>
+        </div>
+
+        <!--Secção "Composition" -->
+        <div class="section_title_container" id="composition_title_container">
+          <h4>Composition</h4>
+        </div>
+
+        <div class="section_container" id="composition_container"></div>
+
+        <!--Secção "Export" -->
+        <div class="section_title_container" id="export_title_container">
+          <h4>Export</h4>
+        </div>
+
+        <div class="section_container" id="export_container"></div>
+
+        <div id="space"></div>
+
         <button class="btn" id="masks_btn" type="button">Get masks</button>
         <button class="btn" id="composition_btn" type="button">New composition</button>
       </div>

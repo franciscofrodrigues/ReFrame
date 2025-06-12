@@ -1,4 +1,3 @@
-import base64
 import cv2
 import os
 import datetime
@@ -44,10 +43,4 @@ def save_output(outputs_path, file, filename, label):
         path = os.path.join(outputs_path, f'{date}_{label}_{filename}.png')            
         cv2.imwrite(path, file)
 
-    return path
-
-def png_to_base64(img):    
-    _, buffer = cv2.imencode('.png', img)
-    img_base64 = base64.b64encode(buffer).decode('utf-8')
-    path = f"data:image/png;base64,{img_base64}"
     return path

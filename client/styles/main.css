@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
 :root {
   --bg-color: hsl(0, 0%, 92%);
   --cnv-color: #ffffff;
@@ -5,60 +7,66 @@
   --sidebar-color: #ffffff;
   --btn-color: #000000;
   --btn-hover-color: #ffffff;
+  --section-color:  #efefef;
   --flex-gap: 10px;
   --div-padding: 1rem;
 }
 
-@font-face {
-  font-family: "Roboto", sans-serif;
-  src: url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
-}
-
-html,
-body,
 * {
   margin: 0;
   padding: 0;
-  font-family: "Roboto", sans-serif;
-  font-size: 10pt;
 }
 
+html,
 body {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
+
+  font-family: "Roboto", sans-serif;
+  font-size: 12pt;
 }
 
-.space_top {
-  margin-top: var(--div-padding);
+/* TIPOGRAFIA */
+h1 {
+  font-size: 4rem;
+  font-weight: 600;
 }
+h2 {
+  font-size: 3.5rem;
+  font-weight: 600;
+}
+h3 {
+  font-size: 2rem;
+  font-weight: 600;
+}
+h4 {
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+p {
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+/* ----------------------------------------------------------------------------- */
 
 main {
   width: 100%;
   height: 100%;
 
   display: flex;
-  gap: var(--flex-gap);
   flex-direction: row;
 }
 
-main > #canvas {
-  flex-grow: 11;
+/* P5JS CANVAS */
+#canvas {
+  flex-grow: 9;
+  width: 0;
+  position: relative;
 }
 
-/* Sidebar */
-.sidebar {
-  padding: var(--div-padding);
-  z-index: 1;
-  background-color: var(--sidebar-color);
-  flex-grow: 1;
-
-  display: flex;
-  flex-direction: column;
-  gap: var(--flex-gap);
-}
-
-/* Botões */
+/* BOTÕES */
 .btn {
   width: 100%;
   padding: 0.5rem;
@@ -66,9 +74,72 @@ main > #canvas {
   color: var(--btn-hover-color);
   border: 1px solid var(--btn-color);
   border-radius: 5px;
+
+  font-size: 1rem;
+  text-align: center;
 }
 .btn:hover {
   background-color: var(--btn-hover-color);
   color: var(--btn-color);
   border: 1px solid var(--btn-color);
+}
+
+/* SIDEBAR */
+#sidebar {
+  flex-grow: 3;
+  width: 0;
+  z-index: 1;
+  background-color: var(--sidebar-color);
+
+  display: flex;
+  flex-direction: column;  
+}
+
+/* SECÇÕES */
+.section_title_container {
+  height: 3rem;
+  border: 1px var(--btn-color);
+  border-style: solid none;
+
+  padding: 0 var(--div-padding);
+
+  display: flex;
+  align-items: center;
+}
+#sidebar .section_container {
+  padding: var(--div-padding);
+  background-color: var(--section-color);
+  
+  display: flex;
+  flex-direction: column;
+  gap: var(--flex-gap);
+}
+
+/* UPLOAD FORM */
+#upload_image_form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--flex-gap);
+  width: 100%;
+}
+#upload_image_form input[type="file"] {
+  width: 100%;
+  display: none;
+}
+#upload_image_form > label {
+  width: 100%;
+  box-sizing: border-box;
+  color: var(--btn-color);
+  background-color: var(--btn-hover-color);
+}
+#upload_image_form > label:hover {
+  color: var(--btn-hover-color);
+  background-color: var(--btn-color);
+}
+#upload_image_form > #upload_image_message {
+  text-align: center;
+}
+
+#space {
+  /* height: 100px; */
 }

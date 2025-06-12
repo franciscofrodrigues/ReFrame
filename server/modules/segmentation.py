@@ -29,8 +29,8 @@ class Segmentation:
         return result_img_rgba
 
     def get_binary_mask(self, mask):
-        mask_np = mask.cpu().numpy()  # Converter de tensor para numpy
-        mask_binary = (mask_np > 0).astype(np.uint8) * 255  # Máscara binária     
+        mask_np = mask.cpu().numpy() # Converter de tensor para numpy
+        mask_binary = mask_np.astype(np.uint8) * 255  # Máscara binária
         return mask_binary
 
     # SEGMENTAÇÃO DE IMAGEM de VÁRIAS imagens
@@ -46,18 +46,19 @@ class Segmentation:
                 original_img = cv2.imread(input_file)                                                            
 
                 for j, mask in enumerate(result.masks.data):                    
-                    mask_binary = self.get_binary_mask(mask)                
+                    mask_binary = self.get_binary_mask(mask)
+                    binary_output_path = save_output(self.outputs_path, mask_binary, f'binary_[{input_filename}]', "segmentation")
                     white_count = int(np.sum(mask_binary == 255))
 
                     # Aplicar MÁSCARA a IMAGEM ORIGINAL
                     masked_img = self.mask_img(mask_binary, original_img)
-                    output_path = save_output(self.outputs_path, masked_img, f'[{input_filename}]', "segmentation")                    
+                    output_path = save_output(self.outputs_path, masked_img, f'[{input_filename}]', "segmentation")
                         
                     data.append({
                         "input_image_index": self.input_counter,
                         "detection_index": i,
                         "mask_index": j,
-                        "mask": mask_binary.tolist(),
+                        "mask": binary_output_path,
                         "mask_pixels": white_count,
                         "result_image_path": output_path
                     })                            
@@ -67,6 +68,6 @@ class Segmentation:
 # ------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    segmentation = Segmentation('weights/FastSAM-x.pt', 'res/uploads/RP-F-00-1507.jpg', 'res/outputs', 0)
+    segmentation = Segmentation('weights/FastSAM-x.pt', 'res/uploads/RP-F-2016-4.jpg', 'res/outputs/test', 0)
     segmentation_data = segmentation.run()
-    print(segmentation_data)
+    print(segmentation_data[0]["mask"])
