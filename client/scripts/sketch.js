@@ -11,9 +11,7 @@ let comp_graphics, comp_graphics_ratio, comp_graphics_w, comp_graphics_h;
 let masks, masks_pool, semantic_groups, composition;
 let masks_pool_visible;
 
-
 // ------------------------------------------------------------------------------
-
 
 function setup() {
   cnv = createCanvas(100, 100);
@@ -70,7 +68,6 @@ function setup() {
   });
 }
 
-
 function draw() {
   background(bg_color);
 
@@ -95,7 +92,6 @@ function draw() {
   }
 }
 
-
 function keyPressed() {
   if (key === "s") {
     let grain_output = createGraphics(comp_graphics.width, comp_graphics.height);
@@ -109,14 +105,11 @@ function keyPressed() {
   }
 }
 
-
 // ------------------------------------------------------------------------------
-
 
 function windowResized() {
   resize_canvas();
 }
-
 
 function resize_canvas() {
   cnv_parent = document.querySelector("#canvas");
@@ -128,14 +121,17 @@ function resize_canvas() {
   comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
 }
 
-
 // ------------------------------------------------------------------------------
-
 
 // Agrupar máscaras por grupos semânticos
 function group_masks(masks, semantic_groups) {
   for (let mask of masks) {
     let found = false;
+
+    if (!mask.mask) {
+      console.error("Broken mask found:", mask);
+      continue; // Skip broken masks
+    }
 
     for (let group of semantic_groups) {
       if (group.semantic_group === mask.semantic_group) {
@@ -152,7 +148,6 @@ function group_masks(masks, semantic_groups) {
     }
   }
 }
-
 
 // https://editor.p5js.org/ogt/sketches/sk1qsRr_n
 function add_grain(pg, num) {

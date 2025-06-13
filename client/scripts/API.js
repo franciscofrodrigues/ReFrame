@@ -81,7 +81,6 @@ function get_mask_img(folder_name, group_index, result_index, inverse) {
   return img;
 }
 
-
 // Carregar máscara contidas
 function get_contained_mask_img(folder_name, group_index, result_index, contained_index) {
   const url = `${endpoint_api}/masks/${folder_name}/result/${group_index}/${result_index}/contained/${contained_index}.png`;
@@ -96,12 +95,12 @@ async function get_masks(folder_name, data) {
 
   for (let i = 0; i < result_json.length; i++) {
     for (let j = 0; j < result_json[i].length; j++) {
-      let mask = get_mask_img(folder_name, i, j, false);
-      let inverted_mask = get_mask_img(folder_name, i, j, true);
+      let mask = await get_mask_img(folder_name, i, j, false);
+      let inverted_mask = await get_mask_img(folder_name, i, j, true);
 
       let contained_masks = [];
       for (let k = 0; k < result_json[i][j]["contained"].length; k++) {
-        contained_masks.push(get_contained_mask_img(folder_name, i, j, k));
+        contained_masks.push(await get_contained_mask_img(folder_name, i, j, k));
       }
 
       let label = result_json[i][j]["label"];

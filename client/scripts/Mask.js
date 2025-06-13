@@ -14,17 +14,13 @@ class Mask {
 
     this.accent_color = accent_color;
 
-    this.chosen_contained = random(this.contained_masks.length);
-    this.contained_mask_copy = null;
-    this.inverted_mask_copy = null;
+    this.init_shapes();
   }
-
 
   run(pg) {
     this.update(pg);
     this.render(pg);
   }
-
 
   render(pg) {
     // pg.noFill();
@@ -42,24 +38,30 @@ class Mask {
     pg.push();
     pg.blendMode(MULTIPLY);
     // pg.image(this.inverted_mask_copy, this.x, this.y, this.w*2, this.h*2);
-    if(this.contained_mask_copy) pg.image(this.contained_mask_copy, this.x, this.y, this.w, this.h);
+    if (this.contained_mask_copy) pg.image(this.contained_mask_copy, this.x, this.y, this.w, this.h);
     pg.pop();
   }
-
 
   update(pg) {
     this.mask_ratio = this.mask.width / this.mask.height;
     this.w = this.h * this.mask_ratio;
   }
 
-
   recompose() {
-    this.chosen_contained = int(random(this.contained_masks.length));
-    if(this.contained_masks) this.contained_mask_copy = this.mask_to_shape(this.contained_masks[this.chosen_contained], this.accent_color);
-    if(this.inverted_mask) this.inverted_mask_copy = this.mask_to_shape(this.inverted_mask, this.accent_color);
+    this.init_shapes();
   }
 
-  
+  init_shapes() {
+    if (this.contained_masks && this.contained_masks.length > 0) {
+      this.chosen_contained = int(random(this.contained_masks.length));
+      this.contained_mask_copy = this.mask_to_shape(this.contained_masks[this.chosen_contained], this.accent_color);
+    }
+
+    if (this.inverted_mask) {
+      this.inverted_mask_copy = this.mask_to_shape(this.inverted_mask, this.accent_color);
+    }
+  }
+
   mask_to_shape(img, c) {
     let copy = createImage(img.width, img.height);
 
