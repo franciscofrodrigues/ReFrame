@@ -11,10 +11,12 @@ class SemanticGroup {
     this.mask_inc = 0;
   }
 
+
   run(pg) {
     this.update(pg);
     this.render(pg);
   }
+
 
   render(pg) {
     pg.push();
@@ -35,6 +37,7 @@ class SemanticGroup {
     pg.pop();
   }
 
+
   update(pg) {
     for (let i = 0; i < this.masks.length; i++) {
       let scl = min(this.w / this.masks[i].mask.width, this.h / this.masks[i].mask.height);
@@ -44,6 +47,7 @@ class SemanticGroup {
     }
   }
 
+  
   recompose() {
     for (let mask of this.masks) {
       mask.recompose();

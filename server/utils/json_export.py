@@ -22,4 +22,4 @@ def create_group(outputs_path):
         "concepts": [],
         "result": [],
     }
-    return group_path, group_data
+    return folder_name, group_path, group_data

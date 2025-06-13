@@ -1,9 +1,4 @@
-const upload_image_form = document.getElementById("upload_image_form");
-upload_image_form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  upload_images(upload_image_form);
-});
-
+// Atualizar número de ficheiros (imagens) selecionados
 const upload_image_input = document.querySelector('#upload_image_form input[type="file"]');
 const upload_image_message = document.getElementById("upload_image_message");
 upload_image_input.addEventListener("change", () => {
@@ -11,6 +6,16 @@ upload_image_input.addEventListener("change", () => {
   upload_image_message.textContent = `${count} file(s) selected.`;
 });
 
+
+// Form de UPLOAD
+const upload_image_form = document.getElementById("upload_image_form");
+upload_image_form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  upload_images(upload_image_form);
+});
+
+
+// UPLOAD
 async function upload_images(form) {
   const url = `${endpoint_api}/upload`;
   const form_data = new FormData(form);
@@ -33,6 +38,8 @@ async function upload_images(form) {
   }
 }
 
+
+// Obter mensagens do progresso de UPLOAD e processamento
 const upload_step = document.getElementById("upload_step");
 async function check_current_state(uuid) {
   const call_interval = setInterval(async () => {
@@ -48,6 +55,7 @@ async function check_current_state(uuid) {
 
       if (task.status === "Process end") {
         clearInterval(call_interval);
+        get_masks(task.folder_name, task.result);
       }
     } catch (error) {
       clearInterval(call_interval);
@@ -58,44 +66,42 @@ async function check_current_state(uuid) {
 
 // ------------------------------------------------------------------------------
 
-async function get_result_data() {
-  const url = `${endpoint_api}/masks/${folder_name}/result`;
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
 
-    const json = await response.json();
-    return json;
-  } catch (error) {
-    console.error(error.message);
-  }
+// JSON
+async function get_result_data(data) {  
+  result = await data["result"];
+  return result;
 }
 
-function get_mask_img(group_index, result_index, inverse) {
+
+// Carregar "largest_mask" e máscara invertida
+function get_mask_img(folder_name, group_index, result_index, inverse) {
   const url = `${endpoint_api}/masks/${folder_name}/result/${group_index}/${result_index}.png?inverse=${inverse}`;
   const img = loadImage(url);
   return img;
 }
 
-function get_contained_mask_img(group_index, result_index, contained_index) {
+
+// Carregar máscara contidas
+function get_contained_mask_img(folder_name, group_index, result_index, contained_index) {
   const url = `${endpoint_api}/masks/${folder_name}/result/${group_index}/${result_index}/contained/${contained_index}.png`;
   const img = loadImage(url);
   return img;
 }
 
-async function get_masks() {
-  result_json = await get_result_data();
+
+// Obter máscaras resultantes da pipeline
+async function get_masks(folder_name, data) {
+  result_json = await get_result_data(data);
 
   for (let i = 0; i < result_json.length; i++) {
     for (let j = 0; j < result_json[i].length; j++) {
-      let mask = get_mask_img(i, j, false);
-      let inverted_mask = get_mask_img(i, j, true);
+      let mask = get_mask_img(folder_name, i, j, false);
+      let inverted_mask = get_mask_img(folder_name, i, j, true);
 
       let contained_masks = [];
       for (let k = 0; k < result_json[i][j]["contained"].length; k++) {
-        contained_masks.push(get_contained_mask_img(i, j, k));
+        contained_masks.push(get_contained_mask_img(folder_name, i, j, k));
       }
 
       let label = result_json[i][j]["label"];

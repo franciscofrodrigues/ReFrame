@@ -11,6 +11,10 @@ let comp_graphics, comp_graphics_ratio, comp_graphics_w, comp_graphics_h;
 let masks, masks_pool, semantic_groups, composition;
 let masks_pool_visible;
 
+
+// ------------------------------------------------------------------------------
+
+
 function setup() {
   cnv = createCanvas(100, 100);
   cnv.parent("#canvas");
@@ -32,7 +36,6 @@ function setup() {
   // API
   port_api = "8000";
   endpoint_api = `http://localhost:${port_api}`;
-  folder_name = "25-06-10_21-39-29-358597";
 
   // Inicializar "masks" e "semantic_groups"
   masks = [];
@@ -63,10 +66,10 @@ function setup() {
 
   let masks_btn = select("#masks_btn");
   masks_btn.mousePressed(() => {
-    get_masks();
     group_masks(masks, semantic_groups);
   });
 }
+
 
 function draw() {
   background(bg_color);
@@ -92,6 +95,7 @@ function draw() {
   }
 }
 
+
 function keyPressed() {
   if (key === "s") {
     let grain_output = createGraphics(comp_graphics.width, comp_graphics.height);
@@ -105,9 +109,14 @@ function keyPressed() {
   }
 }
 
+
+// ------------------------------------------------------------------------------
+
+
 function windowResized() {
   resize_canvas();
 }
+
 
 function resize_canvas() {
   cnv_parent = document.querySelector("#canvas");
@@ -119,25 +128,17 @@ function resize_canvas() {
   comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
 }
 
-// https://editor.p5js.org/ogt/sketches/sk1qsRr_n
-function add_grain(pg, num) {
-  pg.loadPixels();
-  for (let i = 0; i < pg.width * pixelDensity() * (pg.height * pixelDensity()) * 4; i += 4) {
-    let noise = map(random(), 0, 1, -num, num);
-    pg.pixels[i] = pg.pixels[i] + noise;
-    pg.pixels[i + 1] = pg.pixels[i + 1] + noise;
-    pg.pixels[i + 2] = pg.pixels[i + 2] + noise;
-    pg.pixels[i + 3] = pg.pixels[i + 3] + noise;
-  }
-  pg.updatePixels();
-}
 
+// ------------------------------------------------------------------------------
+
+
+// Agrupar máscaras por grupos semânticos
 function group_masks(masks, semantic_groups) {
   for (let mask of masks) {
     let found = false;
 
     for (let group of semantic_groups) {
-      if (group.semantic_group == mask.semantic_group) {
+      if (group.semantic_group === mask.semantic_group) {
         group.masks.push(mask);
         found = true;
         break;
@@ -150,4 +151,18 @@ function group_masks(masks, semantic_groups) {
       semantic_groups.push(semantic_group);
     }
   }
+}
+
+
+// https://editor.p5js.org/ogt/sketches/sk1qsRr_n
+function add_grain(pg, num) {
+  pg.loadPixels();
+  for (let i = 0; i < pg.width * pixelDensity() * (pg.height * pixelDensity()) * 4; i += 4) {
+    let noise = map(random(), 0, 1, -num, num);
+    pg.pixels[i] = pg.pixels[i] + noise;
+    pg.pixels[i + 1] = pg.pixels[i + 1] + noise;
+    pg.pixels[i + 2] = pg.pixels[i + 2] + noise;
+    pg.pixels[i + 3] = pg.pixels[i + 3] + noise;
+  }
+  pg.updatePixels();
 }

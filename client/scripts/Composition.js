@@ -21,10 +21,12 @@ class Composition {
     this.calc_random_point();
   }
 
+
   run() {
     this.update();
     this.render();
   }
+
 
   render() {
     // pg.push();
@@ -41,11 +43,14 @@ class Composition {
     }
   }
 
+
   update() {}
+
 
   calc_random_point() {    
     this.random_point = createVector(random(100, this.w - 100), random(100, this.h - 100));
   }
+
 
   recompose() {
     // Recalcular o posicionamento do "random_point"
@@ -76,7 +81,9 @@ class Composition {
     this.semantic_groups.push(semantic_group);
   }
 
+
   // ---------------------------------------------------------------------------
+
 
   // GRID
   thirds_grid() {
@@ -103,6 +110,7 @@ class Composition {
     return pos;
   }
 
+
   center_grid(index) {
     let pos = createVector(0, 0);
     let ang = random(TWO_PI);
@@ -120,6 +128,7 @@ class Composition {
     return pos;
   }
 
+  
   random_point_grid(index) {
     let pos = createVector(0, 0, 0);
 

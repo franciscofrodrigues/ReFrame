@@ -11,6 +11,7 @@ from uuid import UUID, uuid4
     
 class Task(BaseModel):
     uuid: UUID = Field(default_factory=uuid4)
+    folder_name: str
     status: str = "Process start"
     step: str = "Upload"
     result: Dict = Field(default_factory=dict)
@@ -42,16 +43,15 @@ async def upload_images(background_tasks: BackgroundTasks, files: List[UploadFil
             file.file.close()
 
     # Criar pasta de LOTE
-    group_path, group_data = create_group(config.OUTPUTS_PATH)
+    folder_name, group_path, group_data = create_group(config.OUTPUTS_PATH)
 
     # Adicionar nova tarefa à QUEUE
-    new_task = Task()
+    new_task = Task(folder_name=folder_name)
     tasks[new_task.uuid] = new_task
     
     # Executar PIPELINE
     background_tasks.add_task(pipeline, paths, group_path, group_data, new_task.uuid, tasks)
 
-    # return {"Os ficheiros foram importados": [file.filename for file in files]}
     return new_task
 
 

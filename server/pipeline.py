@@ -32,6 +32,7 @@ def pipeline(uploads_path, outputs_path, json_structure, task_uuid, tasks):
     filename = get_filename(outputs_path)
     save_json(json_structure, outputs_path, filename)
 
+    tasks[task_uuid].folder_name = filename
     tasks[task_uuid].status = "Process end"
     tasks[task_uuid].result = json_structure
     
@@ -66,7 +67,6 @@ def image_segmentation(folders_data, json_structure):
             
                 
 def semantic_relations(json_structure):
-    # CONCEPT NET
     labels_data = []
     for segmentation in json_structure["segmentation"]:
 
@@ -88,7 +88,7 @@ def semantic_relations(json_structure):
     concepts = Concept(labels_data)
     concepts_data = concepts.run()
 
-    # Estrutura do JSON (Módulo de Semântica (CONCEPT NET))
+    # Estrutura do JSON (Módulo de Relações Semânticas (CONCEPT NET))
     json_structure["concepts"].extend(concepts_data)
     
     
