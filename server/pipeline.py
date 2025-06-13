@@ -1,0 +1,107 @@
+from utils.json_export import save_json
+from utils.file_export import (
+    get_filename,
+    filter_folder_structure
+)
+import config
+from modules import Detection, Segmentation, Concept, MaskFilter
+
+import os
+
+
+def pipeline(uploads_path, outputs_path, json_structure, task_uuid, tasks):            
+
+    # DETEÇÃO DE OBJETOS
+    tasks[task_uuid].step = "Performing object detection"
+    folders_data = object_detection(uploads_path, outputs_path, json_structure)
+
+    # SEGMENTAÇÃO DE IMAGEM
+    tasks[task_uuid].step = "Performing image segmentation"
+    image_segmentation(folders_data, json_structure)
+
+    # RELAÇÕES SEMÂNTICAS
+    tasks[task_uuid].step = "Checking for semantic relations"
+    semantic_relations(json_structure)
+    
+    # FILTRAR MÁSCARAS
+    tasks[task_uuid].step = "Filtering masks"
+    mask_filter(outputs_path, json_structure)
+
+    # Exportar ficheiro JSON de LOTE
+    tasks[task_uuid].step = "Saving results"
+    filename = get_filename(outputs_path)
+    save_json(json_structure, outputs_path, filename)
+
+    tasks[task_uuid].status = "Process end"
+    tasks[task_uuid].result = json_structure
+    
+
+# ------------------------------------------------------------------------------
+
+    
+def object_detection(uploads_path, outputs_path, json_structure):     
+    detection = Detection(config.YOLO_WEIGHTS, uploads_path, outputs_path)
+    folders_data, inputs_data, detection_data = detection.run()
+
+    # Estrutura do JSON (INPUTS e módulo OBJECT DETECTION)
+    json_structure["input_images"].extend(inputs_data)
+    json_structure["detection"].extend(detection_data)
+    return folders_data
+    
+    
+def image_segmentation(folders_data, json_structure):
+    # Instâncias da pasta UPLOADS_PATH
+    for i, folder_data in enumerate(folders_data):
+        # Pastas de determinado output
+        crops_folder = folder_data["crops_folder"]
+        segmentation_folder = folder_data["segmentation_folder"]
+
+        # Se existirem deteções na pasta CROPS
+        if len(os.listdir(crops_folder)) != 0:                        
+            segmentation = Segmentation(config.FASTSAM_WEIGHTS, crops_folder, segmentation_folder, i)
+            segmentation_data = segmentation.run()
+
+            # Estrutura do JSON (Módulo de SEGMENTAÇÃO DE IMAGEM)
+            json_structure["segmentation"].extend(segmentation_data)
+            
+                
+def semantic_relations(json_structure):
+    # CONCEPT NET
+    labels_data = []
+    for segmentation in json_structure["segmentation"]:
+
+        key = (segmentation["input_image_index"], segmentation["detection_index"])
+        label = ""
+        for detection in json_structure["detection"]:
+            if (detection["input_image_index"], detection["detection_index"]) == key:
+                label = detection["label"]
+
+        labels_data.append(
+            {
+                "input_image_index": segmentation["input_image_index"],
+                "detection_index": segmentation["detection_index"],
+                "mask_index": segmentation["mask_index"],
+                "label": label,
+            }
+        )
+    
+    concepts = Concept(labels_data)
+    concepts_data = concepts.run()
+
+    # Estrutura do JSON (Módulo de Semântica (CONCEPT NET))
+    json_structure["concepts"].extend(concepts_data)
+    
+    
+def mask_filter(outputs_path, json_structure):
+    inverse_folder, contained_folder = filter_folder_structure(outputs_path)
+    mask_filter = MaskFilter(
+        json_structure["detection"],
+        json_structure["segmentation"],
+        json_structure["concepts"],
+        inverse_folder,
+        contained_folder,
+    )
+    mask_filter_data = mask_filter.run()
+
+    # Estrutura do JSON (Módulo Filtrar Máscaras (MASK FILTER))
+    json_structure["result"].extend(mask_filter_data)

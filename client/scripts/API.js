@@ -5,7 +5,7 @@ upload_image_form.addEventListener("submit", (event) => {
 });
 
 const upload_image_input = document.querySelector('#upload_image_form input[type="file"]');
-const upload_image_message = document.getElementById('upload_image_message');
+const upload_image_message = document.getElementById("upload_image_message");
 upload_image_input.addEventListener("change", () => {
   const count = upload_image_input.files.length;
   upload_image_message.textContent = `${count} file(s) selected.`;
@@ -27,11 +27,36 @@ async function upload_images(form) {
     }
 
     const result = await response.json();
-    console.log("Success:", result);
+    check_current_state(result.uuid);
   } catch (error) {
     console.error("Error:", error);
   }
 }
+
+const upload_step = document.getElementById("upload_step");
+async function check_current_state(uuid) {
+  const call_interval = setInterval(async () => {
+    const url = `${endpoint_api}/upload/${uuid}/status`;
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+
+      const task = await response.json();
+      upload_step.textContent = task.step;
+
+      if (task.status === "Process end") {
+        clearInterval(call_interval);
+      }
+    } catch (error) {
+      clearInterval(call_interval);
+      console.error(error.message);
+    }
+  }, 1000);
+}
+
+// ------------------------------------------------------------------------------
 
 async function get_result_data() {
   const url = `${endpoint_api}/masks/${folder_name}/result`;

@@ -66,11 +66,6 @@ function setup() {
     get_masks();
     group_masks(masks, semantic_groups);
   });
-
-  // Input de upload de imagens
-  // let upload_input = createFileInput(upload_input_changed, true);
-  // upload_input.id("upload_input");
-  // upload_input.parent("#upload_input_container");
 }
 
 function draw() {
@@ -123,22 +118,6 @@ function resize_canvas() {
   comp_graphics_h = height * 0.8;
   comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
 }
-
-// function upload_input_changed(file) {
-//   if (file.type === 'image') {
-//     let img = createImg(file.data, '');
-//     img.hide();
-//     images.push(img);
-//   }
-// }
-
-// function uploadInputChanged(event) {
-//     const files = event.target.files;
-//     for (let file of files) {
-//         console.log('File uploaded:', file.name);
-//         // Handle each file, e.g., send it to your server
-//     }
-// }
 
 // https://editor.p5js.org/ogt/sketches/sk1qsRr_n
 function add_grain(pg, num) {
