@@ -12,28 +12,28 @@ import os
 def pipeline(uploads_path, outputs_path, json_structure, task_uuid, tasks):            
 
     # DETEÇÃO DE OBJETOS
-    tasks[task_uuid].step = "Performing object detection"
+    tasks[task_uuid].step = "Running Object Detection..."
     folders_data = object_detection(uploads_path, outputs_path, json_structure)
 
     # SEGMENTAÇÃO DE IMAGEM
-    tasks[task_uuid].step = "Performing image segmentation"
+    tasks[task_uuid].step = "Running Image Segmentation..."
     image_segmentation(folders_data, json_structure)
 
     # RELAÇÕES SEMÂNTICAS
-    tasks[task_uuid].step = "Checking for semantic relations"
+    tasks[task_uuid].step = "Checking for Semantic Relations..."
     semantic_relations(json_structure)
     
     # FILTRAR MÁSCARAS
-    tasks[task_uuid].step = "Filtering masks"
+    tasks[task_uuid].step = "Filtering Masks..."
     mask_filter(outputs_path, json_structure)
 
     # Exportar ficheiro JSON de LOTE
-    tasks[task_uuid].step = "Saving results"
+    tasks[task_uuid].step = "Saving Results..."
     filename = get_filename(outputs_path)
     save_json(json_structure, outputs_path, filename)
 
     tasks[task_uuid].folder_name = filename
-    tasks[task_uuid].status = "Process end"
+    tasks[task_uuid].status = "Process End"
     tasks[task_uuid].result = json_structure
     
 

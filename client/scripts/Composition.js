@@ -1,8 +1,8 @@
 class Composition {
-  constructor(pg, x, y, w, h, grid_type) {
+  constructor(pg, w, h, grid_type) {
     this.pg = pg;
-    this.x = x;
-    this.y = y;
+    this.x = 0;
+    this.y = 0;
     this.w = w;
     this.h = h;
     this.grid_type = grid_type;

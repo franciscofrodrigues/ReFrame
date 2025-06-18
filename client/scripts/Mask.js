@@ -49,6 +49,7 @@ class Mask {
 
   recompose() {
     this.init_shapes();
+    this.accent_color = accent_color;
   }
 
   init_shapes() {

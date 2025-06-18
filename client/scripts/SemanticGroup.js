@@ -23,10 +23,10 @@ class SemanticGroup {
     pg.translate(this.x, this.y);
     pg.rotate(this.ang);
 
-    pg.noFill();
-    pg.stroke(accent_color);
-    pg.strokeWeight(1);
-    pg.rect(0, 0, this.w, this.h);
+    // pg.noFill();
+    // pg.stroke(accent_color);
+    // pg.strokeWeight(1);
+    // pg.rect(0, 0, this.w, this.h);
 
     for (let i = 0; i < this.masks.length; i++) {
       this.masks[i].run(pg);

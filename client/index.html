@@ -10,56 +10,179 @@
   </head>
   <body>
     <main>
+      <div id="loader_container">
+        <div id="loader"></div>
+        <p id="loader_info">&nbsp;</p>
+      </div>
+
       <div id="sidebar">
-        <div class="section_container" id="logo_container">
+        <!--Logo -->
+        <div id="logo_container">
           <h3>Decomposing Visual Information</h3>
         </div>
 
         <!--Secção "Import" -->
-        <div class="section_title_container" id="import_title_container">
-          <h4>Import</h4>
-        </div>
+        <div class="section_container">
+          <input type="checkbox" name="import_collapsible" id="import_collapsible" />
+          <label class="section_title" id="import_title_container" for="import_collapsible">
+            <h4>Import</h4>
+          </label>
 
-        <div class="section_container" id="import_container">
-          <form id="upload_image_form">
-            <label class="btn">
-              Select Files
-              <input type="file" name="files" accept="image/*" multiple />
-            </label>
-            <button class="btn" type="submit">Upload</button>
-            <p id="upload_image_message">&nbsp;</p>
-          </form>
+          <div class="section_content" id="import_container">
+            <h5>Import</h5>
+            <form id="upload_image_form">
+              <label class="btn">
+                Select Images
+                <input type="file" name="files" accept="image/*" multiple />
+              </label>
+              <button class="btn" type="submit">Upload</button>
+              <p id="upload_image_message"></p>
+            </form>
 
-          <p id="upload_step"></p>
+            <hr class="divider" />
+
+            <h5>Upload Batch</h5>
+            <label for="imports_dropdown"></label>
+            <select class="btn" name="imports_dropdown" id="imports_dropdown"></select>
+
+            <hr class="divider" />
+
+            <!-- Group Selection -->
+            <h5>Group</h5>
+            <div id="group_selection_container">
+              <button class="btn_inverted" id="group_selection_sub" type="button">-</button>
+              <input type="number" id="group_selection_info" />
+              <button class="btn_inverted" id="group_selection_add" type="button">+</button>
+              <button class="btn" id="group_selection_all" type="button">All</button>
+            </div>
+
+            <hr class="divider" />
+
+            <button class="btn" id="group_btn">Group Masks</button>
+          </div>
         </div>
 
         <!--Secção "Composition" -->
-        <div class="section_title_container" id="composition_title_container">
-          <h4>Composition</h4>
+        <div class="section_container">
+          <input type="checkbox" name="composition_collapsible" id="composition_collapsible" />
+          <label class="section_title" id="composition_title_container" for="composition_collapsible">
+            <h4>Composition</h4>
+          </label>
+
+          <div class="section_content" id="composition_container">
+            <!-- Canvas Ratio -->
+            <h5>Ratio</h5>
+            <input class="slider" id="canvas_ratio" name="canvas_ratio" type="range" step="25" list="canvas_ratio_values" />
+            <datalist class="slider" id="canvas_ratio_values">
+              <option class="label" value="0" label="1:1"></option>
+              <option class="label" value="25" label="3:4"></option>
+              <option class="label" value="50" label="4:3"></option>
+              <option class="label" value="75" label="4:5"></option>
+              <option class="label" value="100" label="9:16"></option>
+            </datalist>
+
+            <hr class="divider" />
+
+            <!-- Distribuição -->
+            <h5>Distribution</h5>
+            <div id="distribution_container">
+              <div class="distribution_option">
+                <input type="radio" id="thirds" name="distribution" value="0" checked />
+                <label for="thirds">Thirds</label>
+              </div>
+
+              <div class="distribution_option">
+                <input type="radio" id="center" name="distribution" value="1" />
+                <label for="center">Center</label>
+              </div>
+
+              <div class="distribution_option">
+                <input type="radio" id="random_point" name="distribution" value="2" />
+                <label for="random_point">Random Point</label>
+              </div>
+            </div>
+
+            <hr class="divider" />
+
+            <h5>Number of Groups</h5>
+            <div id="elements_container">
+              <input class="slider" id="number_elements" name="number_elements" type="range" list="number_elements_values" />
+              <datalist class="slider" id="number_elements_values">
+                <option class="label" value="0" label="0%"></option>
+                <option class="label" value="100" label="100%"></option>
+              </datalist>
+            </div>
+
+            <hr class="divider" />
+
+            <!-- Cores -->
+            <h5>Colors</h5>
+            <div id="colors_container">
+              <div class="color_instance">
+                <label for="background_color"></label>
+                <input type="color" id="background_color" name="background_color" value="#ffffff" />
+                <p class="label">Background</p>
+              </div>
+
+              <div class="color_instance">
+                <label for="accent_color"></label>
+                <input type="color" id="accent_color" name="accent_color" value="#ffffff" />
+                <p class="label">Accent</p>
+              </div>
+
+              <div class="color_instance">
+                <label for="complementary_color"></label>
+                <input type="color" id="complementary_color" name="complementary_color" value="#ffffff" />
+                <p class="label">Complementary</p>
+              </div>
+
+              <div class="color_instance">
+                <label for="text_color"></label>
+                <input type="color" id="text_color" name="text_color" value="#ffffff" />
+                <p class="label">Text</p>
+              </div>
+            </div>
+
+            <hr class="divider" />
+
+            <!-- Grain -->
+            <h5>Grain</h5>
+            <div id="grain_container">
+              <p>Size</p>
+              <input class="slider" id="grain_size" name="grain_amount" type="range" list="grain_size_values" />
+              <datalist class="slider" id="grain_size_values">
+                <option class="label" value="0" label="0%"></option>
+                <option class="label" value="100" label="100%"></option>
+              </datalist>
+
+              <p>Amount</p>
+              <input class="slider" id="grain_amount" name="grain_amount" type="range" list="grain_amount_values" />
+              <datalist class="slider" id="grain_amount_values">
+                <option class="label" value="0" label="0%"></option>
+                <option class="label" value="100" label="100%"></option>
+              </datalist>
+            </div>
+
+            <hr class="divider" />
+
+            <div id="apply_changes_container">
+              <button class="btn" type="button" id="apply_changes_btn">Apply Changes</button>
+            </div>
+          </div>
         </div>
-
-        <div class="section_container" id="composition_container">
-          <button class="btn" id="masks_btn" type="button">Group masks</button>
-          <button class="btn" id="composition_btn" type="button">New composition</button>
-        </div>
-
-        <!--Secção "Export" -->
-        <div class="section_title_container" id="export_title_container">
-          <h4>Export</h4>
-        </div>
-
-        <div class="section_container" id="export_container"></div>
-
-        <div id="space"></div>
       </div>
 
       <div id="canvas"></div>
+
+      <button class="btn" id="export_btn">Export</button>
     </main>
 
+    <script src="scripts/Loader.js"></script>
     <script src="scripts/Mask.js"></script>
     <script src="scripts/SemanticGroup.js"></script>
     <script src="scripts/Composition.js"></script>
-    <script src="scripts/API.js"></script>
+    <script src="scripts/APIUpload.js"></script>
+    <script src="scripts/APIMasks.js"></script>
     <script src="scripts/MasksPool.js"></script>
     <script src="scripts/sketch.js"></script>
   </body>

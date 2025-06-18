@@ -12,7 +12,7 @@ from uuid import UUID, uuid4
 class Task(BaseModel):
     uuid: UUID = Field(default_factory=uuid4)
     folder_name: str
-    status: str = "Process start"
+    status: str = "Process Start"
     step: str = "Upload"
     result: Dict = Field(default_factory=dict)
 

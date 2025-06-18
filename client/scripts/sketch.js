@@ -1,6 +1,6 @@
 // UI
 let cnv, cnv_parent, css_styles;
-let bg_color, comp_bg_color, comp_shadow_color, fg_color, accent_color;
+let bg_color, comp_bg_color, comp_shadow_color, fg_color, accent_color, complementary_color;
 
 // API
 let port_api, endpoint_api, folder_name;
@@ -16,7 +16,9 @@ let masks_pool_visible;
 function setup() {
   cnv = createCanvas(100, 100);
   cnv.parent("#canvas");
-  resize_canvas();
+
+  // Default
+  apply_changes();
 
   // Propriedades Sketch
   colorMode(HSB, 360, 100, 100, 255);
@@ -40,10 +42,6 @@ function setup() {
   semantic_groups = [];
 
   // Composition
-  comp_graphics_ratio = 3 / 4;
-  comp_graphics_h = height * 0.8;
-  comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
-
   comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h);
   comp_graphics.colorMode(HSB, 360, 100, 100, 255);
   comp_graphics.imageMode(CENTER);
@@ -57,15 +55,24 @@ function setup() {
   masks_pool_visible = false;
 
   // Botões
-  let composition_btn = select("#composition_btn");
-  composition_btn.mousePressed(() => {
+  let apply_changes_btn = select("#apply_changes_btn");
+  apply_changes_btn.mousePressed(() => {
+    apply_changes();
     composition.recompose();
   });
 
-  let masks_btn = select("#masks_btn");
-  masks_btn.mousePressed(() => {
+  let export_btn = select("#export_btn");
+  export_btn.mousePressed(() => {
+    save_output();
+  });
+
+  let group_btn = select("#group_btn");
+  group_btn.mousePressed(() => {
     group_masks(masks, semantic_groups);
   });
+
+  // Ajustar ao ecrã
+  resize_canvas();
 }
 
 function draw() {
@@ -76,7 +83,6 @@ function draw() {
   } else {
     comp_graphics.background(comp_bg_color);
     composition.run();
-    // add_grain(comp_graphics, 10);
 
     // Drop Shadow
     push();
@@ -94,10 +100,7 @@ function draw() {
 
 function keyPressed() {
   if (key === "s") {
-    let grain_output = createGraphics(comp_graphics.width, comp_graphics.height);
-    grain_output.copy(comp_graphics, 0, 0, width, height, 0, 0, grain_output.width, grain_output.height);
-    add_grain(grain_output, 10);
-    save(grain_output, "canvas.png");
+    save_output();
   }
 
   if (key === "p") {
@@ -116,7 +119,6 @@ function resize_canvas() {
   resizeCanvas(cnv_parent.offsetWidth, cnv_parent.offsetHeight);
 
   // Composition
-  comp_graphics_ratio = 3 / 4;
   comp_graphics_h = height * 0.8;
   comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
 }
@@ -127,11 +129,6 @@ function resize_canvas() {
 function group_masks(masks, semantic_groups) {
   for (let mask of masks) {
     let found = false;
-
-    if (!mask.mask) {
-      console.error("Broken mask found:", mask);
-      continue; // Skip broken masks
-    }
 
     for (let group of semantic_groups) {
       if (group.semantic_group === mask.semantic_group) {
@@ -148,6 +145,52 @@ function group_masks(masks, semantic_groups) {
     }
   }
 }
+
+function apply_changes() {
+  const ratio_slider = select("#canvas_ratio");
+  const ratio_values = {
+    0: 1 / 1,
+    25: 3 / 4,
+    50: 4 / 3,
+    75: 4 / 5,
+    100: 9 / 16,
+  };
+
+  const grid_type = select('input[name="distribution"]:checked');
+
+  const accent_color_picker = select('input[name="accent_color"]');
+  const complementary_color_picker = select('input[name="complementary_color"]');
+  accent_color = color(accent_color_picker.value());
+  complementary_color = color(complementary_color_picker.value());
+
+  // Composition
+  comp_graphics_ratio = ratio_values[ratio_slider.value()];
+  comp_graphics_h = height * 0.8;
+  comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
+
+  composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, grid_type.value());
+  composition.semantic_groups = semantic_groups;
+}
+
+function save_output() {
+  let date = new Date();
+  let year = date.getFullYear();
+  let month = date.getMonth();
+  let day = date.getDate();
+  let hour = date.getHours();
+  let minutes = date.getMinutes();
+  let seconds = date.getSeconds();
+  let millis = date.getMilliseconds();
+
+  let filename = `${year}${month}${day}_${hour}${minutes}${seconds}${millis}`;
+
+  let grain_output = createGraphics(comp_graphics.width, comp_graphics.height);
+  grain_output.copy(comp_graphics, 0, 0, width, height, 0, 0, grain_output.width, grain_output.height);
+  add_grain(grain_output, 5);
+  save(grain_output, `${filename}.png`);
+}
+
+// ------------------------------------------------------------------------------
 
 // https://editor.p5js.org/ogt/sketches/sk1qsRr_n
 function add_grain(pg, num) {
