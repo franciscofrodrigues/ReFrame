@@ -1,6 +1,6 @@
 // UI
 let cnv, cnv_parent, css_styles;
-let bg_color, comp_bg_color, comp_shadow_color, fg_color, accent_color, complementary_color;
+let bg_color, comp_bg_color, comp_shadow_color, accent_color, complementary_color;
 
 // API
 let port_api, endpoint_api, folder_name;
@@ -17,8 +17,22 @@ function setup() {
   cnv = createCanvas(100, 100);
   cnv.parent("#canvas");
 
+  // API
+  port_api = "8000";
+  endpoint_api = `http://localhost:${port_api}`;
+
+  // Inicializar "masks" e "semantic_groups"
+  masks = [];
+  semantic_groups = [];
+
   // Default
   apply_changes();
+  update_imports_list();
+
+  // Propriedades Composition
+  comp_graphics.colorMode(HSB, 360, 100, 100, 255);
+  comp_graphics.imageMode(CENTER);
+  comp_graphics.rectMode(CENTER);
 
   // Propriedades Sketch
   colorMode(HSB, 360, 100, 100, 255);
@@ -30,29 +44,6 @@ function setup() {
   bg_color = css_styles.getPropertyValue("--bg-color");
   comp_bg_color = css_styles.getPropertyValue("--cnv-color");
   comp_shadow_color = css_styles.getPropertyValue("--cnv-shadow");
-  fg_color = color(0, 0, 0);
-  accent_color = color(30, 100, 100);
-
-  // API
-  port_api = "8000";
-  endpoint_api = `http://localhost:${port_api}`;
-
-  // Inicializar "masks" e "semantic_groups"
-  masks = [];
-  semantic_groups = [];
-
-  // Composition
-  comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h);
-  comp_graphics.colorMode(HSB, 360, 100, 100, 255);
-  comp_graphics.imageMode(CENTER);
-  comp_graphics.rectMode(CENTER);
-
-  composition = new Composition(comp_graphics, 0, 0, comp_graphics_w, comp_graphics_h, 0);
-  composition.semantic_groups = semantic_groups;
-
-  // Mask Pool
-  masks_pool = new MasksPool(masks, 0, 0, width, height, 5, 5);
-  masks_pool_visible = false;
 
   // Botões
   let apply_changes_btn = select("#apply_changes_btn");
@@ -65,14 +56,13 @@ function setup() {
   export_btn.mousePressed(() => {
     save_output();
   });
-
-  let group_btn = select("#group_btn");
-  group_btn.mousePressed(() => {
-    group_masks(masks, semantic_groups);
-  });
-
+  
   // Ajustar ao ecrã
   resize_canvas();
+
+  // Mask Pool
+  masks_pool = new MasksPool(masks, 0, 0, width, height, 5, 5);
+  masks_pool_visible = false;
 }
 
 function draw() {
@@ -105,6 +95,7 @@ function keyPressed() {
 
   if (key === "p") {
     masks_pool_visible = !masks_pool_visible;
+    masks_pool = new MasksPool(masks, 0, 0, width, height, 5, 5);
   }
 }
 
@@ -126,7 +117,8 @@ function resize_canvas() {
 // ------------------------------------------------------------------------------
 
 // Agrupar máscaras por grupos semânticos
-function group_masks(masks, semantic_groups) {
+function group_masks(masks, semantic_groups) {  
+  semantic_groups.length = 0;
   for (let mask of masks) {
     let found = false;
 
@@ -168,6 +160,11 @@ function apply_changes() {
   comp_graphics_h = height * 0.8;
   comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
 
+  comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h);
+  comp_graphics.colorMode(HSB, 360, 100, 100, 255);
+  comp_graphics.imageMode(CENTER);
+  comp_graphics.rectMode(CENTER);
+
   composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, grid_type.value());
   composition.semantic_groups = semantic_groups;
 }
@@ -185,7 +182,7 @@ function save_output() {
   let filename = `${year}${month}${day}_${hour}${minutes}${seconds}${millis}`;
 
   let grain_output = createGraphics(comp_graphics.width, comp_graphics.height);
-  grain_output.copy(comp_graphics, 0, 0, width, height, 0, 0, grain_output.width, grain_output.height);
+  grain_output.copy(comp_graphics, 0, 0, comp_graphics.width, comp_graphics.height, 0, 0, grain_output.width, grain_output.height);
   add_grain(grain_output, 5);
   save(grain_output, `${filename}.png`);
 }

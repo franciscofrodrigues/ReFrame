@@ -47,16 +47,15 @@ async function check_current_state(uuid) {
         throw new Error(`Response status: ${response.status}`);
       }
 
-      update_loader_info("Uploading Images...");
       const task = await response.json();
       update_loader_info(task.step);
 
       if (task.status === "Process End") {
         clearInterval(call_interval);
+        await get_masks(task.folder_name, task.result);
         toggle_loader(false);
-        get_masks(task.folder_name, task.result);
-        
-        save_import(task);        
+        group_masks(masks, semantic_groups);
+        save_import(task);
       }
     } catch (error) {
       clearInterval(call_interval);
@@ -73,28 +72,33 @@ function save_import(task) {
   update_imports_list();
 }
 
+const imports_container = document.getElementById("imports_container");
 const imports_dropdown = document.querySelector("select[name='imports_dropdown']");
-imports_dropdown.addEventListener("change", () => {
-  get_import_masks();
+imports_dropdown.addEventListener("change", async () => {
+  await get_import_masks();
+  group_masks(masks, semantic_groups);
 });
 
-function get_import_masks() {
+async function get_import_masks() {
   const imports = sessionStorage.getItem("imports");
   const data = JSON.parse(imports);
-  const index = imports_dropdown.selectedIndex;
+  const index = imports_dropdown.selectedIndex - 1;
 
-  masks = [];
-  get_masks(data[index].folder_name, data[index].result);
+  await get_masks(data[index].folder_name, data[index].result);
 }
 
 function update_imports_list() {
   const imports = sessionStorage.getItem("imports");
-  const data = JSON.parse(imports);
-
-  for (let i = 0; i < data.length; i++) {
-    let select_option = document.createElement("option");
-    select_option.value = data[i].folder_name;
-    select_option.innerHTML = `Import ${i}`;
-    imports_dropdown.appendChild(select_option);
+  if (imports) {
+    imports_container.style.display = "block";
+    const data = JSON.parse(imports);
+    for (let i = 0; i < data.length; i++) {
+      let select_option = document.createElement("option");
+      select_option.value = data[i].folder_name;
+      select_option.innerHTML = `Import ${i}`;
+      imports_dropdown.appendChild(select_option);
+    }
+  } else {
+    imports_container.style.display = "none";
   }
 }

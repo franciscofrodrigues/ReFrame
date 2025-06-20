@@ -10,5 +10,5 @@ function toggle_loader(loading) {
 }
 
 function update_loader_info(loader_info_content) {
-  if (loader_info.textContent !== loader_info_content) loader_info.textContent = loader_info_content;
+  if (loader_info.textContent !== loader_info_content || loader_info.textContent !== "") loader_info.textContent = loader_info_content;
 }

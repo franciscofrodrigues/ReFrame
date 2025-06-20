@@ -20,6 +20,8 @@ function get_contained_mask_img(folder_name, group_index, result_index, containe
 
 // Obter máscaras resultantes da pipeline
 async function get_masks(folder_name, data) {
+  masks.length = 0;
+  semantic_groups.length = 0;
   result_json = await get_result_data(data);
 
   for (let i = 0; i < result_json.length; i++) {
@@ -36,7 +38,7 @@ async function get_masks(folder_name, data) {
       let label = result_json[i][j]["label"];
       let semantic_group = i;
 
-      masks.push(new Mask(mask, inverted_mask, contained_masks, label, semantic_group));
+      masks.push(new Mask(mask, inverted_mask, contained_masks, label, semantic_group));      
     }
   }
 }

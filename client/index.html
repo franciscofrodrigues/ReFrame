@@ -25,14 +25,14 @@
         <div class="section_container">
           <input type="checkbox" name="import_collapsible" id="import_collapsible" />
           <label class="section_title" id="import_title_container" for="import_collapsible">
-            <h4>Import</h4>
+            <h4>Decomposition</h4>
           </label>
 
           <div class="section_content" id="import_container">
-            <h5>Import</h5>
+            <h5>Upload Images</h5>
             <form id="upload_image_form">
               <label class="btn">
-                Select Images
+                Select
                 <input type="file" name="files" accept="image/*" multiple />
               </label>
               <button class="btn" type="submit">Upload</button>
@@ -41,24 +41,26 @@
 
             <hr class="divider" />
 
-            <h5>Upload Batch</h5>
-            <label for="imports_dropdown"></label>
-            <select class="btn" name="imports_dropdown" id="imports_dropdown"></select>
+            <div id="imports_container">
+              <h5>Previous Uploads</h5>
+              <div id="imports_dropdown_container">
+                <label for="imports_dropdown"></label>
+                <select class="btn" name="imports_dropdown" id="imports_dropdown">
+                  <option value="" selected disabled hidden>Choose here</option>
+                </select>
+              </div>
 
-            <hr class="divider" />
+              <hr class="divider" />
+            </div>
 
             <!-- Group Selection -->
-            <h5>Group</h5>
+            <h5>Filter by Group</h5>
             <div id="group_selection_container">
               <button class="btn_inverted" id="group_selection_sub" type="button">-</button>
               <input type="number" id="group_selection_info" />
               <button class="btn_inverted" id="group_selection_add" type="button">+</button>
               <button class="btn" id="group_selection_all" type="button">All</button>
             </div>
-
-            <hr class="divider" />
-
-            <button class="btn" id="group_btn">Group Masks</button>
           </div>
         </div>
 
@@ -71,20 +73,22 @@
 
           <div class="section_content" id="composition_container">
             <!-- Canvas Ratio -->
-            <h5>Ratio</h5>
-            <input class="slider" id="canvas_ratio" name="canvas_ratio" type="range" step="25" list="canvas_ratio_values" />
-            <datalist class="slider" id="canvas_ratio_values">
-              <option class="label" value="0" label="1:1"></option>
-              <option class="label" value="25" label="3:4"></option>
-              <option class="label" value="50" label="4:3"></option>
-              <option class="label" value="75" label="4:5"></option>
-              <option class="label" value="100" label="9:16"></option>
-            </datalist>
+            <h5>Canvas Ratio</h5>
+            <div id="canvas_ratio_container">
+              <input class="slider" id="canvas_ratio" name="canvas_ratio" type="range" step="25" list="canvas_ratio_values" />
+              <datalist class="slider" id="canvas_ratio_values">
+                <option class="label" value="0" label="1:1"></option>
+                <option class="label" value="25" label="3:4"></option>
+                <option class="label" value="50" label="4:3"></option>
+                <option class="label" value="75" label="4:5"></option>
+                <option class="label" value="100" label="9:16"></option>
+              </datalist>
+            </div>
 
             <hr class="divider" />
 
             <!-- Distribuição -->
-            <h5>Distribution</h5>
+            <h5>Groups Distribution</h5>
             <div id="distribution_container">
               <div class="distribution_option">
                 <input type="radio" id="thirds" name="distribution" value="0" checked />
@@ -104,8 +108,8 @@
 
             <hr class="divider" />
 
-            <h5>Number of Groups</h5>
-            <div id="elements_container">
+            <h5>Quantity of Groups</h5>
+            <div id="groups_container">
               <input class="slider" id="number_elements" name="number_elements" type="range" list="number_elements_values" />
               <datalist class="slider" id="number_elements_values">
                 <option class="label" value="0" label="0%"></option>

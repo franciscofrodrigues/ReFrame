@@ -1,6 +1,7 @@
 class Mask {
   constructor(mask, inverted_mask, contained_masks, label, semantic_group) {
     this.mask = mask;
+
     this.inverted_mask = inverted_mask;
     this.contained_masks = contained_masks;
     this.label = label;
@@ -13,7 +14,6 @@ class Mask {
     this.mask_ratio = 1;
 
     this.accent_color = accent_color;
-
     this.init_shapes();
   }
 
@@ -32,8 +32,8 @@ class Mask {
     // pg.noStroke();
     // pg.text(this.label, this.x - this.w / 2, this.y - this.h / 2);
 
-    pg.image(this.mask, this.x, this.y, this.w, this.h);
-    this.mask.filter(GRAY);
+    pg.image(this.mask, this.x, this.y, this.w, this.h);    
+    // this.mask.filter(GRAY);
 
     pg.push();
     pg.blendMode(MULTIPLY);
@@ -48,8 +48,8 @@ class Mask {
   }
 
   recompose() {
-    this.init_shapes();
     this.accent_color = accent_color;
+    this.init_shapes();
   }
 
   init_shapes() {

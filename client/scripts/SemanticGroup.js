@@ -1,10 +1,10 @@
 class SemanticGroup {
   constructor(semantic_group) {
     this.semantic_group = semantic_group;
-    this.x = 0;
-    this.y = 0;
-    this.w = 0;
-    this.h = 0;
+    this.x = -10;
+    this.y = -10;
+    this.w = 10;
+    this.h = 10;
     this.ang = 0;
 
     this.masks = [];

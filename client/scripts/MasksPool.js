@@ -12,12 +12,10 @@ class MasksPool {
     this.cell_h = this.h / this.num_rows;
   }
 
-
   run() {
     this.update();
     this.render();
   }
-
 
   render() {
     // Fundo
@@ -48,7 +46,6 @@ class MasksPool {
     pop();
   }
 
-  
   update() {
     let scl = 0;
     for (let mask of this.masks) {

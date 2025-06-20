@@ -8,25 +8,23 @@ class Composition {
     this.grid_type = grid_type;
 
     this.semantic_groups = [];
-    // this.min_group_w = this.w / 4;
-    // this.max_group_w = this.w / 2;
-    // this.min_group_h = this.h / 4;
-    // this.max_group_h = this.h / 2;
+    // this.min_group_w = this.w * 0.2;
+    // this.max_group_w = this.w * 0.8;
+    // this.min_group_h = this.h * 0.2;
+    // this.max_group_h = this.h * 0.8;
 
     this.min_group_w = this.w*0.5;
-    this.max_group_w = this.w*1.2;
+    this.max_group_w = this.w*0.8;
     this.min_group_h = this.h*0.5;
-    this.max_group_h = this.h*1.2;
+    this.max_group_h = this.h*0.8;
 
-    this.calc_random_point();
+    this.calc_random_point();    
   }
-
 
   run() {
     this.update();
     this.render();
   }
-
 
   render() {
     // pg.push();
@@ -43,18 +41,16 @@ class Composition {
     }
   }
 
-
   update() {}
-
 
   calc_random_point() {    
     this.random_point = createVector(random(100, this.w - 100), random(100, this.h - 100));
   }
 
-
   recompose() {
     // Recalcular o posicionamento do "random_point"
     this.calc_random_point();
+    shuffle(this.semantic_groups, true);
 
     for (let i = 0; i < this.semantic_groups.length; i++) {
       // Grid Type
@@ -110,7 +106,6 @@ class Composition {
     return pos;
   }
 
-
   center_grid(index) {
     let pos = createVector(0, 0);
     let ang = random(TWO_PI);
@@ -128,7 +123,6 @@ class Composition {
     return pos;
   }
 
-  
   random_point_grid(index) {
     let pos = createVector(0, 0, 0);
 
@@ -140,11 +134,9 @@ class Composition {
     let dir = p5.Vector.sub(this.random_point, corners[index]);
     pos.z = PI / 2 + atan2(dir.y, dir.x);
 
-    // let dist = dist(random_point.x, random_point.y, corners[index].x, corners[index].y);
-
     // Calcular a posição central entre os "corners" e o "random_point"
-    pos.x = (this.random_point.x + corners[index].x) / 2;
-    pos.y = (this.random_point.y + corners[index].y) / 2;
+    pos.x = (this.random_point.x + corners[index % corners.length].x) / 2;
+    pos.y = (this.random_point.y + corners[index % corners.length].y) / 2;
     return pos;
   }
 }

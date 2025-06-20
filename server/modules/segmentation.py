@@ -23,11 +23,13 @@ class Segmentation:
     
     def mask_img(self, binary_mask, original_img):
         result_img = cv2.bitwise_and(original_img, original_img, mask=binary_mask) # Máscara de corte à imagem
-        
-        result_img_rgba = cv2.cvtColor(result_img, cv2.COLOR_BGR2BGRA)        
+
+        result_img_bw = cv2.cvtColor(result_img, cv2.COLOR_BGR2GRAY)
+        result_img_rgba = cv2.cvtColor(result_img_bw, cv2.COLOR_GRAY2BGRA)        
+        # result_img_rgba = cv2.cvtColor(result_img, cv2.COLOR_BGR2BGRA)
         result_img_rgba[binary_mask == 0] = [0, 0, 0, 0] # Preto para transparente
         return result_img_rgba
-
+    
     def get_binary_mask(self, mask):
         mask_np = mask.cpu().numpy() # Converter de tensor para numpy
         mask_binary = mask_np.astype(np.uint8) * 255  # Máscara binária
