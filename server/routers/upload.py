@@ -56,5 +56,5 @@ async def upload_images(background_tasks: BackgroundTasks, files: List[UploadFil
 
 
 @router.get("/{uuid}/status")
-async def status_handler(uuid: UUID):
+async def get_status(uuid: UUID):
     return tasks[uuid]

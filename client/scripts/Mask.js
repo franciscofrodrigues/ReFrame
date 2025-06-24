@@ -3,6 +3,10 @@ class Mask {
     this.mask = mask;
 
     this.inverted_mask = inverted_mask;
+    this.chosen_inverse = false;
+    this.inverse_offsetX = random(-10, 10);
+    this.inverse_offsetY = random(-10, 10);
+
     this.contained_masks = contained_masks;
     this.label = label;
     this.semantic_group = semantic_group;
@@ -14,6 +18,7 @@ class Mask {
     this.mask_ratio = 1;
 
     this.accent_color = accent_color;
+    this.complementary_color = complementary_color;
     this.init_shapes();
   }
 
@@ -23,21 +28,28 @@ class Mask {
   }
 
   render(pg) {
-    // pg.noFill();
-    // pg.stroke(accent_color);
-    // pg.strokeWeight(1);
-    // pg.rect(this.x, this.y, this.w, this.h);
+    if (debug) {
+      pg.noFill();
+      pg.stroke(accent_color);
+      pg.strokeWeight(1);
+      pg.rect(this.x, this.y, this.w, this.h);
 
-    // pg.fill(0);
-    // pg.noStroke();
-    // pg.text(this.label, this.x - this.w / 2, this.y - this.h / 2);
+      pg.fill(0);
+      pg.noStroke();
+      pg.text(this.label, this.x - this.w / 2, this.y - this.h / 2);
+    }
 
-    pg.image(this.mask, this.x, this.y, this.w, this.h);    
+    pg.push();
+    pg.blendMode(MULTIPLY);
+    pg.tint(255, 127);
+    if (this.inverted_mask_copy && this.chosen_inverse) pg.image(this.inverted_mask_copy, this.x + this.inverse_offsetX, this.y + this.inverse_offsetY, this.w, this.h);
+    pg.pop();
+
+    pg.image(this.mask, this.x, this.y, this.w, this.h);
     // this.mask.filter(GRAY);
 
     pg.push();
     pg.blendMode(MULTIPLY);
-    // pg.image(this.inverted_mask_copy, this.x, this.y, this.w*2, this.h*2);
     if (this.contained_mask_copy) pg.image(this.contained_mask_copy, this.x, this.y, this.w, this.h);
     pg.pop();
   }
@@ -49,7 +61,12 @@ class Mask {
 
   recompose() {
     this.accent_color = accent_color;
+    this.complementary_color = complementary_color;
     this.init_shapes();
+    // this.chosen_inverse = false;
+
+    this.inverse_offsetX = random(-50, 50);
+    this.inverse_offsetY = random(-50, 50);
   }
 
   init_shapes() {
@@ -58,8 +75,8 @@ class Mask {
       this.contained_mask_copy = this.mask_to_shape(this.contained_masks[this.chosen_contained], this.accent_color);
     }
 
-    if (this.inverted_mask) {
-      this.inverted_mask_copy = this.mask_to_shape(this.inverted_mask, this.accent_color);
+    if (this.inverted_mask && this.chosen_inverse) {
+      this.inverted_mask_copy = this.mask_to_shape(this.inverted_mask, this.complementary_color);
     }
   }
 

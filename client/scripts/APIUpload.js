@@ -1,9 +1,18 @@
 // Atualizar número de ficheiros (imagens) selecionados
 const upload_image_input = document.querySelector('#upload_image_form input[type="file"]');
+const upload_image_button = document.querySelector('#upload_image_form button[type="submit"]');
 const upload_image_message = document.getElementById("upload_image_message");
 upload_image_input.addEventListener("change", () => {
-  const count = upload_image_input.files.length;
-  upload_image_message.textContent = `${count} Selected`;
+  const file_count = upload_image_input.files.length;
+
+  if (file_count > 0) {
+    upload_image_message.textContent = `${file_count} Selected`;
+    upload_image_button.style.display = "block";
+  } else {
+    upload_image_button.style.display = "none";
+  }
+
+  upload_image_message.textContent = `${file_count} Selected`;
 });
 
 // Form de UPLOAD
@@ -31,6 +40,7 @@ async function upload_images(form) {
     }
 
     const result = await response.json();
+    update_loader_info("Uploading Images...");
     check_current_state(result.uuid);
   } catch (error) {
     console.error("Error:", error);
@@ -52,9 +62,8 @@ async function check_current_state(uuid) {
 
       if (task.status === "Process End") {
         clearInterval(call_interval);
-        await get_masks(task.folder_name, task.result);
+        await get_masks(task.folder_name);
         toggle_loader(false);
-        group_masks(masks, semantic_groups);
         save_import(task);
       }
     } catch (error) {
@@ -76,7 +85,6 @@ const imports_container = document.getElementById("imports_container");
 const imports_dropdown = document.querySelector("select[name='imports_dropdown']");
 imports_dropdown.addEventListener("change", async () => {
   await get_import_masks();
-  group_masks(masks, semantic_groups);
 });
 
 async function get_import_masks() {
@@ -84,7 +92,7 @@ async function get_import_masks() {
   const data = JSON.parse(imports);
   const index = imports_dropdown.selectedIndex - 1;
 
-  await get_masks(data[index].folder_name, data[index].result);
+  await get_masks(data[index].folder_name);
 }
 
 function update_imports_list() {

@@ -63,56 +63,99 @@ class Concept:
 
         return intersections
 
+    # def get_relations_structure(self, intersections_data):
+    #     relations = []
+    #     related_dict = {}
+    #     for intersection in intersections_data:
+    #         # Criar estrutura inicial
+    #         for label in intersection["labels"]:
+    #             if label not in related_dict:
+    #                 related_dict[label] = {
+    #                     "labels": [],
+    #                     "input_image_indexes": [],
+    #                     "detection_indexes": [],
+    #                     "mask_indexes": []                        
+    #                 }
+
+    #         # Obter as labels e indexes
+    #         label_1, label_2 = intersection["labels"]
+    #         mask_index_1, mask_index_2 = intersection["mask_indexes"]
+    #         detection_index_1, detection_index_2 = intersection["detection_indexes"]
+    #         input_index_1, input_index_2 = intersection["input_image_indexes"]
+
+    #         # Verificar se o index já se encontra no "related_dict"
+    #         # Adicionar labels e indexes
+    #         if mask_index_2 not in related_dict[label_1]["mask_indexes"]:
+    #             related_dict[label_1]["labels"].append(label_2)
+
+    #             related_dict[label_1]["input_image_indexes"].append(input_index_2)
+    #             related_dict[label_1]["detection_indexes"].append(detection_index_2)
+    #             related_dict[label_1]["mask_indexes"].append(mask_index_2)
+
+    #         if mask_index_1 not in related_dict[label_2]["mask_indexes"]:
+    #             related_dict[label_2]["labels"].append(label_1)
+
+    #             related_dict[label_2]["input_image_indexes"].append(input_index_1)
+    #             related_dict[label_2]["detection_indexes"].append(detection_index_1)
+    #             related_dict[label_2]["mask_indexes"].append(mask_index_1)
+
+    #     # Para cada label que contenha interseções
+    #     for label, related in related_dict.items():
+    #         # Criar a estrutura de dados
+    #         relations.append(
+    #             {
+    #                 "label": label,
+    #                 "related": {
+    #                     "labels": related["labels"],
+    #                     "input_image_indexes": related["input_image_indexes"],
+    #                     "detection_indexes": related["detection_indexes"],
+    #                     "mask_indexes": related["mask_indexes"]
+    #                 }
+    #             }
+    #         )
+
+    #     return relations
+    
     def get_relations_structure(self, intersections_data):
         relations = []
         related_dict = {}
         for intersection in intersections_data:
-            # Criar estrutura inicial
             for label in intersection["labels"]:
                 if label not in related_dict:
                     related_dict[label] = {
                         "labels": [],
                         "input_image_indexes": [],
                         "detection_indexes": [],
-                        "mask_indexes": []                        
+                        "mask_indexes": []
                     }
 
-            # Obter as labels e indexes
             label_1, label_2 = intersection["labels"]
             mask_index_1, mask_index_2 = intersection["mask_indexes"]
             detection_index_1, detection_index_2 = intersection["detection_indexes"]
             input_index_1, input_index_2 = intersection["input_image_indexes"]
 
-            # Verificar se o index já se encontra no "related_dict"
-            # Adicionar labels e indexes
-            if mask_index_2 not in related_dict[label_1]["mask_indexes"]:
+            if input_index_2 not in related_dict[label_1]["input_image_indexes"]:
                 related_dict[label_1]["labels"].append(label_2)
-
                 related_dict[label_1]["input_image_indexes"].append(input_index_2)
                 related_dict[label_1]["detection_indexes"].append(detection_index_2)
                 related_dict[label_1]["mask_indexes"].append(mask_index_2)
 
-            if mask_index_1 not in related_dict[label_2]["mask_indexes"]:
+            if input_index_1 not in related_dict[label_2]["input_image_indexes"]:
                 related_dict[label_2]["labels"].append(label_1)
-
                 related_dict[label_2]["input_image_indexes"].append(input_index_1)
                 related_dict[label_2]["detection_indexes"].append(detection_index_1)
                 related_dict[label_2]["mask_indexes"].append(mask_index_1)
 
-        # Para cada label que contenha interseções
         for label, related in related_dict.items():
-            # Criar a estrutura de dados
-            relations.append(
-                {
-                    "label": label,
-                    "related": {
-                        "labels": related["labels"],
-                        "input_image_indexes": related["input_image_indexes"],
-                        "detection_indexes": related["detection_indexes"],
-                        "mask_indexes": related["mask_indexes"]
-                    }
+            relations.append({
+                "label": label,
+                "related": {
+                    "labels": related["labels"],
+                    "input_image_indexes": related["input_image_indexes"],
+                    "detection_indexes": related["detection_indexes"],
+                    "mask_indexes": related["mask_indexes"]
                 }
-            )
+            })
 
         return relations
 
@@ -145,25 +188,25 @@ if __name__ == "__main__":
             {
                 "input_image_index": 1,
                 "detection_index": 0,
-                "mask_index": 1,
+                "mask_index": 0,
                 "label": "dog",
             },
             {
-                "input_image_index": 0,
+                "input_image_index": 1,
                 "detection_index": 1,
-                "mask_index": 2,
+                "mask_index": 0,
                 "label": "cat",
             },
             {
-                "input_image_index": 0,
+                "input_image_index": 2,
                 "detection_index": 2,
-                "mask_index": 3,
+                "mask_index": 1,
                 "label": "cow",
             },
             {
-                "input_image_index": 0,
+                "input_image_index": 3,
                 "detection_index": 3,
-                "mask_index": 4,
+                "mask_index": 0,
                 "label": "car",
             },
         ]

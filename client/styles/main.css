@@ -321,10 +321,9 @@ input[type="number"]#group_selection_info::-webkit-inner-spin-button {
   color: var(--btn-color);
   background-color: var(--btn-hover-color);
 }
-/* #upload_image_form > label:hover {
-  color: var(--btn-hover-color);
-  background-color: var(--btn-color);
-} */
+#upload_image_form button[type="submit"] {
+  display: none;
+}
 #upload_image_form > #upload_image_message {
   text-align: center;
 }

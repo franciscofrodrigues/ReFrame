@@ -20,31 +20,11 @@ def read_json(folder_name):
     return data
 
 
-# Obter os PATHS das máscaras
-@router.get("/{folder_name}")
-def get_image_paths(folder_name: str):
-    # Carregar JSON
-    data = read_json(folder_name)
-    # Obter o ficheiro JSON para determinado "folder_name"
-    return JSONResponse(content=data)
-
-
-# Obter FICHEIROS de máscaras
-@router.get("/{folder_name}/{index}.png")
-def get_image_file(folder_name: str, index: int):
-    # Carregar JSON
-    data = read_json(folder_name)
-
-    # Obter "result_image_path" para o index especificado
-    path = data["segmentation"][index]["result_image_path"]
-    return FileResponse(path, media_type="image/png", filename=f"{index}.png")
-
-
 @router.get("/{folder_name}/result")
 def get_result_data(folder_name: str):
     # Carregar JSON
     data = read_json(folder_name)
-    return data["result"]
+    return JSONResponse(content=data["result"])
 
 
 @router.get("/{folder_name}/result/{group_index}/{result_index}.png")

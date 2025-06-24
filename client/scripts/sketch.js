@@ -9,9 +9,8 @@ let result_json;
 // Composition
 let comp_graphics, comp_graphics_ratio, comp_graphics_w, comp_graphics_h;
 let masks, masks_pool, semantic_groups, composition;
-let masks_pool_visible;
 
-// ------------------------------------------------------------------------------
+let masks_pool_visible, debug;
 
 function setup() {
   cnv = createCanvas(100, 100);
@@ -32,7 +31,7 @@ function setup() {
   // Propriedades Composition
   comp_graphics.colorMode(HSB, 360, 100, 100, 255);
   comp_graphics.imageMode(CENTER);
-  comp_graphics.rectMode(CENTER);
+  comp_graphics.rectMode(CENTER);  
 
   // Propriedades Sketch
   colorMode(HSB, 360, 100, 100, 255);
@@ -56,17 +55,20 @@ function setup() {
   export_btn.mousePressed(() => {
     save_output();
   });
-  
+
   // Ajustar ao ecrã
   resize_canvas();
 
   // Mask Pool
   masks_pool = new MasksPool(masks, 0, 0, width, height, 5, 5);
   masks_pool_visible = false;
+
+  debug = false;
 }
 
 function draw() {
   background(bg_color);
+  // randomSeed(2);
 
   if (masks_pool_visible) {
     masks_pool.run();
@@ -89,17 +91,19 @@ function draw() {
 }
 
 function keyPressed() {
-  if (key === "s") {
-    save_output();
+  if (key === "b" || key === "B") {
+    batch_export();
   }
 
-  if (key === "p") {
+  if (key === "p" || key === "P") {
     masks_pool_visible = !masks_pool_visible;
     masks_pool = new MasksPool(masks, 0, 0, width, height, 5, 5);
   }
-}
 
-// ------------------------------------------------------------------------------
+  if (key === "d" || key === "D") {
+    debug = !debug;
+  }
+}
 
 function windowResized() {
   resize_canvas();
@@ -114,10 +118,8 @@ function resize_canvas() {
   comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
 }
 
-// ------------------------------------------------------------------------------
-
 // Agrupar máscaras por grupos semânticos
-function group_masks(masks, semantic_groups) {  
+function group_masks(masks, semantic_groups) {
   semantic_groups.length = 0;
   for (let mask of masks) {
     let found = false;
@@ -161,6 +163,7 @@ function apply_changes() {
   comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
 
   comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h);
+  comp_graphics.drawingContext = comp_graphics.elt.getContext("2d", { willReadFrequently: true });
   comp_graphics.colorMode(HSB, 360, 100, 100, 255);
   comp_graphics.imageMode(CENTER);
   comp_graphics.rectMode(CENTER);
@@ -169,7 +172,7 @@ function apply_changes() {
   composition.semantic_groups = semantic_groups;
 }
 
-function save_output() {
+async function save_output(additional = "") {
   let date = new Date();
   let year = date.getFullYear();
   let month = date.getMonth();
@@ -179,15 +182,18 @@ function save_output() {
   let seconds = date.getSeconds();
   let millis = date.getMilliseconds();
 
-  let filename = `${year}${month}${day}_${hour}${minutes}${seconds}${millis}`;
+  let filename = null;
+  if (additional === "") {
+    filename = `${year}${month}${day}_${hour}${minutes}${seconds}${millis}`;
+  } else {
+    filename = `${year}${month}${day}_${hour}${minutes}${seconds}${millis}_${additional}`;
+  }
 
   let grain_output = createGraphics(comp_graphics.width, comp_graphics.height);
   grain_output.copy(comp_graphics, 0, 0, comp_graphics.width, comp_graphics.height, 0, 0, grain_output.width, grain_output.height);
   add_grain(grain_output, 5);
   save(grain_output, `${filename}.png`);
 }
-
-// ------------------------------------------------------------------------------
 
 // https://editor.p5js.org/ogt/sketches/sk1qsRr_n
 function add_grain(pg, num) {

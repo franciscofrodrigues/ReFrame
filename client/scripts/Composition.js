@@ -8,17 +8,13 @@ class Composition {
     this.grid_type = grid_type;
 
     this.semantic_groups = [];
-    // this.min_group_w = this.w * 0.2;
-    // this.max_group_w = this.w * 0.8;
-    // this.min_group_h = this.h * 0.2;
-    // this.max_group_h = this.h * 0.8;
+    this.min_group_w = this.w * 0.2;
+    this.max_group_w = this.w * 0.6;
+    this.min_group_h = this.h * 0.2;
+    this.max_group_h = this.h * 0.6;
 
-    this.min_group_w = this.w*0.5;
-    this.max_group_w = this.w*0.8;
-    this.min_group_h = this.h*0.5;
-    this.max_group_h = this.h*0.8;
-
-    this.calc_random_point();    
+    this.chosen_inverse = int(random(masks.length));
+    this.calc_random_point();
   }
 
   run() {
@@ -27,14 +23,16 @@ class Composition {
   }
 
   render() {
-    // pg.push();
-    // pg.translate(this.x + this.w / 2, this.y + this.h / 2);
+    if (debug) {
+      this.pg.push();
+      this.pg.translate(this.x + this.w / 2, this.y + this.h / 2);
 
-    // pg.noFill();
-    // pg.stroke(accent_color);
-    // pg.strokeWeight(1);
-    // pg.rect(0, 0, this.w, this.h);
-    // pg.pop();
+      this.pg.noFill();
+      this.pg.stroke(accent_color);
+      this.pg.strokeWeight(1);
+      this.pg.rect(0, 0, this.w, this.h);
+      this.pg.pop();
+    }
 
     for (let semantic_group of this.semantic_groups) {
       semantic_group.run(this.pg);
@@ -43,14 +41,16 @@ class Composition {
 
   update() {}
 
-  calc_random_point() {    
-    this.random_point = createVector(random(100, this.w - 100), random(100, this.h - 100));
+  calc_random_point() {
+    this.random_point = createVector(random(this.w / 2 - this.w / 5, this.w / 2 + this.w / 5), random(this.h / 2 - this.h / 5, this.h / 2 + this.h / 5));
   }
 
   recompose() {
     // Recalcular o posicionamento do "random_point"
     this.calc_random_point();
     shuffle(this.semantic_groups, true);
+
+    this.choose_inverse_mask();
 
     for (let i = 0; i < this.semantic_groups.length; i++) {
       // Grid Type
@@ -60,8 +60,14 @@ class Composition {
       else if (this.grid_type == 2) pos = this.random_point_grid(i);
 
       // Tamanho dos "SemanticGroup"
-      let group_w = map(i, 0, this.semantic_groups.length, this.min_group_w, this.max_group_w);
-      let group_h = map(i, 0, this.semantic_groups.length, this.min_group_h, this.max_group_h);
+      let group_w, group_h;
+      if (this.semantic_groups.length > 1) {
+        group_w = map(i, 0, this.semantic_groups.length-1, this.min_group_w, this.max_group_w);
+        group_h = map(i, 0, this.semantic_groups.length-1, this.min_group_h, this.max_group_h);
+      } else {
+        group_w = this.max_group_w;
+        group_h = this.max_group_h;
+      }
 
       // Atualizar Posição, Tamanho e Ângulo
       this.semantic_groups[i].x = pos.x;
@@ -77,14 +83,23 @@ class Composition {
     this.semantic_groups.push(semantic_group);
   }
 
+  choose_inverse_mask() {
+    this.chosen_inverse = int(random(masks.length));
+
+    // Reset
+    for (let mask of masks) {
+      mask.chosen_inverse = false;
+    }
+
+    masks[this.chosen_inverse].chosen_inverse = true;
+  }
 
   // ---------------------------------------------------------------------------
-
 
   // GRID
   thirds_grid() {
     let pos = createVector(0, 0);
-    let std = this.w/10;
+    let std = this.w / 20;
     let mean_width_1 = this.w / 3;
     let mean_width_2 = 2 * (this.w / 3);
     let mean_height_1 = this.h / 3;

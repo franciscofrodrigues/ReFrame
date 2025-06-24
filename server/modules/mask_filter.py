@@ -22,6 +22,9 @@ class MaskFilter:
     # Agrupar máscaras por grupos de uma mesma "key"
     def create_key_groups(self, segmentation_data, concepts_data):
         groups = []
+        registed_keys = set()
+        
+        # Para cada relação semântica encontrada
         for concept_data in concepts_data:
             for relation in concept_data["relations"]:
                 key_groups = {}
@@ -33,9 +36,16 @@ class MaskFilter:
                         relation["related"]["detection_indexes"][i],
                     )
 
+
+                    # Prevenir keys repetidas
+                    if key in registed_keys:
+                        continue
+                    registed_keys.add(key)        
+                    
                     if key not in key_groups:
                         key_groups[key] = []
 
+                    # Adicionar informação de Segmentação de Imagem
                     for segmentation in segmentation_data:
                         if (
                             segmentation["input_image_index"],
@@ -72,7 +82,7 @@ class MaskFilter:
                 largest_mask = self.get_largest_mask(masks)            
 
                 # Obter máscara binária
-                largest_mask_binary = cv2.imread(largest_mask["mask"])
+                largest_mask_binary = cv2.imread(largest_mask["mask"], cv2.IMREAD_GRAYSCALE)
                 ret, largest_mask_mask = cv2.threshold(largest_mask_binary, 127, 255, cv2.THRESH_BINARY)
 
                 # Inverter a máscara
@@ -97,7 +107,7 @@ class MaskFilter:
                 )
 
                 for mask in masks:
-                    current_mask_binary = cv2.imread(mask["mask"])
+                    current_mask_binary = cv2.imread(mask["mask"], cv2.IMREAD_GRAYSCALE)
                     ret, current_mask_mask = cv2.threshold(current_mask_binary, 127, 255, cv2.THRESH_BINARY)
 
                     # Quando não se trata da "largest_mask"

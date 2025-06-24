@@ -7,6 +7,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/p5@1.11.7/lib/p5.min.js"></script>
     <link rel="stylesheet" type="text/css" href="styles/main.css" />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png" />
   </head>
   <body>
     <main>
@@ -130,7 +134,7 @@
 
               <div class="color_instance">
                 <label for="accent_color"></label>
-                <input type="color" id="accent_color" name="accent_color" value="#ffffff" />
+                <input type="color" id="accent_color" name="accent_color" value="#ff0000" />
                 <p class="label">Accent</p>
               </div>
 
@@ -181,13 +185,14 @@
       <button class="btn" id="export_btn">Export</button>
     </main>
 
-    <script src="scripts/Loader.js"></script>
+    <script src="scripts/loader.js"></script>
     <script src="scripts/Mask.js"></script>
     <script src="scripts/SemanticGroup.js"></script>
     <script src="scripts/Composition.js"></script>
-    <script src="scripts/APIUpload.js"></script>
-    <script src="scripts/APIMasks.js"></script>
+    <script src="scripts/apiUpload.js"></script>
+    <script src="scripts/apiMasks.js"></script>
     <script src="scripts/MasksPool.js"></script>
     <script src="scripts/sketch.js"></script>
+    <script src="scripts/batchExport.js"></script>
   </body>
 </html>
