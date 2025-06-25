@@ -29,7 +29,7 @@ pip install -r requirements.txt
 ### Run
 
 ```bash
-python3 server/main.py
+python server/main.py
 ```
 
 ---
@@ -37,7 +37,7 @@ python3 server/main.py
 ### API
 #### Documentation
 
-After running the application access [FastAPI - Swagger UI](http://localhost:8000/docs) to see all the API documentation.
+After running the application you can access [FastAPI - Swagger UI](http://localhost:8000/docs) to check all the API documentation.
 
 #### Endpoints
 ##### Upload
