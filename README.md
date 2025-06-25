@@ -1,7 +1,5 @@
 # Decomposing Visual Information
 
----
-
 ### Virtual Environment
 #### Create
 
