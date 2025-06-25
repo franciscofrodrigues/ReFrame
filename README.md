@@ -43,11 +43,13 @@ After running the application access [FastAPI - Swagger UI](http://localhost:800
 ##### Upload
 <details>
 <summary>/upload</summary>
+<br/>
 To send files from client-side to server-side using *multipart/form-data*.
 </details>
 
 <details>
 <summary>/upload/{uuid}/status</summary>
+<br/>
 To check server-side pipeline processing status of a specific upload *uuid*.
 </details>
 
@@ -55,15 +57,18 @@ To check server-side pipeline processing status of a specific upload *uuid*.
 
 <details>
 <summary>/masks/{folder_name}/result</summary>
+<br/>
 To get resulting data from the server-side processing pipeline.
 </details>
 
 <details>
 <summary>/masks/{folder_name}/result/{group_index}/{result_index}.png</summary>
+<br/>
 To get a specific resulting mask and/or inverse. Specify the type of mask with the boolean query **inverse**  set **true** or **false** depending on which mask you want.
 </details>
 
 <details>
 <summary>/masks/{folder_name}/result/{group_index}/{result_index}/contained/{contained_index}.png</summary>
+<br/>
 To get a all masks contained on a specific resulting mask.
 </details>
