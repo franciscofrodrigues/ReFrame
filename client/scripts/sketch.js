@@ -42,7 +42,6 @@ function setup() {
   // Cores
   css_styles = window.getComputedStyle(document.body);
   bg_color = css_styles.getPropertyValue("--bg-color");
-  comp_bg_color = css_styles.getPropertyValue("--cnv-color");
   comp_shadow_color = css_styles.getPropertyValue("--cnv-shadow");
 
   // Botões
@@ -153,8 +152,10 @@ function apply_changes() {
 
   const grid_type = select('input[name="distribution"]:checked');
 
+  const comp_bg_color_picker = select('input[name="background_color"]');
   const accent_color_picker = select('input[name="accent_color"]');
   const complementary_color_picker = select('input[name="complementary_color"]');
+  comp_bg_color = color(comp_bg_color_picker.value());
   accent_color = color(accent_color_picker.value());
   complementary_color = color(complementary_color_picker.value());
 

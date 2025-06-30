@@ -56,13 +56,7 @@ class Mask {
     pg.pop();
   }
 
-  update(pg) {
-    // this.mask_ratio = this.mask.width / this.mask.height;
-    // this.w = this.h * this.mask_ratio;
-
-    // this.x = constrain(this.x, 0, pg.width - this.w);
-    // this.y = constrain(this.y, 0, pg.height - this.h);
-  }
+  update(pg) {}
 
   recompose() {
     this.accent_color = accent_color;
@@ -71,6 +65,10 @@ class Mask {
 
     this.inverse_offsetX = random(-this.w / 10, this.w / 10);
     this.inverse_offsetY = random(-this.h / 10, this.h / 10);
+  }
+
+  overlaps(other) {
+    return abs(this.x - other.x) < (this.w + other.w) / 2 && abs(this.y - other.y) < (this.h + other.h) / 2;
   }
 
   init_shapes() {

@@ -69,6 +69,26 @@ class SemanticGroup {
   reposition_masks(index) {
     // Caso o grupo contenha mais que uma máscara
     if (this.masks.length > 1) {
+      const max_tries = 10;
+      let tries = 0;
+      let overlap = true;
+
+      while (overlap && tries < max_tries) {
+        // Distribuição horizontal aleatória na largura do grupo
+        // Distribuição vertical incremental
+        this.masks[index].x = random(-this.w / 2, this.w / 2);
+        this.masks[index].y = -this.h / 2 + index * this.mask_inc;
+        overlap = false;
+
+        for (let previous_index = 0; previous_index < index; previous_index++) {
+          if (this.masks[index].overlaps(this.masks[previous_index])) {
+            overlap = true;
+            break;
+          }
+        }
+        tries++;
+      }
+
       // Distribuição Circular
       // this.ang_inc = TWO_PI / this.masks.length;
       // this.masks[index].x = (cos(index * this.ang_inc) * this.w) / 2;
@@ -76,8 +96,8 @@ class SemanticGroup {
 
       // Distribuição horizontal aleatória na largura do grupo
       // Distribuição vertical incremental
-      this.masks[index].x = random(-this.w / 2, this.w / 2);
-      this.masks[index].y = -this.h / 2 + index * this.mask_inc;
+      // this.masks[index].x = random(-this.w / 2, this.w / 2);
+      // this.masks[index].y = -this.h / 2 + index * this.mask_inc;
     } else {
       // Posicionamento central
       this.masks[index].x = 0;
