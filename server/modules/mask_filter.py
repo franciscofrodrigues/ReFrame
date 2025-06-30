@@ -23,7 +23,7 @@ class MaskFilter:
     def create_key_groups(self, segmentation_data, concepts_data):
         groups = []
         registed_keys = set()
-        
+
         # Para cada relação semântica encontrada
         for concept_data in concepts_data:
             for relation in concept_data["relations"]:
@@ -36,12 +36,11 @@ class MaskFilter:
                         relation["related"]["detection_indexes"][i],
                     )
 
-
                     # Prevenir keys repetidas
                     if key in registed_keys:
                         continue
-                    registed_keys.add(key)        
-                    
+                    registed_keys.add(key)
+
                     if key not in key_groups:
                         key_groups[key] = []
 
@@ -69,7 +68,10 @@ class MaskFilter:
 
     # Verificar se a máscara está contida na "largest_mask"
     def check_contained(self, current_mask, largest_mask):
-        return np.all((current_mask == 255) <= (largest_mask == 255))
+        # return np.all((current_mask == 255) <= (largest_mask == 255))
+        
+        difference = np.sum((current_mask == 255) & (largest_mask != 255))
+        return difference <= 200
 
     def run(self):
         groups = self.create_key_groups(self.segmentation_data, self.concepts_data)
@@ -79,11 +81,15 @@ class MaskFilter:
             group_data = []
             # Para cada grupo com determinada key
             for i, (key, masks) in enumerate(key_groups.items()):
-                largest_mask = self.get_largest_mask(masks)            
+                largest_mask = self.get_largest_mask(masks)
 
                 # Obter máscara binária
-                largest_mask_binary = cv2.imread(largest_mask["mask"], cv2.IMREAD_GRAYSCALE)
-                ret, largest_mask_mask = cv2.threshold(largest_mask_binary, 127, 255, cv2.THRESH_BINARY)
+                largest_mask_binary = cv2.imread(
+                    largest_mask["mask"], cv2.IMREAD_GRAYSCALE
+                )
+                ret, largest_mask_mask = cv2.threshold(
+                    largest_mask_binary, 127, 255, cv2.THRESH_BINARY
+                )
 
                 # Inverter a máscara
                 largest_mask_inverted = cv2.bitwise_not(largest_mask_mask)
@@ -107,12 +113,14 @@ class MaskFilter:
                 )
 
                 for mask in masks:
+                    # Obter a máscara atual
                     current_mask_binary = cv2.imread(mask["mask"], cv2.IMREAD_GRAYSCALE)
-                    ret, current_mask_mask = cv2.threshold(current_mask_binary, 127, 255, cv2.THRESH_BINARY)
+                    ret, current_mask_mask = cv2.threshold(
+                        current_mask_binary, 127, 255, cv2.THRESH_BINARY
+                    )
 
                     # Quando não se trata da "largest_mask"
                     if not np.array_equal(current_mask_mask, largest_mask_mask):
-                        # Obter a máscara atual
                         contained_output_path = save_output(
                             self.contained_outputs_path,
                             current_mask_mask,

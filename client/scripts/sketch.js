@@ -15,6 +15,7 @@ let masks_pool_visible, debug;
 function setup() {
   cnv = createCanvas(100, 100);
   cnv.parent("#canvas");
+  randomSeed(millis());
 
   // API
   port_api = "8000";

@@ -41,8 +41,8 @@ class Mask {
 
     pg.push();
     pg.blendMode(MULTIPLY);
-    pg.tint(255, 127);
-    if (this.inverted_mask_copy && this.chosen_inverse) pg.image(this.inverted_mask_copy, this.x + this.inverse_offsetX, this.y + this.inverse_offsetY, this.w, this.h);
+    // pg.tint(255, 127);
+    // if (this.inverted_mask_copy && this.chosen_inverse) pg.image(this.inverted_mask_copy, this.x + this.inverse_offsetX, this.y + this.inverse_offsetY, this.w * 1.2, this.h * 1.2);
     pg.pop();
 
     pg.image(this.mask, this.x, this.y, this.w, this.h);
@@ -50,29 +50,37 @@ class Mask {
 
     pg.push();
     pg.blendMode(MULTIPLY);
-    if (this.contained_mask_copy) pg.image(this.contained_mask_copy, this.x, this.y, this.w, this.h);
+    for (let i = 0; i < this.contained_masks.length; i++) {
+      if (this.contained_mask_copy[i]) pg.image(this.contained_mask_copy[i], this.x, this.y, this.w, this.h);
+    }
     pg.pop();
   }
 
   update(pg) {
-    this.mask_ratio = this.mask.width / this.mask.height;
-    this.w = this.h * this.mask_ratio;
+    // this.mask_ratio = this.mask.width / this.mask.height;
+    // this.w = this.h * this.mask_ratio;
+
+    // this.x = constrain(this.x, 0, pg.width - this.w);
+    // this.y = constrain(this.y, 0, pg.height - this.h);
   }
 
   recompose() {
     this.accent_color = accent_color;
     this.complementary_color = complementary_color;
     this.init_shapes();
-    // this.chosen_inverse = false;
 
-    this.inverse_offsetX = random(-50, 50);
-    this.inverse_offsetY = random(-50, 50);
+    this.inverse_offsetX = random(-this.w / 10, this.w / 10);
+    this.inverse_offsetY = random(-this.h / 10, this.h / 10);
   }
 
   init_shapes() {
     if (this.contained_masks && this.contained_masks.length > 0) {
-      this.chosen_contained = int(random(this.contained_masks.length));
-      this.contained_mask_copy = this.mask_to_shape(this.contained_masks[this.chosen_contained], this.accent_color);
+      // this.chosen_contained = int(random(this.contained_masks.length));
+      // this.contained_mask_copy = this.mask_to_shape(this.contained_masks[this.chosen_contained], this.accent_color);
+      this.contained_mask_copy = [];
+      for (let i = 0; i < this.contained_masks.length; i++) {
+        this.contained_mask_copy[i] = this.mask_to_shape(this.contained_masks[i], this.accent_color);
+      }
     }
 
     if (this.inverted_mask && this.chosen_inverse) {
