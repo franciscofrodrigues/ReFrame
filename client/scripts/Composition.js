@@ -8,10 +8,14 @@ class Composition {
     this.grid_type = grid_type;
 
     this.semantic_groups = [];
+    // this.min_group_w = this.w * 0.2;
+    // this.max_group_w = this.w * 0.6;
+    // this.min_group_h = this.h * 0.2;
+    // this.max_group_h = this.h * 0.6;
     this.min_group_w = this.w * 0.2;
-    this.max_group_w = this.w * 0.6;
+    this.max_group_w = this.w * 0.9;
     this.min_group_h = this.h * 0.2;
-    this.max_group_h = this.h * 0.6;
+    this.max_group_h = this.h * 0.9;
     this.group_w = random(this.min_group_w, this.max_group_w);
     this.group_h = random(this.min_group_h, this.max_group_h);
 
@@ -36,8 +40,6 @@ class Composition {
       this.pg.pop();
     }
 
-    this.backdrop();
-
     for (let semantic_group of this.semantic_groups) {
       semantic_group.run(this.pg);
     }
@@ -51,7 +53,6 @@ class Composition {
     shuffle(this.semantic_groups, true);
 
     this.choose_inverse_mask();
-    this.init_backdrop();
 
     for (let i = 0; i < this.semantic_groups.length; i++) {
       this.reposition(i);
@@ -81,7 +82,8 @@ class Composition {
   }
 
   calc_random_point() {
-    this.random_point = createVector(random(this.w / 2 - this.w / 5, this.w / 2 + this.w / 5), random(this.h / 2 - this.h / 5, this.h / 2 + this.h / 5));
+    // this.random_point = createVector(random(this.w / 2 - this.w / 5, this.w / 2 + this.w / 5), random(this.h / 2 - this.h / 5, this.h / 2 + this.h / 5));
+    this.random_point = createVector(random(this.w / 2, this.w / 2), random(this.h / 2, this.h / 2));
   }
 
   // available_space(pg, x, y) {
@@ -109,43 +111,6 @@ class Composition {
   //   }
   //   return counter >= pg_sample.width * pg_sample.height;
   // }
-
-  // ---------------------------------------------------------------------------
-
-  init_backdrop() {
-    this.cols = 4;
-    this.rows = 6;
-    this.cells = this.cols * this.rows;
-    this.cell_w = this.w / this.cols;
-    this.cell_h = this.h / this.rows;
-    this.backdrop_elements = [];
-
-    for (let i = 0; i < this.cells; i++) {
-      const x = int(random(this.cols));
-      const y = int(random(this.rows));
-      const w = int(random(1, this.cols - x));
-      const h = int(random(1, this.rows - y));
-
-      let c;
-      if (random() < 0.95) c = color(0, 0, random(90, 100), 50);
-      else c = complementary_color;
-
-      this.backdrop_elements.push({ x, y, w, h, c });
-    }
-  }
-
-  backdrop() {
-    if (this.backdrop_elements) {
-      this.pg.push();
-      this.pg.noStroke();
-      this.pg.blendMode(MULTIPLY);
-      for (let element of this.backdrop_elements) {
-        this.pg.fill(element.c);
-        this.pg.rect(element.x * this.cell_w + this.cell_w / 2, element.y * this.cell_h + this.cell_h / 2, element.w * this.cell_w, element.h * this.cell_h);
-      }
-      this.pg.pop();
-    }
-  }
 
   // ---------------------------------------------------------------------------
 

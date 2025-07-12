@@ -16,6 +16,8 @@ function setup() {
   cnv = createCanvas(100, 100);
   cnv.parent("#canvas");
   randomSeed(millis());
+  frameRate(1);
+
 
   // API
   port_api = "8000";
@@ -147,7 +149,7 @@ function apply_changes() {
     25: 3 / 4,
     50: 4 / 3,
     75: 4 / 5,
-    100: 9 / 16,
+    100: 16 / 9,
   };
 
   const grid_type = select('input[name="distribution"]:checked');
