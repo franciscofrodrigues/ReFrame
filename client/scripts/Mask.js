@@ -29,27 +29,31 @@ class Mask {
 
   render(pg) {
     if (debug) {
+      pg.push();
+      pg.translate(0, 0, 3);
       pg.noFill();
-      pg.stroke(accent_color);
+      pg.stroke(this.accent_color);
       pg.strokeWeight(1);
       pg.rect(this.x, this.y, this.w, this.h);
 
       pg.fill(0);
       pg.noStroke();
       pg.text(this.label, this.x - this.w / 2, this.y - this.h / 2);
+      pg.pop();
     }
 
     pg.push();
     pg.blendMode(MULTIPLY);
-    // if (this.inverted_mask_copy && this.chosen_inverse) pg.image(this.inverted_mask_copy, this.x + this.inverse_offsetX, this.y + this.inverse_offsetY, this.w * 1.2, this.h * 1.2);
-    pg.pop();    
+    pg.tint(this.complementary_color);
+    pg.translate(-this.w / 2, 0);
+    pg.scale(-1, 1);
+    // if (this.inverted_mask_copy && this.chosen_inverse) pg.image(this.inverted_mask_copy, this.x + this.inverse_offsetX, this.y + this.inverse_offsetY, this.w, this.h);
+    pg.pop();
 
     pg.push();
-    // pg.blendMode(MULTIPLY);
-    // pg.blendMode(EXCLUSION);
-    // pg.blendMode(HARD_LIGHT);
-    // pg.blendMode(SOFT_LIGHT);
-    pg.translate(this.x, this.y);
+    pg.blendMode(MULTIPLY);
+    // pg.blendMode(EXCLUSION); / pg.blendMode(HARD_LIGHT); / pg.blendMode(SOFT_LIGHT);
+    pg.translate(this.x, this.y, -1);
     for (let i = 0; i < this.contained_masks.length; i++) {
       if (this.contained_mask_copies[i]) {
         pg.push();
@@ -57,16 +61,21 @@ class Mask {
         let scaled = createVector(this.contained_mask_centroids[i].x * this.w, this.contained_mask_centroids[i].y * this.h);
         let line = this.bezier_lines[i];
 
-        this.shape_along_line(pg, this.contained_mask_copies[i], scaled, this.contained_colors[i], line, 5);
+        // this.shape_along_line(pg, this.contained_mask_copies[i], scaled, this.contained_colors[i], line, 5);
+        this.shape_along_line(pg, this.contained_mask_copies[i], scaled, this.accent_color, line, 5);
         pg.pop();
 
-        pg.tint(this.contained_colors[i]);
-        pg.image(this.contained_mask_copies[i], 0, 0, this.w, this.h);
+        // pg.tint(this.accent_color);
+        // pg.tint(this.contained_colors[i]);
+        // pg.image(this.contained_mask_copies[i], 0, 0, this.w, this.h);
       }
     }
     pg.pop();
 
+    pg.push();
+    pg.translate(0,0,1);
     pg.image(this.mask, this.x, this.y, this.w, this.h);
+    pg.pop();
   }
 
   update(pg) {}
@@ -197,27 +206,31 @@ class Mask {
 
       let tangent_x = bezierTangent(line.x1 + centroid.x, line.x2 + centroid.x, line.x3 + centroid.x, line.x4 + centroid.x, t);
       let tangent_y = bezierTangent(line.y1 + centroid.y, line.y2 + centroid.y, line.y3 + centroid.y, line.y4 + centroid.y, t);
-      let ang = atan2(tangent_y, tangent_x);
+      let ang = PI / 2 + atan2(tangent_y, tangent_x);
 
       let scl = map(t, inc, 1, 1, 0.5);
       let scaled_w = this.w * scl;
       let scaled_h = this.h * scl;
+
+      let c = color(hue(mask_color), map(t, inc, 1, saturation(mask_color), 10), map(t, inc, 1, brightness(mask_color), 95));
 
       pg.push();
       pg.translate(x, y);
       pg.rotate(ang);
       pg.translate(-centroid.x * scl, -centroid.y * scl);
 
-      let c = color(hue(mask_color), map(t, inc, 1, saturation(mask_color), 0), map(t, inc, 1, brightness(mask_color), 95));
       pg.tint(c);
       pg.image(img, scaled_w / 2, scaled_h / 2, scaled_w, scaled_h);
       pg.pop();
     }
 
     if (debug) {
+      pg.push();
+      pg.translate(0, 0, 3);
       pg.noFill();
       pg.stroke(this.complementary_color);
       pg.bezier(line.x1 + centroid.x, line.y1 + centroid.y, line.x2 + centroid.x, line.y2 + centroid.y, line.x3 + centroid.x, line.y3 + centroid.y, line.x4 + centroid.x, line.y4 + centroid.y);
+      pg.pop();
     }
   }
 }

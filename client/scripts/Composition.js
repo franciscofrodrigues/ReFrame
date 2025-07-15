@@ -8,14 +8,10 @@ class Composition {
     this.grid_type = grid_type;
 
     this.semantic_groups = [];
-    // this.min_group_w = this.w * 0.2;
-    // this.max_group_w = this.w * 0.6;
-    // this.min_group_h = this.h * 0.2;
-    // this.max_group_h = this.h * 0.6;
     this.min_group_w = this.w * 0.2;
-    this.max_group_w = this.w * 0.9;
+    this.max_group_w = this.w * 0.6;
     this.min_group_h = this.h * 0.2;
-    this.max_group_h = this.h * 0.9;
+    this.max_group_h = this.h * 0.6;
     this.group_w = random(this.min_group_w, this.max_group_w);
     this.group_h = random(this.min_group_h, this.max_group_h);
 
@@ -29,9 +25,16 @@ class Composition {
   }
 
   render() {
+    this.pg.push();
+    this.pg.translate(-this.w / 2, -this.h / 2); // WEBGL
+
+    for (let semantic_group of this.semantic_groups) {
+      semantic_group.run(this.pg);
+    }    
+
     if (debug) {
       this.pg.push();
-      this.pg.translate(this.x + this.w / 2, this.y + this.h / 2);
+      this.pg.translate(this.x + this.w / 2, this.y + this.h / 2, 3);
 
       this.pg.noFill();
       this.pg.stroke(accent_color);
@@ -40,9 +43,7 @@ class Composition {
       this.pg.pop();
     }
 
-    for (let semantic_group of this.semantic_groups) {
-      semantic_group.run(this.pg);
-    }
+    this.pg.pop();
   }
 
   update() {}
@@ -85,33 +86,7 @@ class Composition {
     // this.random_point = createVector(random(this.w / 2 - this.w / 5, this.w / 2 + this.w / 5), random(this.h / 2 - this.h / 5, this.h / 2 + this.h / 5));
     this.random_point = createVector(random(this.w / 2, this.w / 2), random(this.h / 2, this.h / 2));
   }
-
-  // available_space(pg, x, y) {
-  //   let size = 100;
-  //   let pg_sample = pg.get(x - size / 2, y - size / 2, size, size);
-  //   let counter = 0;
-
-  //   let d = pixelDensity();
-  //   pg_sample.loadPixels();
-  //   for (let x = 0; x < pg_sample.width; x++) {
-  //     for (let y = 0; y < pg_sample.height; y++) {
-  //       const i = 4 * (y * pg_sample.width * d + x * d);
-
-  //       let r = pg_sample.pixels[i];
-  //       let g = pg_sample.pixels[i + 1];
-  //       let b = pg_sample.pixels[i + 2];
-  //       let a = pg_sample.pixels[i + 3];
-
-  //       if (r === red(bg_color) && g === green(bg_color) && b === blue(bg_color) && a === alpha(bg_color)) {
-  //         counter++;
-  //       } else {
-  //         return false;
-  //       }
-  //     }
-  //   }
-  //   return counter >= pg_sample.width * pg_sample.height;
-  // }
-
+  
   // ---------------------------------------------------------------------------
 
   // GRID

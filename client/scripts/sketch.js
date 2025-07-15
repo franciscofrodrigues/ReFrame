@@ -10,14 +10,14 @@ let result_json;
 let comp_graphics, comp_graphics_ratio, comp_graphics_w, comp_graphics_h;
 let masks, masks_pool, semantic_groups, composition;
 
+let seed;
 let masks_pool_visible, debug;
 
 function setup() {
-  cnv = createCanvas(100, 100);
+  cnv = createCanvas(100, 100, WEBGL);
+  // cnv = createCanvas(100, 100);
+  // cnv.drawingContext = cnv.elt.getContext("2d", { willReadFrequently: true });
   cnv.parent("#canvas");
-  randomSeed(millis());
-  frameRate(1);
-
 
   // API
   port_api = "8000";
@@ -34,7 +34,7 @@ function setup() {
   // Propriedades Composition
   comp_graphics.colorMode(HSB, 360, 100, 100, 255);
   comp_graphics.imageMode(CENTER);
-  comp_graphics.rectMode(CENTER);  
+  comp_graphics.rectMode(CENTER);
 
   // Propriedades Sketch
   colorMode(HSB, 360, 100, 100, 255);
@@ -70,7 +70,7 @@ function setup() {
 
 function draw() {
   background(bg_color);
-  // randomSeed(2);
+  randomSeed(seed);
 
   if (masks_pool_visible) {
     masks_pool.run();
@@ -85,10 +85,12 @@ function draw() {
     drawingContext.shadowBlur = 20;
     drawingContext.shadowColor = comp_shadow_color;
     noStroke();
-    rect(width / 2, height / 2, comp_graphics.width, comp_graphics.height);
+    fill(0, 0);
+    rect(0, 0, comp_graphics_w, comp_graphics_h);
     pop();
 
-    image(comp_graphics, width / 2, height / 2, comp_graphics_w, comp_graphics_h);
+    image(comp_graphics, 0, 0, comp_graphics_w, comp_graphics_h);
+    // image(comp_graphics, width/2, height/2, comp_graphics_w, comp_graphics_h);
   }
 }
 
@@ -143,13 +145,15 @@ function group_masks(masks, semantic_groups) {
 }
 
 function apply_changes() {
+  seed = millis();
+
   const ratio_slider = select("#canvas_ratio");
   const ratio_values = {
     0: 1 / 1,
     25: 3 / 4,
     50: 4 / 3,
     75: 4 / 5,
-    100: 16 / 9,
+    100: 9 / 16,
   };
 
   const grid_type = select('input[name="distribution"]:checked');
@@ -166,8 +170,22 @@ function apply_changes() {
   comp_graphics_h = height * 0.8;
   comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
 
-  comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h);
-  comp_graphics.drawingContext = comp_graphics.elt.getContext("2d", { willReadFrequently: true });
+  if (comp_graphics) {
+    comp_graphics.remove();
+    comp_graphics = undefined;
+
+    // WebGL context loss -- p5.Graphics (davepagurek)
+    const prevRemove = p5.Graphics.prototype.remove;
+    p5.Graphics.prototype.remove = function () {
+      const ext = this.drawingContext.getExtension("WEBGL_lose_context");
+      if (ext) ext.loseContext();
+      prevRemove.call(this);
+    };
+  }
+
+  comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h, WEBGL);
+  // comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h);
+  // comp_graphics.drawingContext = comp_graphics.elt.getContext("2d", { willReadFrequently: true });
   comp_graphics.colorMode(HSB, 360, 100, 100, 255);
   comp_graphics.imageMode(CENTER);
   comp_graphics.rectMode(CENTER);
@@ -194,9 +212,9 @@ async function save_output(additional = "") {
   }
 
   let grain_output = createGraphics(comp_graphics.width, comp_graphics.height);
-  grain_output.copy(comp_graphics, 0, 0, comp_graphics.width, comp_graphics.height, 0, 0, grain_output.width, grain_output.height);
+  grain_output.copy(comp_graphics, -comp_graphics.width/2, -comp_graphics.height/2, comp_graphics.width, comp_graphics.height, 0, 0, grain_output.width, grain_output.height);
   add_grain(grain_output, 5);
-  save(grain_output, `${filename}.png`);
+  save(grain_output, `${filename}_seed_${seed}.png`);
 }
 
 // https://editor.p5js.org/ogt/sketches/sk1qsRr_n

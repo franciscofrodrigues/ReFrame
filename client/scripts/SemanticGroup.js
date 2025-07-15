@@ -23,15 +23,18 @@ class SemanticGroup {
     pg.translate(this.x, this.y);
     pg.rotate(this.ang);
 
+    for (let i = 0; i < this.masks.length; i++) {
+      this.masks[i].run(pg);
+    }
+
     if (debug) {
+      pg.push();
+      pg.translate(0,0,3);
       pg.noFill();
       pg.stroke(accent_color);
       pg.strokeWeight(1);
       pg.rect(0, 0, this.w, this.h);
-    }
-
-    for (let i = 0; i < this.masks.length; i++) {
-      this.masks[i].run(pg);
+      pg.pop();
     }
 
     pg.pop();
@@ -43,7 +46,8 @@ class SemanticGroup {
       // this.masks[i].h = this.masks[i].mask.height * scl;
 
       this.masks[i].ratio = this.masks[i].mask.width / this.masks[i].mask.height;
-      this.masks[i].w = (this.w / this.masks.length) * this.scl_noise;
+      // this.masks[i].w = (this.w / this.masks.length) * this.scl_noise;
+      this.masks[i].w = this.w * this.scl_noise;
 
       if (this.masks[i].w / this.masks[i].ratio > this.h) {
         this.masks[i].h = this.h;
