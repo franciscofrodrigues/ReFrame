@@ -1,5 +1,7 @@
 class Composition {
   constructor(pg, w, h, grid_type) {
+    randomSeed(seed);
+        
     this.pg = pg;
     this.x = 0;
     this.y = 0;
@@ -15,7 +17,6 @@ class Composition {
     this.group_w = random(this.min_group_w, this.max_group_w);
     this.group_h = random(this.min_group_h, this.max_group_h);
 
-    this.chosen_inverse = int(random(masks.length));
     this.calc_random_point();
   }
 
@@ -32,12 +33,13 @@ class Composition {
       semantic_group.run(this.pg);
     }    
 
+    // DEBUG
     if (debug) {
       this.pg.push();
       this.pg.translate(this.x + this.w / 2, this.y + this.h / 2, 3);
 
       this.pg.noFill();
-      this.pg.stroke(accent_color);
+      this.pg.stroke(debug_color);
       this.pg.strokeWeight(1);
       this.pg.rect(0, 0, this.w, this.h);
       this.pg.pop();
@@ -46,14 +48,13 @@ class Composition {
     this.pg.pop();
   }
 
-  update() {}
+  update() {    
+  }
 
   recompose() {
     // Recalcular o posicionamento do "random_point"
     this.calc_random_point();
     shuffle(this.semantic_groups, true);
-
-    this.choose_inverse_mask();
 
     for (let i = 0; i < this.semantic_groups.length; i++) {
       this.reposition(i);
@@ -72,21 +73,11 @@ class Composition {
     this.semantic_groups[index].recompose();
   }
 
-  choose_inverse_mask() {
-    this.chosen_inverse = int(random(masks.length));
-
-    // Reset
-    for (let mask of masks) {
-      mask.chosen_inverse = false;
-    }
-    masks[this.chosen_inverse].chosen_inverse = true;
-  }
-
   calc_random_point() {
     // this.random_point = createVector(random(this.w / 2 - this.w / 5, this.w / 2 + this.w / 5), random(this.h / 2 - this.h / 5, this.h / 2 + this.h / 5));
-    this.random_point = createVector(random(this.w / 2, this.w / 2), random(this.h / 2, this.h / 2));
+    this.random_point = createVector(random(-this.w / 2, this.w / 2), random(-this.h / 2, this.h / 2));
   }
-  
+
   // ---------------------------------------------------------------------------
 
   // GRID

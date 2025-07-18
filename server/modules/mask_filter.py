@@ -69,9 +69,9 @@ class MaskFilter:
     # Verificar se a máscara está contida na "largest_mask"
     def check_contained(self, current_mask, largest_mask):
         # return np.all((current_mask == 255) <= (largest_mask == 255))
-        
-        difference = np.sum((current_mask == 255) & (largest_mask != 255))
-        return difference <= 200
+        tolerance = 200;
+        difference = np.sum((current_mask == 255) & (largest_mask != 255))            
+        return difference <= tolerance
 
     def run(self):
         groups = self.create_key_groups(self.segmentation_data, self.concepts_data)

@@ -1,16 +1,16 @@
 class SemanticGroup {
   constructor(semantic_group) {
+    randomSeed(seed);
+
     this.semantic_group = semantic_group;
     this.x = -10;
     this.y = -10;
     this.w = 10;
     this.h = 10;
     this.ang = 0;
-    // this.ang_inc = 0;
 
     this.masks = [];
     this.mask_inc = 0;
-    this.scl_noise = random(0.8, 1.2);
   }
 
   run(pg) {
@@ -27,11 +27,12 @@ class SemanticGroup {
       this.masks[i].run(pg);
     }
 
+    // DEBUG
     if (debug) {
       pg.push();
-      pg.translate(0,0,3);
+      pg.translate(0, 0, 3);
       pg.noFill();
-      pg.stroke(accent_color);
+      pg.stroke(debug_color);
       pg.strokeWeight(1);
       pg.rect(0, 0, this.w, this.h);
       pg.pop();
@@ -42,12 +43,8 @@ class SemanticGroup {
 
   update(pg) {
     for (let i = 0; i < this.masks.length; i++) {
-      // let scl = min(this.w / this.masks[i].mask.width, this.h / this.masks[i].mask.height);
-      // this.masks[i].h = this.masks[i].mask.height * scl;
-
       this.masks[i].ratio = this.masks[i].mask.width / this.masks[i].mask.height;
-      // this.masks[i].w = (this.w / this.masks.length) * this.scl_noise;
-      this.masks[i].w = this.w * this.scl_noise;
+      this.masks[i].w = (this.w / this.masks.length) * this.masks[i].scl_noise;
 
       if (this.masks[i].w / this.masks[i].ratio > this.h) {
         this.masks[i].h = this.h;
@@ -77,6 +74,7 @@ class SemanticGroup {
       let tries = 0;
       let overlap = true;
 
+      // Verificar se a máscara é colocada numa posição válida de forma recursiva
       while (overlap && tries < max_tries) {
         // Distribuição horizontal aleatória na largura do grupo
         // Distribuição vertical incremental
@@ -92,16 +90,6 @@ class SemanticGroup {
         }
         tries++;
       }
-
-      // Distribuição Circular
-      // this.ang_inc = TWO_PI / this.masks.length;
-      // this.masks[index].x = (cos(index * this.ang_inc) * this.w) / 2;
-      // this.masks[index].y = (sin(index * this.ang_inc) * this.h) / 2;
-
-      // Distribuição horizontal aleatória na largura do grupo
-      // Distribuição vertical incremental
-      // this.masks[index].x = random(-this.w / 2, this.w / 2);
-      // this.masks[index].y = -this.h / 2 + index * this.mask_inc;
     } else {
       // Posicionamento central
       this.masks[index].x = 0;

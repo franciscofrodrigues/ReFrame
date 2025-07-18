@@ -1,6 +1,6 @@
 // UI
 let cnv, cnv_parent, css_styles;
-let bg_color, comp_bg_color, comp_shadow_color, accent_color, complementary_color;
+let bg_color, comp_bg_color, comp_shadow_color, accent_color, complementary_color, debug_color;
 
 // API
 let port_api, endpoint_api, folder_name;
@@ -45,6 +45,7 @@ function setup() {
   css_styles = window.getComputedStyle(document.body);
   bg_color = css_styles.getPropertyValue("--bg-color");
   comp_shadow_color = css_styles.getPropertyValue("--cnv-shadow");
+  debug_color = color(0, 0, 0, 255);
 
   // Botões
   let apply_changes_btn = select("#apply_changes_btn");
@@ -145,7 +146,7 @@ function group_masks(masks, semantic_groups) {
 }
 
 function apply_changes() {
-  seed = millis();
+  seed = Date.now();
 
   const ratio_slider = select("#canvas_ratio");
   const ratio_values = {
@@ -174,6 +175,7 @@ function apply_changes() {
     comp_graphics.remove();
     comp_graphics = undefined;
 
+    // ----
     // WebGL context loss -- p5.Graphics (davepagurek)
     const prevRemove = p5.Graphics.prototype.remove;
     p5.Graphics.prototype.remove = function () {
@@ -181,6 +183,7 @@ function apply_changes() {
       if (ext) ext.loseContext();
       prevRemove.call(this);
     };
+    // ----
   }
 
   comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h, WEBGL);
