@@ -1,6 +1,6 @@
 // UI
-let cnv, cnv_parent, css_styles;
-let bg_color, comp_bg_color, comp_shadow_color, accent_color, complementary_color, debug_color;
+let cnv, cnv_parent, css_styles, font;
+let bg_color, fg_color, comp_bg_color, comp_shadow_color, accent_color, complementary_color, debug_color;
 
 // API
 let port_api, endpoint_api, folder_name;
@@ -12,6 +12,10 @@ let masks, masks_pool, semantic_groups, composition;
 
 let seed;
 let masks_pool_visible, debug;
+
+function preload() {
+  font = loadFont("assets/fonts/Roboto-Regular.ttf");
+}
 
 function setup() {
   cnv = createCanvas(100, 100, WEBGL);
@@ -31,11 +35,6 @@ function setup() {
   apply_changes();
   update_imports_list();
 
-  // Propriedades Composition
-  comp_graphics.colorMode(HSB, 360, 100, 100, 255);
-  comp_graphics.imageMode(CENTER);
-  comp_graphics.rectMode(CENTER);
-
   // Propriedades Sketch
   colorMode(HSB, 360, 100, 100, 255);
   imageMode(CENTER);
@@ -44,6 +43,7 @@ function setup() {
   // Cores
   css_styles = window.getComputedStyle(document.body);
   bg_color = css_styles.getPropertyValue("--bg-color");
+  fg_color = css_styles.getPropertyValue("--fg-color");
   comp_shadow_color = css_styles.getPropertyValue("--cnv-shadow");
   debug_color = color(0, 0, 0, 255);
 
@@ -63,7 +63,8 @@ function setup() {
   resize_canvas();
 
   // Mask Pool
-  masks_pool = new MasksPool(masks, 0, 0, width, height, 5, 5);
+  // masks_pool = new MasksPool(masks, 0, 0, width, height, 5, 5);
+  masks_pool = new MasksPool(masks, 0, 0, width, height, 5, 20, 5, 5);
   masks_pool_visible = false;
 
   debug = false;
@@ -192,6 +193,8 @@ function apply_changes() {
   comp_graphics.colorMode(HSB, 360, 100, 100, 255);
   comp_graphics.imageMode(CENTER);
   comp_graphics.rectMode(CENTER);
+  comp_graphics.textFont(font);
+  comp_graphics.textSize(12);
 
   composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, grid_type.value());
   composition.semantic_groups = semantic_groups;
@@ -215,7 +218,7 @@ async function save_output(additional = "") {
   }
 
   let grain_output = createGraphics(comp_graphics.width, comp_graphics.height);
-  grain_output.copy(comp_graphics, -comp_graphics.width/2, -comp_graphics.height/2, comp_graphics.width, comp_graphics.height, 0, 0, grain_output.width, grain_output.height);
+  grain_output.copy(comp_graphics, -comp_graphics.width / 2, -comp_graphics.height / 2, comp_graphics.width, comp_graphics.height, 0, 0, grain_output.width, grain_output.height);
   add_grain(grain_output, 5);
   save(grain_output, `${filename}_seed_${seed}.png`);
 }

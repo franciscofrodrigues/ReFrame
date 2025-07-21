@@ -95,7 +95,7 @@ class MaskFilter:
                 largest_mask_inverted = cv2.bitwise_not(largest_mask_mask)
                 inverse_output_path = save_output(
                     self.inverse_outputs_path,
-                    largest_mask_inverted,
+                    largest_mask_mask,
                     f'[{key[0]}_{key[1]}_{largest_mask["mask_index"]}]',
                     "inverse",
                 )

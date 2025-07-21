@@ -49,17 +49,19 @@ class SemanticGroup {
       if (this.masks[i].w / this.masks[i].ratio > this.h) {
         this.masks[i].h = this.h;
         this.masks[i].w = this.h * this.masks[i].ratio;
+
+        // Reposicionar no centro do grupo
         this.masks[i].y = 0;
       } else {
         this.masks[i].h = this.masks[i].w / this.masks[i].ratio;
+
+        // Distribuição vertical incremental
+        this.masks[i].y = -this.h / 2 + this.masks[i].h / 2 + i * this.mask_inc;
       }
     }
   }
 
   recompose() {
-    // Calcular o incremento de acordo com "h" do grupo
-    this.mask_inc = this.h / this.masks.length;
-
     for (let i = 0; i < this.masks.length; i++) {
       this.masks[i].recompose();
       this.reposition_masks(i);
@@ -68,23 +70,29 @@ class SemanticGroup {
   }
 
   reposition_masks(index) {
+    // Calcular o incremento de acordo com altura (h) do grupo
+    this.mask_inc = this.h / this.masks.length;
+
     // Caso o grupo contenha mais que uma máscara
     if (this.masks.length > 1) {
-      const max_tries = 10;
+      const max_tries = 50;
       let tries = 0;
       let overlap = true;
+
+      const mask_min_w = (this.w / this.masks.length) * this.masks[index].scl_range[0];
 
       // Verificar se a máscara é colocada numa posição válida de forma recursiva
       while (overlap && tries < max_tries) {
         // Distribuição horizontal aleatória na largura do grupo
-        // Distribuição vertical incremental
-        this.masks[index].x = random(-this.w / 2, this.w / 2);
-        this.masks[index].y = -this.h / 2 + index * this.mask_inc;
+        this.masks[index].x = random(-this.w / 2 + mask_min_w / 2, this.w / 2 - mask_min_w / 2);
+
         overlap = false;
+        console.log(`${tries}/${max_tries}`);
 
         for (let previous_index = 0; previous_index < index; previous_index++) {
           if (this.masks[index].overlaps(this.masks[previous_index])) {
             overlap = true;
+            console.log("Detected Overlap!");
             break;
           }
         }
@@ -95,5 +103,5 @@ class SemanticGroup {
       this.masks[index].x = 0;
       this.masks[index].y = 0;
     }
-  }
+  }  
 }

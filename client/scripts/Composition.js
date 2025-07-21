@@ -10,10 +10,10 @@ class Composition {
     this.grid_type = grid_type;
 
     this.semantic_groups = [];
-    this.min_group_w = this.w * 0.2;
-    this.max_group_w = this.w * 0.6;
-    this.min_group_h = this.h * 0.2;
-    this.max_group_h = this.h * 0.6;
+    this.min_group_w = this.w * 0.3;
+    this.max_group_w = this.w * 0.7;
+    this.min_group_h = this.h * 0.3;
+    this.max_group_h = this.h * 0.7;
     this.group_w = random(this.min_group_w, this.max_group_w);
     this.group_h = random(this.min_group_h, this.max_group_h);
 
@@ -93,7 +93,7 @@ class Composition {
   thirds_grid() {
     let pos = createVector(0, 0);
     // let std = this.w / 20;
-    let std = this.w * 0.01;
+    let std = 0;
     let mean_width_1 = this.w / 3;
     let mean_width_2 = 2 * (this.w / 3);
     let mean_height_1 = this.h / 3;

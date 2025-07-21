@@ -1,9 +1,15 @@
-const batch_accent_colors = ["#29E7CD", "#FEEA00", "#FF5A5F"];
-const batch_complementary_colors = ["#FFFFFF", "#FFFFFF", "#FFFFFFF"];
-const batch_ratios = [1, 0.75, 1.3333333333, 0.8, 0.5625, 1.7777777778];
-const grid_types = [0, 1, 2];
+// const batch_accent_colors = ["#29E7CD", "#FEEA00", "#FF5A5F"];
+// const batch_complementary_colors = ["#FFFFFF", "#FFFFFF", "#FFFFFFF"];
+// const batch_ratios = [1, 0.75, 1.3333333333, 0.8, 0.5625, 1.7777777778];
+// const grid_types = [0, 1, 2];
+
+const batch_accent_colors = ["#FFFFFF"];
+const batch_complementary_colors = ["#FFFFFF"];
+const batch_ratios = [0.75];
+const grid_types = [0];
 
 const settings = {
+  runs: 20,
   accent_color: batch_accent_colors,
   complementary_color: batch_complementary_colors,
   ratio: batch_ratios,
@@ -20,15 +26,35 @@ async function batch_export() {
 
     for (let j = 0; j < settings.ratio.length; j++) {
       for (let k = 0; k < settings.accent_color.length; k++) {
-        for (let l = 0; l < settings.grid.length; l++) {          
+        for (let l = 0; l < settings.grid.length; l++) {
+          for (let h = 0; h < settings.runs; h++) {
+            seed = Date.now();
+            randomSeed(seed);
+
             // Propriedades Composition
             comp_graphics_h = height * 0.8;
             comp_graphics_w = comp_graphics_h * settings.ratio[j];
 
-            comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h);
+            if (comp_graphics) {
+              comp_graphics.remove();
+              comp_graphics = undefined;
+
+              // ----
+              // WebGL context loss -- p5.Graphics (davepagurek)
+              const prevRemove = p5.Graphics.prototype.remove;
+              p5.Graphics.prototype.remove = function () {
+                const ext = this.drawingContext.getExtension("WEBGL_lose_context");
+                if (ext) ext.loseContext();
+                prevRemove.call(this);
+              };
+            }
+
+            comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h, WEBGL);
             comp_graphics.colorMode(HSB, 360, 100, 100, 255);
             comp_graphics.imageMode(CENTER);
             comp_graphics.rectMode(CENTER);
+            comp_graphics.textFont(font);
+            comp_graphics.textSize(12);
 
             // Composition
             composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, settings.grid[l]);
@@ -43,7 +69,8 @@ async function batch_export() {
 
             // Guardar outputs
             await save_output(`[${j}_${k}_${l}]`);
-            await new Promise(r => setTimeout(r, 100));
+            await new Promise((r) => setTimeout(r, 100));
+          }
         }
       }
     }
