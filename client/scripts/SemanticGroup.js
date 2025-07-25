@@ -75,11 +75,11 @@ class SemanticGroup {
 
     // Caso o grupo contenha mais que uma máscara
     if (this.masks.length > 1) {
-      const max_tries = 50;
+      const max_tries = 200;
       let tries = 0;
       let overlap = true;
 
-      const mask_min_w = (this.w / this.masks.length) * this.masks[index].scl_range[0];
+      let mask_min_w = (this.w / this.masks.length) * this.masks[index].scl_range[0];
 
       // Verificar se a máscara é colocada numa posição válida de forma recursiva
       while (overlap && tries < max_tries) {
@@ -87,12 +87,10 @@ class SemanticGroup {
         this.masks[index].x = random(-this.w / 2 + mask_min_w / 2, this.w / 2 - mask_min_w / 2);
 
         overlap = false;
-        console.log(`${tries}/${max_tries}`);
 
-        for (let previous_index = 0; previous_index < index; previous_index++) {
-          if (this.masks[index].overlaps(this.masks[previous_index])) {
+        for (let other = 0; other < index; other++) {
+          if (this.masks[index].overlaps(this.masks[other])) {
             overlap = true;
-            console.log("Detected Overlap!");
             break;
           }
         }
@@ -103,5 +101,5 @@ class SemanticGroup {
       this.masks[index].x = 0;
       this.masks[index].y = 0;
     }
-  }  
+  }
 }

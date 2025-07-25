@@ -101,6 +101,10 @@ function keyPressed() {
     batch_export();
   }
 
+  if(key === "s" || key == "S") {
+    save_output();
+  }
+
   if (key === "p" || key === "P") {
     masks_pool_visible = !masks_pool_visible;
     masks_pool = new MasksPool(masks, 0, 0, width, height, 5, 5);

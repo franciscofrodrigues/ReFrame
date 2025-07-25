@@ -1,7 +1,7 @@
 class Composition {
   constructor(pg, w, h, grid_type) {
     randomSeed(seed);
-        
+
     this.pg = pg;
     this.x = 0;
     this.y = 0;
@@ -31,7 +31,7 @@ class Composition {
 
     for (let semantic_group of this.semantic_groups) {
       semantic_group.run(this.pg);
-    }    
+    }
 
     // DEBUG
     if (debug) {
@@ -43,13 +43,18 @@ class Composition {
       this.pg.strokeWeight(1);
       this.pg.rect(0, 0, this.w, this.h);
       this.pg.pop();
+
+      if (this.grid_type == 2) {
+        this.pg.noStroke();
+        this.pg.fill(debug_color);
+        this.pg.circle(this.random_point.x, this.random_point.y, 5);
+      }
     }
 
     this.pg.pop();
   }
 
-  update() {    
-  }
+  update() {}
 
   recompose() {
     // Recalcular o posicionamento do "random_point"
@@ -75,7 +80,8 @@ class Composition {
 
   calc_random_point() {
     // this.random_point = createVector(random(this.w / 2 - this.w / 5, this.w / 2 + this.w / 5), random(this.h / 2 - this.h / 5, this.h / 2 + this.h / 5));
-    this.random_point = createVector(random(-this.w / 2, this.w / 2), random(-this.h / 2, this.h / 2));
+    let padding = this.w / 3;
+    this.random_point = createVector(random(padding, this.w - padding), random(padding, this.h - padding));
   }
 
   // ---------------------------------------------------------------------------

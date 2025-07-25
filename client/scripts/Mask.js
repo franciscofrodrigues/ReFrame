@@ -59,7 +59,7 @@ class Mask {
       pg.strokeWeight(1);
       pg.rect(0, 0, this.w, this.h);
 
-      pg.fill(0);      
+      pg.fill(0);
       pg.noStroke();
       pg.text(this.label, -this.w / 2, -this.h / 2 - 5);
       pg.pop();
@@ -74,22 +74,22 @@ class Mask {
         break;
       case "orig+cont":
         this.render_mask(pg, false);
-        this.render_contained(pg, false);
+        this.render_contained(pg, false, false);
         break;
       case "orig+cont_rep":
-        this.render_contained(pg, true);
+        this.render_contained(pg, false, true);
         this.render_mask(pg, false);
         break;
       case "orig+inv":
-        this.render_inverse(pg, false);
+        this.render_inverse(pg, false, false);
         this.render_mask(pg, false);
         break;
       case "orig+inv_rep":
-        this.render_inverse(pg, true);
+        this.render_inverse(pg, false, true);
         this.render_mask(pg, false);
         break;
       case "inv_rep":
-        this.render_inverse(pg, true);
+        this.render_inverse(pg, false, true);
         break;
     }
 
@@ -100,7 +100,6 @@ class Mask {
 
   recompose() {
     this.view_type = random(this.view_type_options);
-    console.log(this.view_type);
 
     this.accent_color = accent_color;
     this.complementary_color = complementary_color;
@@ -116,11 +115,16 @@ class Mask {
   }
 
   // Verificar sobreposições entre máscaras
+  // Eixo X e Y
   // overlaps(other) {
   //   return abs(this.x - other.x) < (this.w + other.w) / 2 && abs(this.y - other.y) < (this.h + other.h) / 2;
   // }
+  // Apenas no eixo X
   overlaps(other) {
-    return abs(this.x - other.x) < (this.w + other.w) / 2;
+    // Distância para que não haja sobreposição
+    // (this.w + other.w) / 2
+    let x_distance = (this.w + other.w) / 5;
+    return abs(this.x - other.x) < x_distance;
   }
 
   // ---------------------------------------------------------------------------
@@ -141,10 +145,11 @@ class Mask {
   }
 
   // Inversa
-  render_inverse(pg, repeat) {
+  render_inverse(pg, blend, repeat) {
     if (this.inverted_mask_copy) {
       pg.push();
-      pg.blendMode(MULTIPLY);
+      if (blend) pg.blendMode(MULTIPLY);
+      else pg.blendMode(BLEND);
 
       if (repeat) {
         // Máscara ao longo da curva bezier
@@ -152,7 +157,7 @@ class Mask {
         pg.translate(-this.w / 2, -this.h / 2);
         let scaled = createVector(this.inverted_mask_centroid.x * this.w, this.inverted_mask_centroid.y * this.h);
         let line = this.curves[1][0];
-        this.shape_along_line(pg, this.inverted_mask_copy, scaled, this.pick_color(), line, line.steps, true, true, true, true);
+        this.shape_along_line(pg, this.inverted_mask_copy, scaled, this.pick_color(), line, line.steps, true, true, false, false);
         pg.pop();
       } else {
         pg.push();
@@ -167,9 +172,10 @@ class Mask {
   }
 
   // Contidas
-  render_contained(pg, repeat) {
+  render_contained(pg, blend, repeat) {
     pg.push();
-    pg.blendMode(MULTIPLY);
+    if (blend) pg.blendMode(MULTIPLY);
+    else pg.blendMode(BLEND);
 
     for (let i = 0; i < this.contained_masks.length; i++) {
       if (this.contained_mask_copies[i]) {
@@ -179,7 +185,7 @@ class Mask {
           pg.translate(-this.w / 2, -this.h / 2);
           let scaled = createVector(this.contained_mask_centroids[i].x * this.w, this.contained_mask_centroids[i].y * this.h);
           let line = this.curves[2][i];
-          this.shape_along_line(pg, this.contained_mask_copies[i], scaled, this.pick_color(), line, line.steps, true, true, true, true);
+          this.shape_along_line(pg, this.contained_mask_copies[i], scaled, this.pick_color(), line, line.steps, true, true, false, false);
           pg.pop();
         } else {
           pg.push();

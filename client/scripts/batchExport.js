@@ -69,7 +69,9 @@ async function batch_export() {
 
             // Guardar outputs
             await save_output(`[${j}_${k}_${l}]`);
-            await new Promise((r) => setTimeout(r, 100));
+
+            // Preview de 1s
+            await new Promise((r) => setTimeout(r, 1000));
           }
         }
       }
