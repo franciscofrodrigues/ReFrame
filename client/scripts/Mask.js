@@ -11,27 +11,29 @@ class Mask {
     this.label = label;
     this.semantic_group = semantic_group;
 
-    // orig (original mask), cont (contained mask), inv (inverse mask), rep (repeat)
-    this.view_type_options = ["orig", "orig_rep", "orig+cont", "orig+cont_rep", "orig+inv", "orig+inv_rep", "inv_rep"];
+    // categ (categorized mask), cont (contained mask), silh (silhouette mask), rep (repeat)
+    this.view_type_options = ["categ", "categ_rep", "categ+cont", "categ+cont_rep", "categ+silh", "categ+silh_rep", "silh_rep"];
+    // this.view_type_options = ["categ", "categ_rep", "categ+cont", "cont", "categ+cont_rep", "categ+silh", "categ+silh_rep", "silh_rep"];
     this.view_type = random(this.view_type_options);
 
     // Inversa
     this.inverted_mask = inverted_mask;
     this.offsetX_range = [-this.w / 10, this.w / 10];
     this.offsetY_range = [-this.h / 10, this.h / 10];
-    this.inverse_offsetX = random(this.offsetX_range[0], this.offsetX_range[1]);
-    this.inverse_offsetY = random(this.offsetY_range[0], this.offsetY_range[1]);
+    this.silhouette_offsetX = random(this.offsetX_range[0], this.offsetX_range[1]);
+    this.silhouette_offsetY = random(this.offsetY_range[0], this.offsetY_range[1]);
 
     // Contidas
     this.contained_masks = contained_masks;
 
     // Escala
-    this.scl_range = [1, 1.5];
+    this.scl_range = [1, 2];
     this.scl_noise = random(this.scl_range[0], this.scl_range[1]);
 
     // Cores
-    this.accent_color = accent_color;
-    this.complementary_color = complementary_color;
+    // this.accent_color = accent_color;
+    // this.complementary_color = complementary_color;
+    this.blend_mode = MULTIPLY;
 
     // Máscaras binárias -> Shapes
     this.init_shapes();
@@ -66,30 +68,33 @@ class Mask {
     }
 
     switch (this.view_type) {
-      case "orig":
+      case "categ":
         this.render_mask(pg, false);
         break;
-      case "orig_rep":
+      case "categ_rep":
         this.render_mask(pg, true);
         break;
-      case "orig+cont":
+      case "categ+cont":
         this.render_mask(pg, false);
-        this.render_contained(pg, false, false);
+        this.render_contained(pg, true, false);
         break;
-      case "orig+cont_rep":
-        this.render_contained(pg, false, true);
-        this.render_mask(pg, false);
+      case "cont":
+        this.render_contained(pg, true, false);
         break;
-      case "orig+inv":
-        this.render_inverse(pg, false, false);
-        this.render_mask(pg, false);
-        break;
-      case "orig+inv_rep":
-        this.render_inverse(pg, false, true);
+      case "categ+cont_rep":
+        this.render_contained(pg, true, true);
         this.render_mask(pg, false);
         break;
-      case "inv_rep":
-        this.render_inverse(pg, false, true);
+      case "categ+silh":
+        this.render_silhouette(pg, true, false);
+        this.render_mask(pg, false);
+        break;
+      case "categ+silh_rep":
+        this.render_silhouette(pg, true, true);
+        this.render_mask(pg, false);
+        break;
+      case "silh_rep":
+        this.render_silhouette(pg, true, true);
         break;
     }
 
@@ -101,15 +106,15 @@ class Mask {
   recompose() {
     this.view_type = random(this.view_type_options);
 
-    this.accent_color = accent_color;
-    this.complementary_color = complementary_color;
+    // this.accent_color = accent_color;
+    // this.complementary_color = complementary_color;
     this.init_shapes();
     this.init_curves();
 
     this.offsetX_range = [-this.w / 10, this.w / 10];
     this.offsetY_range = [-this.h / 10, this.h / 10];
-    this.inverse_offsetX = random(this.offsetX_range[0], this.offsetX_range[1]);
-    this.inverse_offsetY = random(this.offsetY_range[0], this.offsetY_range[1]);
+    this.silhouette_offsetX = random(this.offsetX_range[0], this.offsetX_range[1]);
+    this.silhouette_offsetY = random(this.offsetY_range[0], this.offsetY_range[1]);
 
     this.scl_noise = random(this.scl_range[0], this.scl_range[1]);
   }
@@ -145,25 +150,28 @@ class Mask {
   }
 
   // Inversa
-  render_inverse(pg, blend, repeat) {
-    if (this.inverted_mask_copy) {
+  render_silhouette(pg, blend, repeat) {
+    if (this.silhouette_mask_copy) {
       pg.push();
-      if (blend) pg.blendMode(MULTIPLY);
+      if (blend) pg.blendMode(this.blend_mode);
       else pg.blendMode(BLEND);
 
       if (repeat) {
         // Máscara ao longo da curva bezier
         pg.push();
         pg.translate(-this.w / 2, -this.h / 2);
-        let scaled = createVector(this.inverted_mask_centroid.x * this.w, this.inverted_mask_centroid.y * this.h);
+        let scaled = createVector(this.silhouette_mask_centroid.x * this.w, this.silhouette_mask_centroid.y * this.h);
         let line = this.curves[1][0];
-        this.shape_along_line(pg, this.inverted_mask_copy, scaled, this.pick_color(), line, line.steps, true, true, false, false);
+        // this.shape_along_line(pg, this.silhouette_mask_copy, scaled, this.pick_color(), line, line.steps, false, true, false, false);
+        this.shape_along_line(pg, this.silhouette_mask_copy, scaled, this.color, line, line.steps, false, true, false, false);
+        // this.shape_along_line(pg, this.silhouette_mask_copy, scaled, this.get_monochromatic_color(this.color), line, line.steps, false, true, false, false);
         pg.pop();
       } else {
         pg.push();
-        pg.tint(this.pick_color());
-        pg.image(this.inverted_mask_copy, this.inverse_offsetX, this.inverse_offsetY, this.w, this.h);
-        // pg.image(this.inverted_mask_copy, 0, 0, this.w, this.h);
+        // pg.tint(this.get_monochromatic_color(this.color));
+        pg.tint(this.color);
+        // pg.tint(this.pick_color());
+        pg.image(this.silhouette_mask_copy, this.silhouette_offsetX, this.silhouette_offsetY, this.w, this.h);
         pg.pop();
       }
 
@@ -174,7 +182,7 @@ class Mask {
   // Contidas
   render_contained(pg, blend, repeat) {
     pg.push();
-    if (blend) pg.blendMode(MULTIPLY);
+    if (blend) pg.blendMode(this.blend_mode);
     else pg.blendMode(BLEND);
 
     for (let i = 0; i < this.contained_masks.length; i++) {
@@ -185,11 +193,15 @@ class Mask {
           pg.translate(-this.w / 2, -this.h / 2);
           let scaled = createVector(this.contained_mask_centroids[i].x * this.w, this.contained_mask_centroids[i].y * this.h);
           let line = this.curves[2][i];
-          this.shape_along_line(pg, this.contained_mask_copies[i], scaled, this.pick_color(), line, line.steps, true, true, false, false);
+          // this.shape_along_line(pg, this.contained_mask_copies[i], scaled, this.pick_color(), line, line.steps, true, true, false, false);
+          this.shape_along_line(pg, this.contained_mask_copies[i], scaled, this.color, line, line.steps, true, true, false, false);
+          // this.shape_along_line(pg, this.contained_mask_copies[i], scaled, this.get_monochromatic_color(this.color), line, line.steps, true, true, false, false);
           pg.pop();
         } else {
           pg.push();
-          pg.tint(this.pick_color());
+          // pg.tint(this.get_monochromatic_color(this.color));
+          pg.tint(this.color);
+          // pg.tint(this.pick_color());
           pg.image(this.contained_mask_copies[i], 0, 0, this.w, this.h);
           pg.pop();
         }
@@ -207,8 +219,8 @@ class Mask {
 
     // Inversa
     if (this.inverted_mask) {
-      this.inverted_mask_copy = this.mask_to_shape(this.inverted_mask);
-      this.inverted_mask_centroid = this.get_shape_centroid(this.inverted_mask_copy);
+      this.silhouette_mask_copy = this.mask_to_shape(this.inverted_mask);
+      this.silhouette_mask_centroid = this.get_shape_centroid(this.silhouette_mask_copy);
     }
 
     // Contidas
@@ -271,6 +283,11 @@ class Mask {
     return normalized;
   }
 
+  get_monochromatic_color(c) {
+    let mono_color = color(hue(c), random(50, 80), random(50, 80));
+    return mono_color;
+  }
+
   pick_color() {
     // let color_palette = ["#00FFFF", "#FF00FF", "#FFFF00"];
     let color_palette = ["#F299B9", "#027333", "#F2AB27", "#F2220F"];
@@ -282,10 +299,10 @@ class Mask {
   // BEZIER
   init_curves() {
     this.curves[0][0] = this.bezier_line(this.mask_centroid, 20, 0, true, 1, 10);
-    this.curves[1][0] = this.bezier_line(this.inverted_mask_centroid, 200, 0, true, 1, 10);
+    this.curves[1][0] = this.bezier_line(this.silhouette_mask_centroid, random(20, max(comp_graphics_w, comp_graphics_h)), 0, true, 1, 10);
 
     for (let i = 0; i < this.contained_masks.length; i++) {
-      this.curves[2][i] = this.bezier_line(this.contained_mask_centroids[i], 200, 20, false, 1, 20);
+      this.curves[2][i] = this.bezier_line(this.contained_mask_centroids[i], random(20, max(comp_graphics_w, comp_graphics_h)), 20, false, 1, 20);
     }
   }
 
@@ -319,7 +336,6 @@ class Mask {
 
   shape_along_line(pg, img, centroid, mask_color, line, steps, angle_variation, scale_variation, color_variation, alpha_variation) {
     let inc = 1 / steps;
-    // for (let t = 0; t <= 1; t += inc) {
     for (let t = 1; t >= 0; t -= inc) {
       // Cálculo de coordenadas ao longo da curva bezier
       let x = bezierPoint(line.x1 + centroid.x, line.x2 + centroid.x, line.x3 + centroid.x, line.x4 + centroid.x, t);

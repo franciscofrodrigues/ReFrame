@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Decomposing Visual Information</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.7/lib/p5.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/p5@1.11.7/lib/p5.min.js"></script> -->
+    <script src="libraries/p5.min.js"></script>
+
     <link rel="stylesheet" type="text/css" href="styles/main.css" />
 
     <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png" />
@@ -27,7 +29,7 @@
 
         <!--Secção "Import" -->
         <div class="section_container">
-          <input type="checkbox" name="import_collapsible" id="import_collapsible" />
+          <input type="checkbox" name="section_collapsible" id="import_collapsible" value="0" />
           <label class="section_title" id="import_title_container" for="import_collapsible">
             <h4>Decomposition</h4>
           </label>
@@ -37,40 +39,37 @@
             <form id="upload_image_form">
               <label class="btn">
                 Select
-                <input type="file" name="files" accept="image/*" multiple />
+                <input type="file" name="files" accept="image/png, image/jpg, image/jpeg" multiple />
               </label>
               <button class="btn" type="submit">Upload</button>
               <p id="upload_image_message"></p>
             </form>
 
-            <hr class="divider" />
-
             <div id="imports_container">
+              <hr class="divider" />
               <h5>Previous Uploads</h5>
               <div id="imports_dropdown_container">
                 <label for="imports_dropdown"></label>
-                <select class="btn" name="imports_dropdown" id="imports_dropdown">
-                  <option value="" selected disabled hidden>Choose here</option>
-                </select>
+                <select class="btn" name="imports_dropdown" id="imports_dropdown"></select>
               </div>
 
-              <hr class="divider" />
+              <!-- <hr class="divider" /> -->
             </div>
 
             <!-- Group Selection -->
-            <h5>Filter by Group</h5>
+            <!-- <h5>Filter by Group</h5>
             <div id="group_selection_container">
               <button class="btn_inverted" id="group_selection_sub" type="button">-</button>
               <input type="number" id="group_selection_info" />
               <button class="btn_inverted" id="group_selection_add" type="button">+</button>
               <button class="btn" id="group_selection_all" type="button">All</button>
-            </div>
+            </div> -->
           </div>
         </div>
 
         <!--Secção "Composition" -->
         <div class="section_container">
-          <input type="checkbox" name="composition_collapsible" id="composition_collapsible" />
+          <input type="checkbox" name="section_collapsible" id="composition_collapsible" value="1" />
           <label class="section_title" id="composition_title_container" for="composition_collapsible">
             <h4>Composition</h4>
           </label>
@@ -79,13 +78,17 @@
             <!-- Canvas Ratio -->
             <h5>Canvas Ratio</h5>
             <div id="canvas_ratio_container">
-              <input class="slider" id="canvas_ratio" name="canvas_ratio" type="range" step="25" list="canvas_ratio_values" />
+              <input class="slider" id="canvas_ratio" name="canvas_ratio" type="range" step="12.5" list="canvas_ratio_values" />
               <datalist class="slider" id="canvas_ratio_values">
-                <option class="label" value="0" label="1:1"></option>
-                <option class="label" value="25" label="3:4"></option>
-                <option class="label" value="50" label="4:3"></option>
-                <option class="label" value="75" label="4:5"></option>
-                <option class="label" value="100" label="9:16"></option>
+                <option class="label" value="0">16:9</option>
+                <option class="label" value="12.5">3:2</option>
+                <option class="label" value="25">4:3</option>
+                <option class="label" value="37.5">5:4</option>
+                <option class="label" value="50">1:1</option>
+                <option class="label" value="62.5">3:4</option>
+                <option class="label" value="75">4:5</option>
+                <option class="label" value="87.5">2:3</option>
+                <option class="label" value="100">9:16</option>
               </datalist>
             </div>
 
@@ -112,22 +115,55 @@
 
             <hr class="divider" />
 
-            <h5>Quantity of Groups</h5>
+            <!-- Dimensões dos Grupos -->
+            <h5>Groups Dimensions</h5>
             <div id="groups_container">
-              <input class="slider" id="number_elements" name="number_elements" type="range" list="number_elements_values" />
-              <datalist class="slider" id="number_elements_values">
+              <p>Width</p>
+              <input class="slider" id="group_width" name="group_width" type="range" value="0.7" min="0.2" max="1" step="any" list="group_width_values" />
+              <datalist class="slider" id="group_width_values">
                 <option class="label" value="0" label="0%"></option>
-                <option class="label" value="100" label="100%"></option>
+                <option class="label" value="1" label="100%"></option>
+              </datalist>
+
+              <p>Height</p>
+              <input class="slider" id="group_height" name="group_height" type="range" value="0.7" min="0.2" max="1" step="any" list="group_height_values" />
+              <datalist class="slider" id="group_height_values">
+                <option class="label" value="0" label="0%"></option>
+                <option class="label" value="1" label="100%"></option>
               </datalist>
             </div>
 
             <hr class="divider" />
 
             <!-- Cores -->
-            <h5>Colors</h5>
+            <h5>Color</h5>
             <div id="colors_container">
+              <div id="color_input_container">
+                <div id="color_picker">
+                  <label for="user_color"></label>
+                  <input type="color" id="user_color" name="user_color" value="#EBFA64" />
+                  <!-- <p class="label">Accent</p> -->
+                </div>
+
+                <div id="color_text">
+                  <span>#</span>
+                  <label for="color_hex"></label>
+                  <input id="color_hex" name="color_hex" type="text" maxlength="6" />
+                </div>
+              </div>
+
+              <div id="color_options">
+                <label for="group_color_variation">
+                  <p>Group Color Variation</p>
+                  <input type="checkbox" name="group_color_variation" id="group_color_variation" checked />
+                  <span class="mark"></span>
+                </label>                
+              </div>
+
+              <!--               
               <div class="color_instance">
                 <label for="background_color"></label>
+                <input type="color" id="colorInput" value="#ff0000">
                 <input type="color" id="background_color" name="background_color" value="#F7F6F5" />
                 <p class="label">Background</p>
               </div>
@@ -148,7 +184,7 @@
                 <label for="text_color"></label>
                 <input type="color" id="text_color" name="text_color" value="#000000" />
                 <p class="label">Text</p>
-              </div>
+              </div> -->
             </div>
 
             <hr class="divider" />
@@ -157,14 +193,14 @@
             <h5>Grain</h5>
             <div id="grain_container">
               <p>Size</p>
-              <input class="slider" id="grain_size" name="grain_amount" type="range" list="grain_size_values" />
+              <input class="slider" id="grain_size" name="grain_amount" type="range" min="0" max="1" step="any" list="grain_size_values" />
               <datalist class="slider" id="grain_size_values">
                 <option class="label" value="0" label="0%"></option>
                 <option class="label" value="100" label="100%"></option>
               </datalist>
 
               <p>Amount</p>
-              <input class="slider" id="grain_amount" name="grain_amount" type="range" list="grain_amount_values" />
+              <input class="slider" id="grain_amount" name="grain_amount" type="range" min="0" max="1" step="any" list="grain_amount_values" />
               <datalist class="slider" id="grain_amount_values">
                 <option class="label" value="0" label="0%"></option>
                 <option class="label" value="100" label="100%"></option>
@@ -189,10 +225,29 @@
     <script src="scripts/Mask.js"></script>
     <script src="scripts/SemanticGroup.js"></script>
     <script src="scripts/Composition.js"></script>
-    <script src="scripts/apiUpload.js"></script>
-    <script src="scripts/apiMasks.js"></script>
+    <script src="scripts/PreviewChanges.js"></script>
+    <script src="scripts/APIUpload.js"></script>
+    <script src="scripts/APIMasks.js"></script>
+    <script src="scripts/PoolCell.js"></script>
     <script src="scripts/MasksPool.js"></script>
     <script src="scripts/sketch.js"></script>
     <script src="scripts/batchExport.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const colorPicker = document.getElementById("user_color");
+        const hexInput = document.getElementById("color_hex");
+
+        colorPicker.addEventListener("input", (e) => {
+          hexInput.value = e.target.value.replace("#", "");
+        });
+
+        hexInput.addEventListener("input", (e) => {
+          let hex = e.target.value;
+          colorPicker.value = "#" + hex;
+        });
+
+        hexInput.value = colorPicker.value.replace("#", "");
+      });
+    </script>
   </body>
 </html>

@@ -61,7 +61,7 @@ class MaskFilter:
         largest_mask_pixels = -1
 
         for mask in masks:
-            if mask["mask_pixels"] > largest_mask_pixels:
+            if mask["mask_pixels"] >= largest_mask_pixels:
                 largest_mask_pixels = mask["mask_pixels"]
                 largest_mask = mask
         return largest_mask
@@ -69,13 +69,14 @@ class MaskFilter:
     # Verificar se a máscara está contida na "largest_mask"
     def check_contained(self, current_mask, largest_mask):
         # return np.all((current_mask == 255) <= (largest_mask == 255))
-        tolerance = 200;
-        difference = np.sum((current_mask == 255) & (largest_mask != 255))            
+        tolerance = 200
+        difference = np.sum((current_mask == 255) & (largest_mask != 255))
         return difference <= tolerance
 
     def run(self):
         groups = self.create_key_groups(self.segmentation_data, self.concepts_data)
         data = []
+        labels_info = []
 
         for key_groups in groups:
             group_data = []
@@ -85,7 +86,7 @@ class MaskFilter:
 
                 # Obter máscara binária
                 largest_mask_binary = cv2.imread(
-                    largest_mask["mask"], cv2.IMREAD_GRAYSCALE
+                    largest_mask["binary_mask_path"], cv2.IMREAD_GRAYSCALE
                 )
                 ret, largest_mask_mask = cv2.threshold(
                     largest_mask_binary, 127, 255, cv2.THRESH_BINARY
@@ -114,7 +115,9 @@ class MaskFilter:
 
                 for mask in masks:
                     # Obter a máscara atual
-                    current_mask_binary = cv2.imread(mask["mask"], cv2.IMREAD_GRAYSCALE)
+                    current_mask_binary = cv2.imread(
+                        mask["binary_mask_path"], cv2.IMREAD_GRAYSCALE
+                    )
                     ret, current_mask_mask = cv2.threshold(
                         current_mask_binary, 127, 255, cv2.THRESH_BINARY
                     )
@@ -141,7 +144,8 @@ class MaskFilter:
                             ) == key:
                                 # Adicionar label da "largest_mask"
                                 group_data[i]["label"] = detection["label"]
+                                labels_info.append(detection["label"])
 
             data.append(group_data)
 
-        return data
+        return data, labels_info

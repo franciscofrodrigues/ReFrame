@@ -14,6 +14,7 @@ SERVER_PATH = "server"
 WEIGHTS_PATH = os.path.join(SERVER_PATH, "weights")
 FASTSAM_WEIGHTS = os.path.join(WEIGHTS_PATH, "FastSAM-x.pt")
 YOLO_WEIGHTS = os.path.join(WEIGHTS_PATH, "yolo11x.pt")
+YOLO_SEG_WEIGHTS = os.path.join(WEIGHTS_PATH, "yolo11x-seg.pt")
 
 # Resources
 RES_PATH = os.path.join(SERVER_PATH, "res")
@@ -22,3 +23,5 @@ UPLOADS_PATH = os.path.join(RES_PATH, "uploads")
 
 # Atributos gerais
 DEBUG_MODE = True
+
+TOKEN = "test_user_123"

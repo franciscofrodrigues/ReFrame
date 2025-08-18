@@ -1,3 +1,7 @@
+let current_folder_name = "";
+const imports_container = document.getElementById("imports_container");
+const imports_dropdown = document.querySelector("select[name='imports_dropdown']");
+
 // Atualizar número de ficheiros (imagens) selecionados
 const upload_image_input = document.querySelector('#upload_image_form input[type="file"]');
 const upload_image_button = document.querySelector('#upload_image_form button[type="submit"]');
@@ -65,6 +69,8 @@ async function check_current_state(uuid) {
         await get_masks(task.folder_name);
         toggle_loader(false);
         save_import(task);
+        current_folder_name = task.folder_name;
+        imports_dropdown.value = current_folder_name;
       }
     } catch (error) {
       clearInterval(call_interval);
@@ -81,8 +87,6 @@ function save_import(task) {
   update_imports_list();
 }
 
-const imports_container = document.getElementById("imports_container");
-const imports_dropdown = document.querySelector("select[name='imports_dropdown']");
 imports_dropdown.addEventListener("change", async () => {
   await get_import_masks();
 });
@@ -93,19 +97,23 @@ async function get_import_masks() {
   const index = imports_dropdown.selectedIndex - 1;
 
   await get_masks(data[index].folder_name);
+  current_folder_name = data[index].folder_name;
+  imports_dropdown.value = current_folder_name;
 }
 
 function update_imports_list() {
   const imports = sessionStorage.getItem("imports");
+  imports_dropdown.innerHTML = '<option value="" selected disabled>Choose here</option>';
   if (imports) {
     imports_container.style.display = "block";
     const data = JSON.parse(imports);
     for (let i = 0; i < data.length; i++) {
       let select_option = document.createElement("option");
       select_option.value = data[i].folder_name;
-      select_option.innerHTML = `Import ${i}`;
-      imports_dropdown.appendChild(select_option);
+      select_option.innerHTML = `Elements: ${data[i].labels}`;
+      imports_dropdown.appendChild(select_option);      
     }
+    imports_dropdown.selectedIndex = 1;
   } else {
     imports_container.style.display = "none";
   }

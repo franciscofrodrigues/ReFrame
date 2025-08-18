@@ -8,6 +8,7 @@ class SemanticGroup {
     this.w = 10;
     this.h = 10;
     this.ang = 0;
+    this.color = color(0,0,100);
 
     this.masks = [];
     this.mask_inc = 0;
@@ -41,29 +42,13 @@ class SemanticGroup {
     pg.pop();
   }
 
-  update(pg) {
-    for (let i = 0; i < this.masks.length; i++) {
-      this.masks[i].ratio = this.masks[i].mask.width / this.masks[i].mask.height;
-      this.masks[i].w = (this.w / this.masks.length) * this.masks[i].scl_noise;
-
-      if (this.masks[i].w / this.masks[i].ratio > this.h) {
-        this.masks[i].h = this.h;
-        this.masks[i].w = this.h * this.masks[i].ratio;
-
-        // Reposicionar no centro do grupo
-        this.masks[i].y = 0;
-      } else {
-        this.masks[i].h = this.masks[i].w / this.masks[i].ratio;
-
-        // Distribuição vertical incremental
-        this.masks[i].y = -this.h / 2 + this.masks[i].h / 2 + i * this.mask_inc;
-      }
-    }
-  }
+  update(pg) {}
 
   recompose() {
     for (let i = 0; i < this.masks.length; i++) {
+      this.masks[i].color = this.color;
       this.masks[i].recompose();
+      this.scale_masks(i);
       this.reposition_masks(i);
     }
     shuffle(this.masks, true);
@@ -71,11 +56,11 @@ class SemanticGroup {
 
   reposition_masks(index) {
     // Calcular o incremento de acordo com altura (h) do grupo
-    this.mask_inc = this.h / this.masks.length;
+    this.mask_inc = this.h / (this.masks.length - 1);
 
     // Caso o grupo contenha mais que uma máscara
     if (this.masks.length > 1) {
-      const max_tries = 200;
+      const max_tries = 100;
       let tries = 0;
       let overlap = true;
 
@@ -100,6 +85,24 @@ class SemanticGroup {
       // Posicionamento central
       this.masks[index].x = 0;
       this.masks[index].y = 0;
+    }
+  }
+
+  scale_masks(index) {
+    this.masks[index].ratio = this.masks[index].mask.width / this.masks[index].mask.height;
+    this.masks[index].w = (this.w / this.masks.length) * this.masks[index].scl_noise;
+
+    if (this.masks[index].w / this.masks[index].ratio > this.h) {
+      this.masks[index].h = this.h;
+      this.masks[index].w = this.h * this.masks[index].ratio;
+
+      // Reposicionar no centro do grupo
+      this.masks[index].y = 0;
+    } else {
+      this.masks[index].h = this.masks[index].w / this.masks[index].ratio;
+
+      // Distribuição vertical incremental
+      this.masks[index].y = -this.h / 2 + index * this.mask_inc;
     }
   }
 }

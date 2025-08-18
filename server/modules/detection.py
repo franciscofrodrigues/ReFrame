@@ -10,15 +10,16 @@ class Detection:
         self.outputs_path = outputs_path
         
         # Padding do CROP
-        self.padding = 10
+        self.padding = 30
 
         # Configuração do modelo
         self.device = 'cpu'
         self.save = False
-        self.imgsz = 320
-        self.conf = 0.2
-        self.iou = 0.7
-
+        self.batch = 4
+        self.imgsz = 640        
+        self.conf = 0.6
+        self.iou = 0.6
+                
     def get_label(self, box):
         return self.model.names[int(box.cls.item())] 
     
@@ -42,7 +43,7 @@ class Detection:
     # OBJECT DETECTION de VÁRIAS imagens
     def run(self):
         # Inferência
-        results = self.model(self.input_files, device=self.device, save=self.save, imgsz=self.imgsz, conf=self.conf, iou=self.iou)
+        results = self.model(self.input_files, device=self.device, save=self.save, batch=self.batch, imgsz=self.imgsz, conf=self.conf, iou=self.iou)
         
         if results:
             inputs_data = []
@@ -67,29 +68,31 @@ class Detection:
                     "crops_folder": crops_folder,
                     "segmentation_folder": segmentation_folder,
                 })
-
-                for j, box in enumerate(result.boxes):
-                    label = self.get_label(box) # LABEL
-                    confidence = self.get_confidence(box) # CONFIDENCE
-                    x1, y1, x2, y2 = self.get_bbox(box) # BBOX                                     
-                    
-                    # Lógica de CROP
-                    cropped_img = self.crop_object(img, x1, y1, x2, y2)
-                    output_path = save_output(crops_folder, cropped_img, f'x{x1}_y{y1}_x{x2}_y{y2}_conf{confidence}', "crops")
+                            
+                # result.show()
+                if result.boxes:
+                    for j, box in enumerate(result.boxes):
+                        label = self.get_label(box) # LABEL
+                        confidence = self.get_confidence(box) # CONFIDENCE
+                        x1, y1, x2, y2 = self.get_bbox(box) # BBOX                                     
                         
-                    data.append({
-                        "input_image_index": i,
-                        "detection_index": j,
-                        "label": label,
-                        "confidence": confidence,
-                        "bbox": [x1, y1, x2, y2],
-                        "result_image_path": output_path,                    
-                    })                
+                        # Lógica de CROP
+                        cropped_img = self.crop_object(img, x1, y1, x2, y2)
+                        output_path = save_output(crops_folder, cropped_img, f'x{x1}_y{y1}_x{x2}_y{y2}_conf{confidence}', "crops")
+                            
+                        data.append({
+                            "input_image_index": i,
+                            "detection_index": j,
+                            "label": label,
+                            "confidence": confidence,
+                            "bbox": [x1, y1, x2, y2],
+                            "result_image_path": output_path                    
+                        })                
 
             return folders_data, inputs_data, data
 
 # ------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    detection = Detection('weights/yolo11x.pt', 'res/uploads', 'res/outputs')
+    detection = Detection('weights/yolo11x.pt', 'res/uploads', 'res/outputs/modules/detection')
     print(detection.run())

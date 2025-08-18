@@ -25,7 +25,7 @@ def pipeline(uploads_path, outputs_path, json_structure, task_uuid, tasks):
     
     # FILTRAR MÁSCARAS
     tasks[task_uuid].step = "Filtering Masks..."
-    mask_filter(outputs_path, json_structure)
+    labels_info = mask_filter(outputs_path, json_structure)
 
     # Exportar ficheiro JSON de LOTE
     tasks[task_uuid].step = "Saving Results..."
@@ -33,8 +33,8 @@ def pipeline(uploads_path, outputs_path, json_structure, task_uuid, tasks):
     save_json(json_structure, outputs_path, filename)
 
     tasks[task_uuid].folder_name = filename
-    tasks[task_uuid].status = "Process End"
-    tasks[task_uuid].result = json_structure
+    tasks[task_uuid].status = "Process End"    
+    tasks[task_uuid].labels = format_labels_list(labels_info)
     
 
 # ------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ def semantic_relations(json_structure):
                 "input_image_index": segmentation["input_image_index"],
                 "detection_index": segmentation["detection_index"],
                 "mask_index": segmentation["mask_index"],
-                "label": label,
+                "label": label
             }
         )
     
@@ -99,9 +99,18 @@ def mask_filter(outputs_path, json_structure):
         json_structure["segmentation"],
         json_structure["concepts"],
         inverse_folder,
-        contained_folder,
+        contained_folder
     )
-    mask_filter_data = mask_filter.run()
+    mask_filter_data, labels_info = mask_filter.run()
 
     # Estrutura do JSON (Módulo Filtrar Máscaras (MASK FILTER))
     json_structure["result"].extend(mask_filter_data)
+    return labels_info
+
+# ------------------------------------------------------------------------------
+
+def format_labels_list(labels_list):
+    if not labels_list:
+        return "No elements found"
+    else:
+        return ", ".join(label.capitalize() for label in labels_list)

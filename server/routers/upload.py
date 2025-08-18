@@ -8,17 +8,16 @@ from pydantic import BaseModel, Field
 from typing import Dict, List
 from uuid import UUID, uuid4
 
-    
-class Task(BaseModel):
+class Upload(BaseModel):
     uuid: UUID = Field(default_factory=uuid4)
     folder_name: str
     status: str = "Process Start"
     step: str = "Upload"
-    result: Dict = Field(default_factory=dict)
+    labels: str = "No elements found"
 
 
 router = APIRouter(prefix="/upload", tags=["upload"])
-tasks: Dict[UUID, Task] = {}
+uploads: Dict[UUID, Upload] = {}
 
 
 @router.post("")
@@ -46,15 +45,15 @@ async def upload_images(background_tasks: BackgroundTasks, files: List[UploadFil
     folder_name, group_path, group_data = create_group(config.OUTPUTS_PATH)
 
     # Adicionar nova tarefa à QUEUE
-    new_task = Task(folder_name=folder_name)
-    tasks[new_task.uuid] = new_task
+    new_upload = Upload(folder_name=folder_name)
+    uploads[new_upload.uuid] = new_upload
     
     # Executar PIPELINE
-    background_tasks.add_task(pipeline, paths, group_path, group_data, new_task.uuid, tasks)
+    background_tasks.add_task(pipeline, paths, group_path, group_data, new_upload.uuid, uploads)
 
-    return new_task
+    return new_upload
 
 
 @router.get("/{uuid}/status")
 async def get_status(uuid: UUID):
-    return tasks[uuid]
+    return uploads[uuid]

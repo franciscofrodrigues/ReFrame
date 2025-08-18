@@ -1,11 +1,3 @@
-function load_image_async(url) {
-  return new Promise((resolve, reject) => {
-    loadImage(url, img => resolve(img), err => reject(err));
-  });
-}
-
-
-
 // JSON
 async function get_result_data(folder_name) {
     const url = `${endpoint_api}/masks/${folder_name}/result`;
@@ -22,35 +14,25 @@ async function get_result_data(folder_name) {
     }
 }
 
-// // Carregar "largest_mask" e máscara invertida
-// function get_mask_img(folder_name, group_index, result_index, inverse) {
-//   const url = `${endpoint_api}/masks/${folder_name}/result/${group_index}/${result_index}.png?inverse=${inverse}`;
-//   const img = loadImage(url);
-//   return img;
-// }
-
-// // Carregar máscara contidas
-// function get_contained_mask_img(folder_name, group_index, result_index, contained_index) {
-//   const url = `${endpoint_api}/masks/${folder_name}/result/${group_index}/${result_index}/contained/${contained_index}.png`;
-//   const img = loadImage(url);
-//   return img;
-// }
-
+// Carregar "largest_mask" e máscara invertida
 function get_mask_img(folder_name, group_index, result_index, inverse) {
   const url = `${endpoint_api}/masks/${folder_name}/result/${group_index}/${result_index}.png?inverse=${inverse}`;
-  const img = load_image_async(url);
+  const img = loadImage(url);
   return img;
 }
+
+// Carregar máscara contidas
 function get_contained_mask_img(folder_name, group_index, result_index, contained_index) {
   const url = `${endpoint_api}/masks/${folder_name}/result/${group_index}/${result_index}/contained/${contained_index}.png`;
-  const img = load_image_async(url);
+  const img = loadImage(url);
   return img;
 }
 
 // Obter máscaras resultantes da pipeline
 async function get_masks(folder_name) {
-  masks.length = 0;
-  semantic_groups.length = 0;
+  masks = [];
+  unselected_masks = [];
+  semantic_groups = [];
   toggle_loader(true);
   update_loader_info("Loading Masks...");
 

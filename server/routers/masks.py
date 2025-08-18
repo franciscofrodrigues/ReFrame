@@ -1,7 +1,7 @@
 import config
 from utils.file_export import get_filename
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from fastapi.responses import FileResponse, JSONResponse
 from functools import lru_cache
 import json
@@ -11,7 +11,7 @@ import os
 router = APIRouter(prefix="/masks", tags=["masks"])
 
 
-@lru_cache()
+@lru_cache(maxsize=16)
 def read_json(folder_name):
     # Carregar JSON
     json_path = os.path.join(config.OUTPUTS_PATH, folder_name, f"{folder_name}.json")
