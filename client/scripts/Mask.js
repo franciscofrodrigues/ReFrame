@@ -161,16 +161,12 @@ class Mask {
         pg.push();
         pg.translate(-this.w / 2, -this.h / 2);
         let scaled = createVector(this.silhouette_mask_centroid.x * this.w, this.silhouette_mask_centroid.y * this.h);
-        let line = this.curves[1][0];
-        // this.shape_along_line(pg, this.silhouette_mask_copy, scaled, this.pick_color(), line, line.steps, false, true, false, false);
-        this.shape_along_line(pg, this.silhouette_mask_copy, scaled, this.color, line, line.steps, false, true, false, false);
-        // this.shape_along_line(pg, this.silhouette_mask_copy, scaled, this.get_monochromatic_color(this.color), line, line.steps, false, true, false, false);
+        let line = this.curves[1][0];        
+        this.shape_along_line(pg, this.silhouette_mask_copy, scaled, this.pick_color(), line, line.steps, false, true, false, false);
         pg.pop();
       } else {
         pg.push();
-        // pg.tint(this.get_monochromatic_color(this.color));
-        pg.tint(this.color);
-        // pg.tint(this.pick_color());
+        pg.tint(this.pick_color());
         pg.image(this.silhouette_mask_copy, this.silhouette_offsetX, this.silhouette_offsetY, this.w, this.h);
         pg.pop();
       }
@@ -193,15 +189,11 @@ class Mask {
           pg.translate(-this.w / 2, -this.h / 2);
           let scaled = createVector(this.contained_mask_centroids[i].x * this.w, this.contained_mask_centroids[i].y * this.h);
           let line = this.curves[2][i];
-          // this.shape_along_line(pg, this.contained_mask_copies[i], scaled, this.pick_color(), line, line.steps, true, true, false, false);
-          this.shape_along_line(pg, this.contained_mask_copies[i], scaled, this.color, line, line.steps, true, true, false, false);
-          // this.shape_along_line(pg, this.contained_mask_copies[i], scaled, this.get_monochromatic_color(this.color), line, line.steps, true, true, false, false);
+          this.shape_along_line(pg, this.contained_mask_copies[i], scaled, this.pick_color(), line, line.steps, true, true, false, false);
           pg.pop();
         } else {
           pg.push();
-          // pg.tint(this.get_monochromatic_color(this.color));
-          pg.tint(this.color);
-          // pg.tint(this.pick_color());
+          pg.tint(this.pick_color());
           pg.image(this.contained_mask_copies[i], 0, 0, this.w, this.h);
           pg.pop();
         }
@@ -283,26 +275,45 @@ class Mask {
     return normalized;
   }
 
+  pick_color() {
+    let picked_color;
+    if(this.color_variation_type == 0) {
+      picked_color = this.color;
+    } else if (this.color_variation_type == 1) {
+      picked_color = this.get_monochromatic_color(this.color);
+    } else if (this.color_variation_type == 2) {
+      picked_color = this.get_random_color();
+    }
+    return picked_color;
+  }
+
   get_monochromatic_color(c) {
-    let mono_color = color(hue(c), random(50, 80), random(50, 80));
+    let mono_color = color(hue(c), random(20, 80), random(50, 80));
     return mono_color;
   }
 
-  pick_color() {
-    // let color_palette = ["#00FFFF", "#FF00FF", "#FFFF00"];
-    let color_palette = ["#F299B9", "#027333", "#F2AB27", "#F2220F"];
-    return random(color_palette);
+  get_random_color() {
+    let random_color = color(random(360), random(70, 90), random(70, 90));
+    return random_color;
   }
+
+  // pick_color() {
+  //   // let color_palette = ["#00FFFF", "#FF00FF", "#FFFF00"];
+  //   let color_palette = ["#F299B9", "#027333", "#F2AB27", "#F2220F"];
+  //   return random(color_palette);
+  // }
 
   // ---------------------------------------------------------------------------
 
   // BEZIER
   init_curves() {
     this.curves[0][0] = this.bezier_line(this.mask_centroid, 20, 0, true, 1, 10);
-    this.curves[1][0] = this.bezier_line(this.silhouette_mask_centroid, random(20, max(comp_graphics_w, comp_graphics_h)), 0, true, 1, 10);
+    // this.curves[1][0] = this.bezier_line(this.silhouette_mask_centroid, random(20, max(comp_graphics_w, comp_graphics_h)), 0, true, 1, 10);
+    this.curves[1][0] = this.bezier_line(this.silhouette_mask_centroid, random(20, 200), 0, true, 1, 10);
 
     for (let i = 0; i < this.contained_masks.length; i++) {
-      this.curves[2][i] = this.bezier_line(this.contained_mask_centroids[i], random(20, max(comp_graphics_w, comp_graphics_h)), 20, false, 1, 20);
+      // this.curves[2][i] = this.bezier_line(this.contained_mask_centroids[i], random(20, max(comp_graphics_w, comp_graphics_h)), 20, false, 1, 20);
+      this.curves[2][i] = this.bezier_line(this.contained_mask_centroids[i], random(20, 200), 20, false, 1, 20);
     }
   }
 

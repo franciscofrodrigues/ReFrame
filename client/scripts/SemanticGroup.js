@@ -9,6 +9,7 @@ class SemanticGroup {
     this.h = 10;
     this.ang = 0;
     this.color = color(0,0,100);
+    this.color_variation_type = 0;
 
     this.masks = [];
     this.mask_inc = 0;
@@ -47,6 +48,8 @@ class SemanticGroup {
   recompose() {
     for (let i = 0; i < this.masks.length; i++) {
       this.masks[i].color = this.color;
+      this.masks[i].color_variation_type = this.color_variation_type;
+
       this.masks[i].recompose();
       this.scale_masks(i);
       this.reposition_masks(i);

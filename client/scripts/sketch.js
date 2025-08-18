@@ -29,7 +29,7 @@ function setup() {
   // API
   // port_api = "8000";
   // endpoint_api = `http://localhost:${port_api}`;
-  endpoint_api = `https://loc-mixed-edited-jeremy.trycloudflare.com`;
+  endpoint_api = window.location.protocol + "//" + window.location.host;
 
   // Inicializar "masks", "unselected_masks" e "semantic_groups"
   masks = [];
@@ -222,6 +222,8 @@ function apply_changes() {
   const user_color_picker = select('input[name="user_color"]');
   user_color = color(user_color_picker.value());
 
+  const color_variation_type = select('input[name="color_variation"]:checked').value();
+
   const max_group_w_factor = select('input[name="group_width"]').value();
   const max_group_h_factor = select('input[name="group_height"]').value();
 
@@ -254,7 +256,7 @@ function apply_changes() {
   comp_graphics.textFont(font);
   comp_graphics.textSize(12);
 
-  composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, grid_type, user_color, max_group_w_factor, max_group_h_factor);
+  composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, grid_type, user_color, color_variation_type, max_group_w_factor, max_group_h_factor);
   composition.semantic_groups = semantic_groups;
   composition.recompose();
 

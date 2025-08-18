@@ -1,5 +1,5 @@
 class Composition {
-  constructor(pg, w, h, grid_type, user_color, max_group_w_factor, max_group_h_factor) {
+  constructor(pg, w, h, grid_type, user_color, color_variation_type, max_group_w_factor, max_group_h_factor) {
     randomSeed(seed);
 
     this.pg = pg;
@@ -11,6 +11,7 @@ class Composition {
     
     this.user_color = user_color;
     this.complementary_color = this.get_complementary_color(this.user_color);
+    this.color_variation_type = color_variation_type;
 
     this.semantic_groups = [];
 
@@ -75,6 +76,7 @@ class Composition {
     for (let i = 0; i < this.semantic_groups.length; i++) {
       this.reposition(i);
       this.semantic_groups[i].color = this.main_palette[i];
+      this.semantic_groups[i].color_variation_type = this.color_variation_type;
       this.semantic_groups[i].recompose();      
     }
   }

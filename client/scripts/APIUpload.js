@@ -111,7 +111,7 @@ function update_imports_list() {
       let select_option = document.createElement("option");
       select_option.value = data[i].folder_name;
       select_option.innerHTML = `Elements: ${data[i].labels}`;
-      imports_dropdown.appendChild(select_option);      
+      imports_dropdown.appendChild(select_option);
     }
     imports_dropdown.selectedIndex = 1;
   } else {

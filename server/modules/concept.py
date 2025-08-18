@@ -12,7 +12,7 @@ class Concept:
         
         # Obter todos os conceitos relacionados para determinada label
         try:
-            response = requests.get(f"https://api.conceptnet.io/query?node=/c/en/{label}&rel=/r/{relation_type}&filter=/c/en&limit={limit}").json()
+            response = requests.get(f"https://api.conceptnet.io/query?node=/c/en/{label}&rel=/r/{relation_type}&filter=/c/en&limit={limit}").json()            
             concepts = {edge["end"]["label"] for edge in response["edges"]}
             return list(concepts)
         except requests.RequestException:

@@ -58,7 +58,7 @@ async function batch_export() {
             user_color = settings.color[k];
 
             // Composition
-            composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, settings.grid[l], user_color, 1, 1);
+            composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, settings.grid[l], user_color, 0, 1, 1);
             composition.semantic_groups = semantic_groups;
 
             composition.recompose();

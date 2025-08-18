@@ -21,6 +21,7 @@
         <p id="loader_info">&nbsp;</p>
       </div>
 
+
       <div id="sidebar">
         <!--Logo -->
         <div id="logo_container">
@@ -97,17 +98,17 @@
             <!-- Distribuição -->
             <h5>Groups Distribution</h5>
             <div id="distribution_container">
-              <div class="distribution_option">
+              <div class="radio_option">
                 <input type="radio" id="thirds" name="distribution" value="0" checked />
                 <label for="thirds">Thirds</label>
               </div>
 
-              <div class="distribution_option">
+              <div class="radio_option">
                 <input type="radio" id="center" name="distribution" value="1" />
                 <label for="center">Center</label>
               </div>
 
-              <div class="distribution_option">
+              <div class="radio_option">
                 <input type="radio" id="random_point" name="distribution" value="2" />
                 <label for="random_point">Random Point</label>
               </div>
@@ -138,6 +139,7 @@
             <!-- Cores -->
             <h5>Color</h5>
             <div id="colors_container">
+              <p>Main Color</p>
               <div id="color_input_container">
                 <div id="color_picker">
                   <label for="user_color"></label>
@@ -152,13 +154,31 @@
                 </div>
               </div>
 
-              <div id="color_options">
+              <p>Group Variation</p>
+              <div id="color_variation_container">
+                <div class="radio_option">
+                  <input type="radio" id="unique" name="color_variation" value="0" checked />
+                  <label for="unique">Unique</label>
+                </div>
+
+                <div class="radio_option">
+                  <input type="radio" id="mono" name="color_variation" value="1" />
+                  <label for="mono">Monochromatic</label>
+                </div>
+
+                <div class="radio_option">
+                  <input type="radio" id="random" name="color_variation" value="2" />
+                  <label for="random">Random</label>
+                </div>
+              </div>
+
+              <!-- <div id="color_options">
                 <label for="group_color_variation">
                   <p>Group Color Variation</p>
                   <input type="checkbox" name="group_color_variation" id="group_color_variation" checked />
                   <span class="mark"></span>
-                </label>                
-              </div>
+                </label>
+              </div> -->
 
               <!--               
               <div class="color_instance">
@@ -187,10 +207,10 @@
               </div> -->
             </div>
 
-            <hr class="divider" />
+            <!-- <hr class="divider" /> -->
 
             <!-- Grain -->
-            <h5>Grain</h5>
+            <!-- <h5>Grain</h5>
             <div id="grain_container">
               <p>Size</p>
               <input class="slider" id="grain_size" name="grain_amount" type="range" min="0" max="1" step="any" list="grain_size_values" />
@@ -205,7 +225,7 @@
                 <option class="label" value="0" label="0%"></option>
                 <option class="label" value="100" label="100%"></option>
               </datalist>
-            </div>
+            </div> -->
 
             <hr class="divider" />
 
