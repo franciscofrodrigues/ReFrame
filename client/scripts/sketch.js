@@ -11,8 +11,8 @@ let result_json;
 let comp_graphics, comp_graphics_ratio, comp_graphics_w, comp_graphics_h;
 let masks, unselected_masks, masks_pool, semantic_groups, composition, ratio_values;
 
-let seed;
-let masks_pool_visible, debug;
+// Sketch
+let seed, debug;
 
 // ---------------------------------------------------------------------------
 
@@ -22,7 +22,6 @@ function preload() {
 
 function setup() {
   cnv = createCanvas(100, 100);
-  // cnv = createCanvas(100, 100);
   cnv.drawingContext = cnv.elt.getContext("2d", { willReadFrequently: true });
   cnv.parent("#canvas");
 
@@ -55,20 +54,34 @@ function setup() {
   overlay_alpha = 150;
 
   // Botões
-  let apply_changes_btn = select("#apply_changes_btn");
+  // Botão "Apply Changes"
+  const apply_changes_btn = select("#apply_changes_btn");
   apply_changes_btn.mousePressed(() => {
-    apply_changes();    
+    apply_changes();
   });
 
-  let export_btn = select("#export_btn");
+  // Botão Export
+  const export_btn = select("#export_btn");
   export_btn.mousePressed(() => {
     save_output();
   });
 
+  // Botão "Open Library"
+  const mask_pool_btn = select("#mask_pool_btn");
+  mask_pool_btn.mousePressed(() => {
+    init_mask_pool();
+    toggle_mask_pool();
+  });
+
+  // Dropdown Imports
+  const imports_dropdown = select("select[name='imports_dropdown']");
+  imports_dropdown.changed(() => {
+    init_mask_pool();
+    mask_selection = false;
+  });
+
   // Mask Pool
-  // masks_pool = new MasksPool(masks, -width / 2, -height / 2, width, height, 5, 5);
   masks_pool = new MasksPool(masks, unselected_masks, 0, 0, width, height, 5, 5);
-  masks_pool_visible = false;
 
   // Preview Changes
   preview_changes = new PreviewChanges(0, 0, width, height, ratio_values, composition);
@@ -104,17 +117,13 @@ function draw() {
     push();
     drawingContext.shadowOffsetX = 0;
     drawingContext.shadowOffsetY = 0;
-    // drawingContext.shadowOffsetX = 10;
-    // drawingContext.shadowOffsetY = 10;
-    drawingContext.shadowBlur = 10;
+    drawingContext.shadowBlur = 30;
     drawingContext.shadowColor = comp_shadow_color;
     noStroke();
     fill(bg_color);
-    // rect(0, 0, comp_graphics_w, comp_graphics_h);
     rect(width / 2, height / 2, comp_graphics_w, comp_graphics_h);
     pop();
 
-    // image(comp_graphics, 0, 0, comp_graphics_w, comp_graphics_h);
     image(comp_graphics, width / 2, height / 2, comp_graphics_w, comp_graphics_h);
 
     // Preview Changes
@@ -125,25 +134,17 @@ function draw() {
 // ---------------------------------------------------------------------------
 
 function keyPressed() {
-  if (key === "b" || key === "B") {
-    batch_export();
-  }
+  // if (key === "b" || key === "B") {
+  //   batch_export();
+  // }
 
-  if (key === "s" || key == "S") {
-    save_output();
-  }
-
-  if (key === "p" || key === "P") {
-    mask_selection = !mask_selection;
-    masks_pool = new MasksPool(masks, unselected_masks, 0, 0, width, height, 5, 5);
-    group_masks(masks, semantic_groups);
-  }
-
+  // Modo Debug
   if (key === "d" || key === "D") {
     debug = !debug;
   }
 }
 
+// Redimensionamento da Janela
 function windowResized() {
   resize_canvas();
 }
@@ -155,7 +156,6 @@ function resize_canvas() {
   // Composition
   comp_graphics_h = height * 0.8;
   comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
-
   composition.w = comp_graphics_w;
   composition.h = comp_graphics_h;
 
@@ -170,6 +170,7 @@ function mousePressed() {
   masks_pool.pressed();
 }
 
+// Zoom
 function mouseWheel(event) {
   if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
     zoom -= event.delta * 0.001;
@@ -201,9 +202,11 @@ function group_masks(masks, semantic_groups) {
   }
 }
 
+// Aplicar Alterações
 function apply_changes() {
   seed = Date.now();
 
+  // Ratio (Input)
   const ratio_slider = select("#canvas_ratio");
   ratio_values = {
     0: 16 / 9,
@@ -217,13 +220,17 @@ function apply_changes() {
     100: 9 / 16,
   };
 
+  // Distribuição (Input)
   const grid_type = select('input[name="distribution"]:checked').value();
 
+  // Cor (Input)
   const user_color_picker = select('input[name="user_color"]');
   user_color = color(user_color_picker.value());
 
+  // Variação de Cor (Inputs)
   const color_variation_type = select('input[name="color_variation"]:checked').value();
 
+  // Dimensões dos Grupos (Inputs)
   const max_group_w_factor = select('input[name="group_width"]').value();
   const max_group_h_factor = select('input[name="group_height"]').value();
 
@@ -232,6 +239,7 @@ function apply_changes() {
   comp_graphics_h = height * 0.8;
   comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
 
+  // Remover "comp_graphics" existente
   if (comp_graphics) {
     comp_graphics.remove();
     comp_graphics = undefined;
@@ -247,9 +255,8 @@ function apply_changes() {
     // ----
   }
 
+  // Criação de nova Composição com os novos parâmetros
   comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h, WEBGL);
-  // comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h);
-  // comp_graphics.drawingContext = comp_graphics.elt.getContext("2d", { willReadFrequently: true });
   comp_graphics.colorMode(HSB, 360, 100, 100, 255);
   comp_graphics.imageMode(CENTER);
   comp_graphics.rectMode(CENTER);
@@ -267,6 +274,21 @@ function apply_changes() {
 
 // ---------------------------------------------------------------------------
 
+// Mask Pool
+// Inicializar
+function init_mask_pool() {
+  masks_pool = new MasksPool(masks, unselected_masks, 0, 0, width, height, 5, 5);
+  group_masks(masks, semantic_groups);
+}
+
+// Alterar Visibilidade
+function toggle_mask_pool() {
+  mask_selection = !mask_selection;
+}
+
+// ---------------------------------------------------------------------------
+
+// Guardar a Composição atual
 async function save_output(additional = "") {
   let date = new Date();
   let year = date.getFullYear();
@@ -293,6 +315,8 @@ async function save_output(additional = "") {
   save(grain_output, `${filename}_seed_${seed}.png`);
 }
 
+
+// ----
 // https://editor.p5js.org/ogt/sketches/sk1qsRr_n
 function add_grain(pg, num) {
   pg.loadPixels();
@@ -305,3 +329,4 @@ function add_grain(pg, num) {
   }
   pg.updatePixels();
 }
+// ----

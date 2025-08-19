@@ -16,9 +16,9 @@ class Detection:
         self.device = 'cpu'
         self.save = False
         self.batch = 4
-        self.imgsz = 640        
+        self.imgsz = 640
         self.conf = 0.6
-        self.iou = 0.6
+        self.iou = 0.7
                 
     def get_label(self, box):
         return self.model.names[int(box.cls.item())] 

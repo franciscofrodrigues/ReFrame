@@ -35,6 +35,7 @@ class PoolCell {
     pop();
 
     this.render_selection_mark();
+    this.render_text_label();
     pop();
   }
 
@@ -68,6 +69,19 @@ class PoolCell {
     noStroke();
     let [w, h] = this.rect_dims();
     rect(0, 0, w, h, this.border_radius);
+  }
+
+  render_text_label() {
+    if (this.hover) {
+      let size = 14;
+      let padding = size * 0.4;
+      push();
+      textAlign(RIGHT, TOP);
+      fill(0);
+      let label = this.mask.label.charAt(0).toUpperCase()+this.mask.label.slice(1);
+      text(label, this.w - padding, padding);
+      pop();
+    }
   }
 
   render_overlay() {

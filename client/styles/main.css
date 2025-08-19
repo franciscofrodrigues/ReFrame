@@ -17,13 +17,13 @@
   --fg-color: #ffffff;
   --cnv-color: #ffffff;
   /* --cnv-color: rgb(52, 55, 55); */
-  --cnv-shadow: #00000010;
+  --cnv-shadow: hsla(0, 0%, 0%, 0.11);
   --sidebar-color: #ffffff;
   --btn-color: #000000;
   --btn-hover-color: #ffffff;
   --section-color: hsl(0, 0%, 92%);
   --flex-gap: 10px;
-  --div-padding: 1rem;
+  --div-padding: 1.5rem;
 }
 
 * {
@@ -83,9 +83,14 @@ p {
 
 /* LINHAS HORIZONTAIS */
 hr.divider {
-  /* margin: calc(var(--div-padding) / 2) 0; */
   margin: var(--div-padding) 0;
+  /* margin: 0;
+  padding: 0; */
   border-top: 1px dashed var(--btn-color);
+}
+
+hr#apply_changes_divider {
+  margin-bottom: 0;
 }
 
 /* ----------------------------------------------------------------------------- */
@@ -233,11 +238,15 @@ label.section_title {
   background-color: var(--sidebar-color);
 }
 .section_content {
-  padding: calc(var(--div-padding) * 2);
+  padding: var(--div-padding) calc(var(--div-padding) * 2);
   background-color: var(--section-color);
   border: 1px var(--btn-color);
   border-style: none none solid none;
 }
+#composition_container {
+  padding-bottom: 0;
+}
+
 .section_content h5 {
   margin-bottom: calc(var(--div-padding) / 2);
 }
@@ -277,8 +286,12 @@ label.section_title {
 }
 
 #apply_changes_container {
+  padding: var(--div-padding) calc(var(--div-padding) * 2) var(--div-padding);
+  margin: 0 calc(var(--div-padding) * -2) 0 calc(var(--div-padding) * -2);
   position: sticky;
-  bottom: var(--div-padding);
+  bottom: 0;
+  /* background-color: var(--bg-color); */
+  background: linear-gradient(#ffffff00, var(--bg-color));
 }
 
 #export_btn {
@@ -315,6 +328,12 @@ label.section_title {
 }
 #upload_image_form > #upload_image_message {
   text-align: center;
+  font-size: 0.8rem;
+  display: none;
+}
+
+#selection_container {
+  display: none;
 }
 
 /* ----------------------------------------------------------------------------- */
@@ -355,13 +374,14 @@ datalist.slider {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  writing-mode: vertical-lr;
+  writing-mode: vertical-lr;  
 }
 datalist.slider > option {
   padding: 0;
   rotate: -90deg;
   text-align: center;
   margin-top: calc(var(--flex-gap)/2);
+  font-size: 0.8rem;
 }
 
 /* ----------------------------------------------------------------------------- */
@@ -398,32 +418,9 @@ datalist.slider > option {
   background-color: var(--btn-hover-color);
   height: 2rem;
 }
-/* 
-#color_options {
-  height: 2rem;
+#color_variation_title {
+  margin-top: calc(var(--flex-gap) / 2);
 }
-#color_options label {
-  width: 100%;
-    display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-}
-#color_options input[type="checkbox"] {
-  display: none;
-}
-.mark {
-  width: 1rem;
-  height: 1rem;
-  background-color: var(--btn-hover-color);
-  border-radius: 1px;
-}
-#color_options input[type="checkbox"]:checked ~ span.mark {
-  background-color: var(--btn-color);
-  color: var(--btn-hover-color);
-  border: 1px solid var(--btn-color);
-} */
-
 #color_options {
   height: 2rem;
 }
@@ -536,13 +533,13 @@ input[type="checkbox"]:checked ~ .mark::after {
   gap: calc(var(--flex-gap) / 2);
 }
 
-.radio_option input[type="radio"] {
+.radio_option input {
   display: none;
 }
 .radio_option {
   display: flex;
 }
-.radio_option input[type="radio"]:checked ~ label {
+.radio_option input:checked ~ label {
   background-color: var(--btn-color);
   color: var(--btn-hover-color);
   border: 1px solid var(--btn-color);
@@ -563,10 +560,4 @@ input[type="checkbox"]:checked ~ .mark::after {
   display: flex;
   flex-direction: column;
   gap: calc(var(--flex-gap) / 2);
-}
-
-/* ----------------------------------------------------------------------------- */
-
-#apply_changes_container {
-  background-color: aqua;
 }

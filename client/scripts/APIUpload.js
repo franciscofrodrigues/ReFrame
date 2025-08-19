@@ -1,6 +1,7 @@
 let current_folder_name = "";
 const imports_container = document.getElementById("imports_container");
 const imports_dropdown = document.querySelector("select[name='imports_dropdown']");
+const selection_container = document.getElementById("selection_container");
 
 // Atualizar número de ficheiros (imagens) selecionados
 const upload_image_input = document.querySelector('#upload_image_form input[type="file"]');
@@ -12,8 +13,10 @@ upload_image_input.addEventListener("change", () => {
   if (file_count > 0) {
     upload_image_message.textContent = `${file_count} Selected`;
     upload_image_button.style.display = "block";
+    upload_image_message.style.display = "block";
   } else {
     upload_image_button.style.display = "none";
+    upload_image_message.style.display = "none";
   }
 
   upload_image_message.textContent = `${file_count} Selected`;
@@ -112,9 +115,11 @@ function update_imports_list() {
       select_option.value = data[i].folder_name;
       select_option.innerHTML = `Elements: ${data[i].labels}`;
       imports_dropdown.appendChild(select_option);
+      selection_container.style.display = "block";
     }
-    imports_dropdown.selectedIndex = 1;
+    imports_dropdown.selectedIndex = 0;
   } else {
     imports_container.style.display = "none";
+    selection_container.style.display = "none";
   }
 }

@@ -3,14 +3,10 @@ from utils.file_export import get_filename, save_output
 import cv2
 import numpy as np
 from ultralytics import FastSAM
-from ultralytics import YOLO
-
-import os
 
 class Segmentation:
     def __init__(self, weights_path, input_files, outputs_path, input_counter):
         self.model = FastSAM(weights_path)
-        # self.model = YOLO(weights_path)
         self.input_files = input_files
         self.outputs_path = outputs_path
         self.input_counter = input_counter
@@ -22,7 +18,7 @@ class Segmentation:
         self.batch = 4
         self.imgsz = 640
         self.conf = 0.8
-        self.iou = 0.6
+        self.iou = 0.4
     
     def mask_img(self, binary_mask, original_img):
         result_img = cv2.bitwise_and(original_img, original_img, mask=binary_mask) # Máscara de corte à imagem

@@ -8,7 +8,7 @@ class Composition {
     this.w = w;
     this.h = h;
     this.grid_type = grid_type;
-    
+
     this.user_color = user_color;
     this.complementary_color = this.get_complementary_color(this.user_color);
     this.color_variation_type = color_variation_type;
@@ -25,9 +25,12 @@ class Composition {
     this.group_w = random(this.min_group_w, this.max_group_w);
     this.group_h = random(this.min_group_h, this.max_group_h);
 
-    this.group_ang = [-PI / 3, -QUARTER_PI, -PI / 6, 0, -PI / 6, QUARTER_PI, PI / 3];
+    // this.group_ang = [-PI / 3, -QUARTER_PI, -PI / 6, 0, -PI / 6, QUARTER_PI, PI / 3];
+    this.group_ang = [-QUARTER_PI, -PI / 6, 0, -PI / 6, QUARTER_PI];
 
     this.random_point = this.calc_random_point();
+    this.center_ellipse_w = random(this.w * 0.4, this.w * 0.8) / 2;
+    this.center_ellipse_h = random(this.h * 0.4, this.h * 0.8) / 2;
   }
 
   run() {
@@ -71,13 +74,16 @@ class Composition {
     this.random_point = this.calc_random_point();
     shuffle(this.semantic_groups, true);
 
+    this.center_ellipse_w = random(this.w * 0.4, this.w * 0.8) / 2;
+    this.center_ellipse_h = random(this.h * 0.4, this.h * 0.8) / 2;
+
     this.main_palette = this.get_main_palette(this.user_color, this.complementary_color);
 
     for (let i = 0; i < this.semantic_groups.length; i++) {
       this.reposition(i);
       this.semantic_groups[i].color = this.main_palette[i];
       this.semantic_groups[i].color_variation_type = this.color_variation_type;
-      this.semantic_groups[i].recompose();      
+      this.semantic_groups[i].recompose();
     }
   }
 
@@ -89,7 +95,7 @@ class Composition {
     this.semantic_groups[index].y = constrain(pos.y, 0, this.h);
     this.semantic_groups[index].w = this.group_w;
     this.semantic_groups[index].h = this.group_h;
-    this.semantic_groups[index].ang = pos.z;    
+    this.semantic_groups[index].ang = pos.z;
   }
 
   calc_random_point() {
@@ -191,8 +197,10 @@ class Composition {
       pos.y = randomGaussian() * std + this.h / 2;
     } else {
       // Elementos ao redor do Elemento Central
-      pos.x = randomGaussian() * std + this.w / 2 + cos(ang + index * ang_inc) * this.semantic_groups[0].w;
-      pos.y = randomGaussian() * std + this.h / 2 + sin(ang + index * ang_inc) * this.semantic_groups[0].h;
+      pos.x = randomGaussian() * std + this.w / 2 + cos(ang + index * ang_inc) * this.center_ellipse_w;
+      pos.y = randomGaussian() * std + this.h / 2 + sin(ang + index * ang_inc) * this.center_ellipse_h;
+      // pos.x = randomGaussian() * std + this.w / 2 + cos(ang + index * ang_inc) * this.semantic_groups[0].w;
+      // pos.y = randomGaussian() * std + this.h / 2 + sin(ang + index * ang_inc) * this.semantic_groups[0].h;
     }
 
     pos.z = random(this.group_ang);

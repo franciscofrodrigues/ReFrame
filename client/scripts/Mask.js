@@ -161,7 +161,7 @@ class Mask {
         pg.push();
         pg.translate(-this.w / 2, -this.h / 2);
         let scaled = createVector(this.silhouette_mask_centroid.x * this.w, this.silhouette_mask_centroid.y * this.h);
-        let line = this.curves[1][0];        
+        let line = this.curves[1][0];
         this.shape_along_line(pg, this.silhouette_mask_copy, scaled, this.pick_color(), line, line.steps, false, true, false, false);
         pg.pop();
       } else {
@@ -275,33 +275,34 @@ class Mask {
     return normalized;
   }
 
+  // pick_color() {
+  //   // let color_palette = ["#00FFFF", "#FF00FF", "#FFFF00"];
+  //   let color_palette = ["#F299B9", "#027333", "#F2AB27", "#F2220F"];
+  //   return random(color_palette);
+  // }
+
   pick_color() {
     let picked_color;
-    if(this.color_variation_type == 0) {
+    if (this.color_variation_type == 0) {
       picked_color = this.color;
     } else if (this.color_variation_type == 1) {
-      picked_color = this.get_monochromatic_color(this.color);
+      // picked_color = this.get_monochromatic_color(this.color);
+      picked_color = this.color;
     } else if (this.color_variation_type == 2) {
       picked_color = this.get_random_color();
     }
     return picked_color;
   }
 
-  get_monochromatic_color(c) {
-    let mono_color = color(hue(c), random(20, 80), random(50, 80));
-    return mono_color;
-  }
+  // get_monochromatic_color(c) {
+  //   let mono_color = color(hue(c), random(20, 80), random(20, 80));
+  //   return mono_color;
+  // }
 
   get_random_color() {
     let random_color = color(random(360), random(70, 90), random(70, 90));
     return random_color;
   }
-
-  // pick_color() {
-  //   // let color_palette = ["#00FFFF", "#FF00FF", "#FFFF00"];
-  //   let color_palette = ["#F299B9", "#027333", "#F2AB27", "#F2220F"];
-  //   return random(color_palette);
-  // }
 
   // ---------------------------------------------------------------------------
 
@@ -380,7 +381,7 @@ class Mask {
       }
 
       let c;
-      if (color_variation) {
+      if (color_variation || this.color_variation_type == 1) {
         // Cor (tints)
         c = color(hue(mask_color), map(t, 0, 1, saturation(mask_color), 0), map(t, 0, 1, brightness(mask_color), 100), alpha_value);
       } else {

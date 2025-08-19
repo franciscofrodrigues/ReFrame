@@ -21,7 +21,6 @@
         <p id="loader_info">&nbsp;</p>
       </div>
 
-
       <div id="sidebar">
         <!--Logo -->
         <div id="logo_container">
@@ -51,20 +50,15 @@
               <h5>Previous Uploads</h5>
               <div id="imports_dropdown_container">
                 <label for="imports_dropdown"></label>
-                <select class="btn" name="imports_dropdown" id="imports_dropdown"></select>
+                <select class="btn_inverted" name="imports_dropdown" id="imports_dropdown"></select>
               </div>
-
-              <!-- <hr class="divider" /> -->
             </div>
 
-            <!-- Group Selection -->
-            <!-- <h5>Filter by Group</h5>
-            <div id="group_selection_container">
-              <button class="btn_inverted" id="group_selection_sub" type="button">-</button>
-              <input type="number" id="group_selection_info" />
-              <button class="btn_inverted" id="group_selection_add" type="button">+</button>
-              <button class="btn" id="group_selection_all" type="button">All</button>
-            </div> -->
+            <div id="selection_container">
+              <hr class="divider" />
+              <h5>Select Elements</h5>
+              <button class="btn_inverted" id="mask_pool_btn" type="submit">Open Library</button>
+            </div>
           </div>
         </div>
 
@@ -144,7 +138,6 @@
                 <div id="color_picker">
                   <label for="user_color"></label>
                   <input type="color" id="user_color" name="user_color" value="#EBFA64" />
-                  <!-- <p class="label">Accent</p> -->
                 </div>
 
                 <div id="color_text">
@@ -154,7 +147,7 @@
                 </div>
               </div>
 
-              <p>Group Variation</p>
+              <p id="color_variation_title">Group Variation</p>
               <div id="color_variation_container">
                 <div class="radio_option">
                   <input type="radio" id="unique" name="color_variation" value="0" checked />
@@ -171,63 +164,9 @@
                   <label for="random">Random</label>
                 </div>
               </div>
-
-              <!-- <div id="color_options">
-                <label for="group_color_variation">
-                  <p>Group Color Variation</p>
-                  <input type="checkbox" name="group_color_variation" id="group_color_variation" checked />
-                  <span class="mark"></span>
-                </label>
-              </div> -->
-
-              <!--               
-              <div class="color_instance">
-                <label for="background_color"></label>
-                <input type="color" id="colorInput" value="#ff0000">
-                <input type="color" id="background_color" name="background_color" value="#F7F6F5" />
-                <p class="label">Background</p>
-              </div>
-
-              <div class="color_instance">
-                <label for="accent_color"></label>
-                <input type="color" id="accent_color" name="accent_color" value="#EBFA64" />
-                <p class="label">Accent</p>
-              </div>
-
-              <div class="color_instance">
-                <label for="complementary_color"></label>
-                <input type="color" id="complementary_color" name="complementary_color" value="#A83DFA" />
-                <p class="label">Complementary</p>
-              </div>
-
-              <div class="color_instance">
-                <label for="text_color"></label>
-                <input type="color" id="text_color" name="text_color" value="#000000" />
-                <p class="label">Text</p>
-              </div> -->
             </div>
 
-            <!-- <hr class="divider" /> -->
-
-            <!-- Grain -->
-            <!-- <h5>Grain</h5>
-            <div id="grain_container">
-              <p>Size</p>
-              <input class="slider" id="grain_size" name="grain_amount" type="range" min="0" max="1" step="any" list="grain_size_values" />
-              <datalist class="slider" id="grain_size_values">
-                <option class="label" value="0" label="0%"></option>
-                <option class="label" value="100" label="100%"></option>
-              </datalist>
-
-              <p>Amount</p>
-              <input class="slider" id="grain_amount" name="grain_amount" type="range" min="0" max="1" step="any" list="grain_amount_values" />
-              <datalist class="slider" id="grain_amount_values">
-                <option class="label" value="0" label="0%"></option>
-                <option class="label" value="100" label="100%"></option>
-              </datalist>
-            </div> -->
-
-            <hr class="divider" />
+            <hr class="divider" id="apply_changes_divider" />
 
             <div id="apply_changes_container">
               <button class="btn" type="button" id="apply_changes_btn">Apply Changes</button>

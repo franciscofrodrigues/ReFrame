@@ -6,6 +6,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
+import os
+import shutil
+
 app = FastAPI()
 app.include_router(upload.router)
 app.include_router(masks.router)
@@ -18,6 +21,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("shutdown")
+def remove_folders():
+    # Uploads
+    shutil.rmtree(config.UPLOADS_PATH)
+    os.makedirs(config.UPLOADS_PATH)
+        
+    # Outputs
+    shutil.rmtree(config.OUTPUTS_PATH)
+    os.makedirs(config.OUTPUTS_PATH)
 
 # ------------------------------------------------------------------------------
 
