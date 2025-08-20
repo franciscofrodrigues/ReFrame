@@ -1,5 +1,5 @@
 // UI
-let cnv, cnv_parent, css_styles, font, mask_selection;
+let cnv, cnv_parent, css_styles, font, mask_selection, info_p;
 let bg_color, fg_color, comp_shadow_color, user_color, comp_bg_color, debug_color, overlay_alpha;
 let zoom, zoom_pos;
 
@@ -49,11 +49,21 @@ function setup() {
   bg_color = css_styles.getPropertyValue("--bg-color");
   fg_color = css_styles.getPropertyValue("--fg-color");
   comp_shadow_color = css_styles.getPropertyValue("--cnv-shadow");
-  comp_bg_color = color("#F7F6F5");
+  // comp_bg_color = color("#F7F6F5");
+  comp_bg_color = color("#FFFFFF");
   debug_color = color(0, 0, 0, 255);
   overlay_alpha = 150;
 
   // Botões
+  const upload_btn = select("#upload_image_form > button");
+  upload_btn.mousePressed(() => {
+    masks = [];
+    unselected_masks = [];
+    semantic_groups = [];
+    init_mask_pool();
+    mask_selection = false;
+  });
+
   // Botão "Apply Changes"
   const apply_changes_btn = select("#apply_changes_btn");
   apply_changes_btn.mousePressed(() => {
@@ -80,6 +90,17 @@ function setup() {
     mask_selection = false;
   });
 
+  let random_color = random_user_color();
+  user_color_hex_input = select("#color_hex");
+  user_color_hex_input.value(random_color.replace("#", ""));
+  user_color_hex_input.input(user_color_hex);
+
+  user_color_picker = select("#user_color");
+  user_color_picker.value(random_color);
+  user_color_picker.input(user_color_pick);
+
+  info_p = select("#canvas_info");
+
   // Mask Pool
   masks_pool = new MasksPool(masks, unselected_masks, 0, 0, width, height, 5, 5);
 
@@ -99,6 +120,8 @@ function setup() {
 function draw() {
   background(bg_color);
   randomSeed(seed);
+
+  display_info();
 
   if (mask_selection) {
     masks_pool.run();
@@ -174,6 +197,7 @@ function mousePressed() {
 function mouseWheel(event) {
   if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
     zoom -= event.delta * 0.001;
+    zoom_pos = createVector(width / 2, height / 2);
     zoom = constrain(zoom, 0.5, 2);
   }
 }
@@ -256,7 +280,13 @@ function apply_changes() {
   }
 
   // Criação de nova Composição com os novos parâmetros
-  comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h, WEBGL);
+  // comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h, WEBGL);
+  if (!comp_graphics) {
+    comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h, WEBGL);
+  } else {
+    comp_graphics.resizeCanvas(comp_graphics_w, comp_graphics_h);
+  }
+
   comp_graphics.colorMode(HSB, 360, 100, 100, 255);
   comp_graphics.imageMode(CENTER);
   comp_graphics.rectMode(CENTER);
@@ -270,6 +300,8 @@ function apply_changes() {
   // Preview Changes
   preview_changes = new PreviewChanges(0, 0, width, height, ratio_values, composition);
   preview_changes.preview = false;
+
+  mask_selection = false;
 }
 
 // ---------------------------------------------------------------------------
@@ -315,7 +347,6 @@ async function save_output(additional = "") {
   save(grain_output, `${filename}_seed_${seed}.png`);
 }
 
-
 // ----
 // https://editor.p5js.org/ogt/sketches/sk1qsRr_n
 function add_grain(pg, num) {
@@ -330,3 +361,33 @@ function add_grain(pg, num) {
   pg.updatePixels();
 }
 // ----
+
+// ---------------------------------------------------------------------------
+
+// Cor
+function user_color_pick() {
+  user_color = color(user_color_picker.value());
+  user_color_hex_input.value(user_color_picker.value().replace("#", ""));
+}
+
+function user_color_hex() {
+  let hex_value = `#${user_color_hex_input.value()}`;
+  user_color = color(hex_value);
+  user_color_picker.value(hex_value);
+}
+
+function random_user_color() {
+  let c = color(random(360), random(100), random(100));
+  let hex_value = `#${hex(red(c), 2)}${hex(green(c), 2)}${hex(blue(c), 2)}`;
+  return hex_value;
+}
+
+function display_info() {
+  if (masks.length == 0 && unselected_masks.length == 0 && mask_selection) {
+    info_p.html("No elements to display.<br>Please try uploading some images.");
+  } else if (masks.length == 0 && !mask_selection) {
+    info_p.html("No elements selected.");
+  } else {
+    info_p.html("");
+  }
+}

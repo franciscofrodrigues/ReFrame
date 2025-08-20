@@ -160,11 +160,11 @@ class Composition {
 
   thirds_grid() {
     let pos = createVector(0, 0);
-    let std = this.w / 20;
     let mean_width_1 = this.w / 3;
     let mean_width_2 = 2 * (this.w / 3);
     let mean_height_1 = this.h / 3;
     let mean_height_2 = 2 * (this.h / 3);
+    let std = this.w / 20;
 
     // Distribuição Horizontal
     if (random() < 0.5) {

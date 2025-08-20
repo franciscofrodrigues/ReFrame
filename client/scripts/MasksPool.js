@@ -31,15 +31,6 @@ class MasksPool {
     for (let cell of this.cells) {
       cell.render();
     }
-
-    if(this.cells.length == 0) {
-      push();
-      textAlign(CENTER, CENTER);
-      fill(debug_color);
-      textSize(14);
-      text("No items to display. Please try uploading some images.", this.w/2, this.h/2);
-      pop();
-    }
   }
 
   update() {

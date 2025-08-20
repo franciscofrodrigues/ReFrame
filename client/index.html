@@ -114,14 +114,14 @@
             <h5>Groups Dimensions</h5>
             <div id="groups_container">
               <p>Width</p>
-              <input class="slider" id="group_width" name="group_width" type="range" value="0.7" min="0.2" max="1" step="any" list="group_width_values" />
+              <input class="slider" id="group_width" name="group_width" type="range" value="0.6" min="0.2" max="1" step="any" list="group_width_values" />
               <datalist class="slider" id="group_width_values">
                 <option class="label" value="0" label="0%"></option>
                 <option class="label" value="1" label="100%"></option>
               </datalist>
 
               <p>Height</p>
-              <input class="slider" id="group_height" name="group_height" type="range" value="0.7" min="0.2" max="1" step="any" list="group_height_values" />
+              <input class="slider" id="group_height" name="group_height" type="range" value="0.6" min="0.2" max="1" step="any" list="group_height_values" />
               <datalist class="slider" id="group_height_values">
                 <option class="label" value="0" label="0%"></option>
                 <option class="label" value="1" label="100%"></option>
@@ -137,7 +137,7 @@
               <div id="color_input_container">
                 <div id="color_picker">
                   <label for="user_color"></label>
-                  <input type="color" id="user_color" name="user_color" value="#EBFA64" />
+                  <input type="color" id="user_color" name="user_color" />
                 </div>
 
                 <div id="color_text">
@@ -175,7 +175,9 @@
         </div>
       </div>
 
-      <div id="canvas"></div>
+      <div id="canvas">
+        <p id="canvas_info"></p>
+      </div>
 
       <button class="btn" id="export_btn">Export</button>
     </main>
@@ -192,21 +194,26 @@
     <script src="scripts/sketch.js"></script>
     <script src="scripts/batchExport.js"></script>
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const colorPicker = document.getElementById("user_color");
-        const hexInput = document.getElementById("color_hex");
+      // Pega os elementos
+      const colorPicker = document.getElementById("user_color");
+      const colorHex = document.getElementById("color_hex");
+      const radios = document.querySelectorAll('input[name="color_variation"]');
 
-        colorPicker.addEventListener("input", (e) => {
-          hexInput.value = e.target.value.replace("#", "");
-        });
+      // Função para ativar/desativar
+      function updateColorInputs() {
+        const randomSelected = document.getElementById("random").checked;
 
-        hexInput.addEventListener("input", (e) => {
-          let hex = e.target.value;
-          colorPicker.value = "#" + hex;
-        });
+        colorPicker.disabled = randomSelected;
+        colorHex.disabled = randomSelected;
+      }
 
-        hexInput.value = colorPicker.value.replace("#", "");
+      // Escuta mudanças nos radios
+      radios.forEach((radio) => {
+        radio.addEventListener("change", updateColorInputs);
       });
+
+      // Estado inicial
+      updateColorInputs();
     </script>
   </body>
 </html>

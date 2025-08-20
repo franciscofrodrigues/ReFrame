@@ -31,9 +31,8 @@ class Mask {
     this.scl_noise = random(this.scl_range[0], this.scl_range[1]);
 
     // Cores
-    // this.accent_color = accent_color;
-    // this.complementary_color = complementary_color;
     this.blend_mode = MULTIPLY;
+    // this.blend_mode = random([MULTIPLY, BLEND]);
 
     // Máscaras binárias -> Shapes
     this.init_shapes();
@@ -374,7 +373,7 @@ class Mask {
       let scaled_h = this.h * scl;
 
       let alpha_value;
-      if (alpha_variation) {
+      if (alpha_variation || this.color_variation_type == 1) {
         alpha_value = map(t, 0, 1, alpha(mask_color), 0);
       } else {
         alpha_value = alpha(mask_color);

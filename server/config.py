@@ -23,5 +23,3 @@ UPLOADS_PATH = os.path.join(RES_PATH, "uploads")
 
 # Atributos gerais
 DEBUG_MODE = True
-
-TOKEN = "test_user_123"
