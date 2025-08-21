@@ -67,6 +67,7 @@ function setup() {
   // Botão "Apply Changes"
   const apply_changes_btn = select("#apply_changes_btn");
   apply_changes_btn.mousePressed(() => {
+    group_masks(masks, semantic_groups);
     apply_changes();
   });
 

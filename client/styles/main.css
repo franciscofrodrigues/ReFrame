@@ -249,6 +249,15 @@ label.section_title {
   user-select: none;
   background-color: var(--sidebar-color);
 }
+label.section_title > img {
+  width: 1.5rem;
+  justify-self: flex-end;
+
+  -moz-transform: scaleY(-1);
+  -webkit-transform: scaleY(-1);
+  transform: scaleY(-1);
+}
+
 .section_content {
   padding: var(--div-padding) calc(var(--div-padding) * 2);
   background-color: var(--section-color);
@@ -274,8 +283,8 @@ label.section_title {
   border: 1px var(--btn-color);
   border-style: none none solid none;
 
-  /* height: 5rem; */
-  /* flex-shrink: 0; */
+  /* height: 8rem; */
+  flex-shrink: 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -288,6 +297,13 @@ label.section_title {
 #import_collapsible:not(:checked) ~ #import_container {
   display: none;
 }
+#import_collapsible:not(:checked) ~ label.section_title > img,
+#composition_collapsible:not(:checked) ~ label.section_title > img {
+  -moz-transform: scaleY(1);
+  -webkit-transform: scaleY(1);
+  transform: scaleY(1);
+}
+
 #import_title_container {
   border-style: none none solid none;
 }
@@ -296,18 +312,18 @@ select#imports_dropdown {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  
+
   background-image: none;
   -webkit-border-radius: 5px;
   border-radius: 5px;
-  
-  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 140 140' width='24' height='24' xmlns='http://www.w3.org/2000/svg'><g><path d='m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z' fill='black'/></g></svg>");
+
+  background-image: url("data:image/svg+xml,%3Csvg%20width='100'%20height='100'%20viewBox='0%200%20100%20100'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3E%3Cpath%20d='M10%2030L49.7929%2069.7929C50.1834%2070.1834%2050.8166%2070.1834%2051.2071%2069.7929L91%2030'%20stroke='black'%20stroke-width='5'%20stroke-linecap='square'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 0.5rem center;
+  background-position: right 1rem center;
   background-size: 1rem;
 }
 select#imports_dropdown:hover {
-  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 140 140' width='24' height='24' xmlns='http://www.w3.org/2000/svg'><g><path d='m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z' fill='white'/></g></svg>");
+  background-image: url("data:image/svg+xml,%3Csvg%20width='100'%20height='100'%20viewBox='0%200%20100%20100'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3E%3Cpath%20d='M10%2030L49.7929%2069.7929C50.1834%2070.1834%2050.8166%2070.1834%2051.2071%2069.7929L91%2030'%20stroke='white'%20stroke-width='5'%20stroke-linecap='square'/%3E%3C/svg%3E");
 }
 
 /* COMPOSITION */
@@ -372,7 +388,7 @@ select#imports_dropdown:hover {
 input[type="range"].slider {
   appearance: none;
   -webkit-appearance: none;
-  -moz-appearance: none;  
+  -moz-appearance: none;
 
   width: 100%;
   height: 3px;
@@ -406,7 +422,7 @@ input[type="range"].slider::-webkit-slider-thumb {
   margin-top: calc(-1rem - 1.5px);
   box-shadow: none;
 }
-@supports (-webkit-hyphens:none) {
+@supports (-webkit-hyphens: none) {
   input[type="range"].slider::-webkit-slider-thumb {
     margin-top: calc(-0.5rem + 6px);
   }
