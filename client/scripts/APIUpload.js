@@ -12,11 +12,11 @@ upload_image_input.addEventListener("change", () => {
 
   if (file_count > 0) {
     upload_image_message.textContent = `${file_count} Selected`;
-    upload_image_button.style.display = "block";
     upload_image_message.style.display = "block";
+    upload_image_button.style.display = "block";
   } else {
-    upload_image_button.style.display = "none";
     upload_image_message.style.display = "none";
+    upload_image_button.style.display = "none";
   }
 
   upload_image_message.textContent = `${file_count} Selected`;
@@ -28,6 +28,11 @@ upload_image_form.addEventListener("submit", (event) => {
   event.preventDefault();
   upload_images(upload_image_form);
   toggle_loader(true);
+
+  upload_image_message.value = "";
+  upload_image_message.textContent = "";
+  upload_image_message.style.display = "none";
+  upload_image_button.style.display = "none";
 });
 
 // UPLOAD
@@ -106,7 +111,6 @@ async function get_import_masks() {
 
 function update_imports_list() {
   const imports = sessionStorage.getItem("imports");
-  imports_dropdown.innerHTML = '<option value="" selected disabled>Choose here</option>';
   if (imports) {
     imports_container.style.display = "block";
     const data = JSON.parse(imports);

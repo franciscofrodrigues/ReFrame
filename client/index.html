@@ -29,7 +29,7 @@
 
         <!--Secção "Import" -->
         <div class="section_container">
-          <input type="checkbox" name="section_collapsible" id="import_collapsible" value="0" />
+          <input type="checkbox" name="section_collapsible" id="import_collapsible" value="0" checked />
           <label class="section_title" id="import_title_container" for="import_collapsible">
             <h4>Decomposition</h4>
           </label>
@@ -50,7 +50,9 @@
               <h5>Previous Uploads</h5>
               <div id="imports_dropdown_container">
                 <label for="imports_dropdown"></label>
-                <select class="btn_inverted" name="imports_dropdown" id="imports_dropdown"></select>
+                <select class="btn_inverted" name="imports_dropdown" id="imports_dropdown">
+                  <option value="" selected disabled>Choose here</option>
+                </select>                
               </div>
             </div>
 

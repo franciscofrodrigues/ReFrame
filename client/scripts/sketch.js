@@ -280,13 +280,7 @@ function apply_changes() {
   }
 
   // Criação de nova Composição com os novos parâmetros
-  // comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h, WEBGL);
-  if (!comp_graphics) {
-    comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h, WEBGL);
-  } else {
-    comp_graphics.resizeCanvas(comp_graphics_w, comp_graphics_h);
-  }
-
+  comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h, WEBGL);
   comp_graphics.colorMode(HSB, 360, 100, 100, 255);
   comp_graphics.imageMode(CENTER);
   comp_graphics.rectMode(CENTER);
