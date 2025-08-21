@@ -9,6 +9,9 @@ import uvicorn
 import os
 import shutil
 
+os.makedirs(config.UPLOADS_PATH, exist_ok=True)
+os.makedirs(config.OUTPUTS_PATH, exist_ok=True)
+
 app = FastAPI()
 app.include_router(upload.router)
 app.include_router(masks.router)
@@ -23,14 +26,9 @@ app.add_middleware(
 )
 
 @app.on_event("shutdown")
-def remove_folders():
-    # Uploads
-    shutil.rmtree(config.UPLOADS_PATH)
-    os.makedirs(config.UPLOADS_PATH)
-        
-    # Outputs
-    shutil.rmtree(config.OUTPUTS_PATH)
-    os.makedirs(config.OUTPUTS_PATH)
+def remove_folders():    
+    shutil.rmtree(config.UPLOADS_PATH) # Uploads
+    shutil.rmtree(config.OUTPUTS_PATH) # Outputs
 
 # ------------------------------------------------------------------------------
 
