@@ -633,8 +633,9 @@ input[type="checkbox"]:checked ~ .mark::after {
   cursor: pointer;
 }
 
-#color_variation_container {
+/* #color_variation_container {
   display: flex;
   flex-direction: column;
   gap: calc(var(--flex-gap) / 2);
-}
+} */
+
