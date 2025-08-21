@@ -8,7 +8,7 @@ class SemanticGroup {
     this.w = 10;
     this.h = 10;
     this.ang = 0;
-    this.color = color(0,0,100);
+    this.color = color(0, 0, 100);
     this.color_variation_type = 0;
 
     this.masks = [];
@@ -55,6 +55,14 @@ class SemanticGroup {
       this.reposition_masks(i);
     }
     shuffle(this.masks, true);
+  }
+
+  // Verificar sobreposições entre máscaras
+  // Eixo X e Y
+  overlaps(other) {
+    let x_distance = (this.w + other.w) / 2;
+    let y_distance = (this.h + other.h) / 2;
+    return abs(this.x - other.x) < x_distance && abs(this.y - other.y) < y_distance;
   }
 
   reposition_masks(index) {

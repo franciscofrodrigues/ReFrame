@@ -81,17 +81,39 @@ class Composition {
   }
 
   reposition(index) {
-    let pos = this.place_in_grid(index);
-
-    // Atualizar Posição, Tamanho e Ângulo
-    this.semantic_groups[index].x = constrain(pos.x, 0, this.w);
-    this.semantic_groups[index].y = constrain(pos.y, 0, this.h);
-    this.semantic_groups[index].ang = pos.z;
-
     this.group_w = constrain(random(this.min_group_w, this.max_group_w), 0, this.w);
     this.group_h = constrain(random(this.min_group_h, this.max_group_h), 0, this.h);
     this.semantic_groups[index].w = this.group_w;
     this.semantic_groups[index].h = this.group_h;
+
+    this.reposition_groups(index);
+  }
+
+  reposition_groups(index) {
+    const max_tries = 50;
+    let tries = 0;
+    let overlap = true;
+
+    // Verificar se a máscara é colocada numa posição válida de forma recursiva
+    while (overlap && tries < max_tries) {
+      // Distribuição horizontal aleatória na largura do grupo
+      let pos = this.place_in_grid(index);
+
+      // Atualizar Posição, Tamanho e Ângulo
+      this.semantic_groups[index].x = constrain(pos.x, 0, this.w);
+      this.semantic_groups[index].y = constrain(pos.y, 0, this.h);
+      this.semantic_groups[index].ang = pos.z;
+
+      overlap = false;
+
+      for (let other = 0; other < index; other++) {
+        if (this.semantic_groups[index].overlaps(this.semantic_groups[other])) {
+          overlap = true;
+          break;
+        }
+      }
+      tries++;
+    }
   }
 
   calc_random_point() {

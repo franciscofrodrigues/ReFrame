@@ -372,7 +372,7 @@ function user_color_hex() {
 }
 
 function random_user_color() {
-  let c = color(random(360), random(100), random(100));
+  let c = color(random(360), random(10, 100), random(40, 100));
   let hex_value = `#${hex(red(c), 2)}${hex(green(c), 2)}${hex(blue(c), 2)}`;
   return hex_value;
 }
