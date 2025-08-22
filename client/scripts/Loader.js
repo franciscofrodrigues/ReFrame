@@ -1,12 +1,15 @@
 const loader_container = document.getElementById("loader_container");
 const loader_info = document.getElementById("loader_info");
+const loader_time = 500;
 
 function toggle_loader(loading) {
-  if (loading) {
-    loader_container.style.display = "flex";
-  } else {
-    loader_container.style.display = "none";
-  }
+  setTimeout(() => {
+    if (loading) {
+      loader_container.style.display = "flex";
+    } else {
+      loader_container.style.display = "none";
+    }
+  }, loader_time);
 }
 
 function update_loader_info(loader_info_content) {

@@ -66,15 +66,25 @@ function setup() {
 
   // Botão "Apply Changes"
   const apply_changes_btn = select("#apply_changes_btn");
-  apply_changes_btn.mousePressed(() => {
+  apply_changes_btn.mousePressed(async () => {
+    toggle_loader(true);
+    update_loader_info("Applying Changes...");
     group_masks(masks, semantic_groups);
-    apply_changes();
+    await apply_changes();
+    toggle_loader(false);
+
+    setTimeout(() => {
+      composition.loaded = true;
+    }, loader_time);
   });
 
   // Botão Export
   const export_btn = select("#export_btn");
-  export_btn.mousePressed(() => {
-    save_output();
+  export_btn.mousePressed(async () => {
+    toggle_loader(true);
+    update_loader_info("Exporting Composition...");
+    await save_output();
+    toggle_loader(false);
   });
 
   // Botão "Open Library"
@@ -228,7 +238,7 @@ function group_masks(masks, semantic_groups) {
 }
 
 // Aplicar Alterações
-function apply_changes() {
+async function apply_changes() {
   seed = Date.now();
 
   // Ratio (Input)
@@ -260,10 +270,6 @@ function apply_changes() {
   const max_group_h_factor = select('input[name="group_height"]').value();
 
   // Composition
-  comp_graphics_ratio = ratio_values[ratio_slider.value()];
-  comp_graphics_h = height * 0.8;
-  comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
-
   // Remover "comp_graphics" existente
   if (comp_graphics) {
     comp_graphics.remove();
@@ -280,6 +286,10 @@ function apply_changes() {
     // ----
   }
 
+  comp_graphics_ratio = ratio_values[ratio_slider.value()];
+  comp_graphics_h = height * 0.8;
+  comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
+
   // Criação de nova Composição com os novos parâmetros
   comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h, WEBGL);
   comp_graphics.colorMode(HSB, 360, 100, 100, 255);
@@ -288,9 +298,14 @@ function apply_changes() {
   comp_graphics.textFont(font);
   comp_graphics.textSize(12);
 
-  composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, grid_type, user_color, color_variation_type, max_group_w_factor, max_group_h_factor);
-  composition.semantic_groups = semantic_groups;
-  composition.recompose();
+  await new Promise((r) => {
+    composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, grid_type, user_color, color_variation_type, max_group_w_factor, max_group_h_factor);
+    composition.semantic_groups = semantic_groups;
+    composition.recompose();
+    setTimeout(() => {
+      r();
+    }, 0);
+  });
 
   // Preview Changes
   preview_changes = new PreviewChanges(0, 0, width, height, ratio_values, composition);
@@ -339,7 +354,7 @@ async function save_output(additional = "") {
   let grain_output = createGraphics(comp_scaled_w, comp_scaled_h);
   grain_output.copy(comp_graphics, -comp_graphics.width / 2, -comp_graphics.height / 2, comp_graphics.width, comp_graphics.height, 0, 0, grain_output.width, grain_output.height);
   add_grain(grain_output, 5);
-  save(grain_output, `${filename}_seed_${seed}.png`);
+  await save(grain_output, `${filename}_seed_${seed}.png`);
 }
 
 // ----

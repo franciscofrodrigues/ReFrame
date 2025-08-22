@@ -33,11 +33,15 @@ class Composition {
     this.random_point = this.calc_random_point();
     this.center_ellipse_w = random(this.w * 0.4, this.w * 0.8) / 2;
     this.center_ellipse_h = random(this.h * 0.4, this.h * 0.8) / 2;
+
+    this.loaded = false;
   }
 
   run() {
-    this.update();
-    this.render();
+    if (this.loaded) {
+      this.update();
+      this.render();
+    }
   }
 
   render() {
@@ -63,6 +67,8 @@ class Composition {
   update() {}
 
   recompose() {
+    this.loaded = false;
+
     // Recalcular o posicionamento do "random_point"
     this.random_point = this.calc_random_point();
     shuffle(this.semantic_groups, true);

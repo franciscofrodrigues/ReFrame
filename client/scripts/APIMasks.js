@@ -1,17 +1,17 @@
 // JSON
 async function get_result_data(folder_name) {
-    const url = `${endpoint_api}/masks/${folder_name}/result`;
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
-      }
-
-      const result_json = await response.json();
-      return result_json;
-    } catch (error) {
-      console.error(error.message);
+  const url = `${endpoint_api}/masks/${folder_name}/result`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
     }
+
+    const result_json = await response.json();
+    return result_json;
+  } catch (error) {
+    console.error(error.message);
+  }
 }
 
 // Carregar "largest_mask" e máscara invertida
@@ -34,7 +34,7 @@ async function get_masks(folder_name) {
   unselected_masks = [];
   semantic_groups = [];
   toggle_loader(true);
-  update_loader_info("Loading Masks...");
+  update_loader_info("Loading Elements...");
 
   result_json = await get_result_data(folder_name);
 
@@ -51,11 +51,13 @@ async function get_masks(folder_name) {
       let label = result_json[i][j]["label"];
       let semantic_group = i;
 
-      masks.push(new Mask(mask, inverted_mask, contained_masks, label, semantic_group));      
+      masks.push(new Mask(mask, inverted_mask, contained_masks, label, semantic_group));
     }
   }
 
   group_masks(masks, semantic_groups);
-  toggle_loader(false);
-  update_loader_info("");
+  
+  setTimeout(() => {
+    toggle_loader(false);
+  }, loader_time);
 }

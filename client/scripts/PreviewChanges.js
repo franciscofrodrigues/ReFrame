@@ -65,7 +65,7 @@ class PreviewChanges {
       let overlay_color = color(hue(bg_color), saturation(bg_color), brightness(bg_color), overlay_alpha);
       this.pg.fill(overlay_color);
       this.pg.noStroke();
-      this.pg.rect(0, 0, this.w, this.h);
+      this.pg.rect(0, 0, width, height);
 
       if (this.ratio_preview) this.ratio_animation();
 

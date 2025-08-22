@@ -12,7 +12,7 @@ class Mask {
     this.semantic_group = semantic_group;
 
     // categ (categorized mask), cont (contained mask), silh (silhouette mask), rep (repeat)
-    this.view_type_options = ["categ", "categ_rep", "categ+cont", "categ+cont_rep", "categ+silh", "categ+silh_rep", "silh_rep"];
+    this.view_type_options = ["categ", "categ", "categ", "categ_rep", "categ+cont", "categ+cont_rep", "categ+silh", "categ+silh_rep", "silh_rep"];
     // this.view_type_options = ["categ", "categ_rep", "categ+cont", "cont", "categ+cont_rep", "categ+silh", "categ+silh_rep", "silh_rep"];
     this.view_type = random(this.view_type_options);
 
@@ -81,8 +81,8 @@ class Mask {
         this.render_contained(pg, true, false);
         break;
       case "categ+cont_rep":
-        this.render_contained(pg, true, true);
         this.render_mask(pg, false);
+        this.render_contained(pg, true, true);
         break;
       case "categ+silh":
         this.render_silhouette(pg, true, false);
@@ -372,14 +372,14 @@ class Mask {
       let scaled_w = this.w * scl;
       let scaled_h = this.h * scl;
 
-      let alpha_value;
+      let alpha_value = alpha(mask_color);
       if (alpha_variation || this.color_variation_type == 1) {
         alpha_value = map(t, 0, 1, alpha(mask_color), 0);
       } else {
         alpha_value = alpha(mask_color);
       }
 
-      let c;
+      let c = mask_color;
       if (color_variation || this.color_variation_type == 1) {
         // Cor (tints)
         c = color(hue(mask_color), map(t, 0, 1, saturation(mask_color), 0), map(t, 0, 1, brightness(mask_color), 100), alpha_value);
