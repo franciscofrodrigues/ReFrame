@@ -12,8 +12,8 @@ class Mask {
     this.semantic_group = semantic_group;
 
     // categ (categorized mask), cont (contained mask), silh (silhouette mask), rep (repeat)
-    this.view_type_options = ["categ", "categ", "categ", "categ_rep", "categ+cont", "categ+cont_rep", "categ+silh", "categ+silh_rep", "silh_rep"];
     // this.view_type_options = ["categ", "categ_rep", "categ+cont", "cont", "categ+cont_rep", "categ+silh", "categ+silh_rep", "silh_rep"];
+    this.view_type_options = ["categ", "categ", "categ", "categ", "categ", "categ", "categ_rep", "categ+cont", "categ+cont_rep", "categ+silh", "categ+silh_rep", "silh_rep"];
     this.view_type = random(this.view_type_options);
 
     // Inversa

@@ -1,6 +1,6 @@
 // UI
 let cnv, cnv_parent, css_styles, font, mask_selection, info_p;
-let bg_color, fg_color, comp_shadow_color, user_color, comp_bg_color, debug_color, overlay_alpha;
+let bg_color, comp_shadow_color, comp_bg_color, user_color, debug_color, overlay_alpha;
 let zoom, zoom_pos;
 
 // API
@@ -24,6 +24,7 @@ function setup() {
   cnv = createCanvas(100, 100);
   cnv.drawingContext = cnv.elt.getContext("2d", { willReadFrequently: true });
   cnv.parent("#canvas");
+  noSmooth();
 
   // API
   // port_api = "8000";
@@ -47,9 +48,8 @@ function setup() {
   // Cores
   css_styles = window.getComputedStyle(document.body);
   bg_color = css_styles.getPropertyValue("--bg-color");
-  fg_color = css_styles.getPropertyValue("--fg-color");
   comp_shadow_color = css_styles.getPropertyValue("--cnv-shadow");
-  comp_bg_color = color("#FFFFFF");
+  comp_bg_color = css_styles.getPropertyValue("--cnv-color");
   debug_color = color(0, 0, 0, 255);
   overlay_alpha = 150;
 
@@ -132,6 +132,11 @@ function draw() {
   randomSeed(seed);
 
   display_info();
+  if(mask_selection) {
+    export_btn.style.display = "none";
+  } else {
+    export_btn.style.display = "block";
+  }
 
   if (mask_selection) {
     masks_pool.run();
@@ -330,12 +335,6 @@ function init_mask_pool() {
 // Alterar Visibilidade
 function toggle_mask_pool() {
   mask_selection = !mask_selection;
-
-  if(mask_selection) {
-    export_btn.style.display = "none";
-  } else {
-    export_btn.style.display = "block";
-  }
 }
 
 // ---------------------------------------------------------------------------

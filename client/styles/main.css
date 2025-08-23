@@ -14,14 +14,15 @@
 
 :root {
   --bg-color: #ebebeb;
-  --fg-color: #ffffff;
-  --cnv-color: #ffffff;
-  /* --cnv-color: rgb(52, 55, 55); */
-  --cnv-shadow: hsla(0, 0%, 0%, 0.11);
+  --section-color: #ebebeb;
   --sidebar-color: #ffffff;
+  
+  --cnv-color: #ffffff;
+  --cnv-shadow: hsla(0, 0%, 0%, 0.11);
+  
   --btn-color: #000000;
   --btn-hover-color: #ffffff;
-  --section-color: hsl(0, 0%, 92%);
+
   --flex-gap: 10px;
   --div-padding: 1.5rem;
 }
@@ -638,4 +639,3 @@ input[type="checkbox"]:checked ~ .mark::after {
   flex-direction: column;
   gap: calc(var(--flex-gap) / 2);
 }
-
