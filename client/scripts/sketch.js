@@ -207,9 +207,13 @@ function mousePressed() {
 // Zoom
 function mouseWheel(event) {
   if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
-    zoom -= event.delta * 0.001;
-    zoom_pos = createVector(width / 2, height / 2);
-    zoom = constrain(zoom, 0.5, 2);
+    if(mask_selection) {
+      masks_pool.mouse_wheel(event);
+    } else {
+      zoom -= event.delta * 0.001;
+      zoom_pos = createVector(width / 2, height / 2);
+      zoom = constrain(zoom, 0.5, 2);
+    }
   }
 }
 
