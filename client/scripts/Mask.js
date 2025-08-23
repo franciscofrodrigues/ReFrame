@@ -32,6 +32,7 @@ class Mask {
 
     // Cores
     this.blend_mode = MULTIPLY;
+    // this.blend_mode = BLEND;
     // this.blend_mode = random([MULTIPLY, BLEND]);
 
     // Máscaras binárias -> Shapes
@@ -81,8 +82,8 @@ class Mask {
         this.render_contained(pg, true, false);
         break;
       case "categ+cont_rep":
-        this.render_mask(pg, false);
         this.render_contained(pg, true, true);
+        this.render_mask(pg, false);
         break;
       case "categ+silh":
         this.render_silhouette(pg, true, false);
