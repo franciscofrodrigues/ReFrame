@@ -171,6 +171,7 @@ function keyPressed() {
   // if (key === "b" || key === "B") {
   //   batch_export();
   // }
+
   // Modo Debug
   // if (key === "d" || key === "D") {
   //   debug = !debug;
@@ -206,7 +207,7 @@ function mousePressed() {
 // Zoom
 function mouseWheel(event) {
   if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
-    if (mask_selection) {
+    if(mask_selection) {
       masks_pool.mouse_wheel(event);
     } else {
       zoom -= event.delta * 0.001;
@@ -330,7 +331,7 @@ function init_mask_pool() {
 function toggle_mask_pool() {
   mask_selection = !mask_selection;
 
-  if (mask_selection) {
+  if(mask_selection) {
     export_btn.style.display = "none";
   } else {
     export_btn.style.display = "block";
