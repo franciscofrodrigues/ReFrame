@@ -19,6 +19,7 @@ class MasksPool {
 
     this.scroll = 0;
     this.max_scroll = int(this.all_masks.length / this.num_cols) * this.cell_h;
+    this.max_scroll = constrain(this.max_scroll, 0, this.max_scroll - this.h);
 
     this.cells = [];
     this.init_cells();

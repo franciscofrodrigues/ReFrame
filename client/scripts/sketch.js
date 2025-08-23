@@ -49,7 +49,6 @@ function setup() {
   bg_color = css_styles.getPropertyValue("--bg-color");
   fg_color = css_styles.getPropertyValue("--fg-color");
   comp_shadow_color = css_styles.getPropertyValue("--cnv-shadow");
-  // comp_bg_color = color("#F7F6F5");
   comp_bg_color = color("#FFFFFF");
   debug_color = color(0, 0, 0, 255);
   overlay_alpha = 150;
@@ -168,14 +167,14 @@ function draw() {
 // ---------------------------------------------------------------------------
 
 function keyPressed() {
+  // Modo Batch Export
   // if (key === "b" || key === "B") {
   //   batch_export();
   // }
-
   // Modo Debug
-  if (key === "d" || key === "D") {
-    debug = !debug;
-  }
+  // if (key === "d" || key === "D") {
+  //   debug = !debug;
+  // }
 }
 
 // Redimensionamento da Janela
@@ -207,7 +206,7 @@ function mousePressed() {
 // Zoom
 function mouseWheel(event) {
   if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
-    if(mask_selection) {
+    if (mask_selection) {
       masks_pool.mouse_wheel(event);
     } else {
       zoom -= event.delta * 0.001;
@@ -330,6 +329,12 @@ function init_mask_pool() {
 // Alterar Visibilidade
 function toggle_mask_pool() {
   mask_selection = !mask_selection;
+
+  if (mask_selection) {
+    export_btn.style.display = "none";
+  } else {
+    export_btn.style.display = "block";
+  }
 }
 
 // ---------------------------------------------------------------------------
