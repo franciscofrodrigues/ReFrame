@@ -65,7 +65,7 @@ class PoolCell {
     drawingContext.shadowBlur = 20;
     drawingContext.shadowColor = comp_shadow_color;
 
-    fill(fg_color);
+    fill(comp_bg_color);
     noStroke();
     let [w, h] = this.rect_dims();
     rect(0, 0, w, h, this.border_radius);

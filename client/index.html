@@ -27,153 +27,155 @@
           <h3>Decomposing Visual Information</h3>
         </div>
 
-        <!--Secção "Import" -->
-        <div class="section_container">
-          <input type="checkbox" name="section_collapsible" id="import_collapsible" value="0" checked />
-          <label class="section_title" id="import_title_container" for="import_collapsible">
-            <h4>Decomposition</h4>
-            <img src="assets/icons/dropdown_arrow.svg" alt="dropdown_arrow">
-          </label>
+        <div id="content">
+          <!--Secção "Import" -->
+          <div class="section_container">
+            <input type="checkbox" name="section_collapsible" id="import_collapsible" value="0" checked />
+            <label class="section_title" id="import_title_container" for="import_collapsible">
+              <h4>Decomposition</h4>
+              <img src="assets/icons/dropdown_arrow.svg" alt="dropdown_arrow" />
+            </label>
 
-          <div class="section_content" id="import_container">
-            <h5>Upload Images</h5>
-            <form id="upload_image_form">
-              <label class="btn">
-                Select
-                <input type="file" name="files" accept="image/png, image/jpg, image/jpeg" multiple />
-              </label>
-              <button class="btn" type="submit">Upload</button>
-              <p id="upload_image_message"></p>
-            </form>
+            <div class="section_content" id="import_container">
+              <h5>Upload Images</h5>
+              <form id="upload_image_form">
+                <label class="btn">
+                  Select
+                  <input type="file" name="files" accept="image/png, image/jpg, image/jpeg" multiple />
+                </label>
+                <button class="btn" type="submit">Upload</button>
+                <p id="upload_image_message"></p>
+              </form>
 
-            <div id="imports_container">
-              <hr class="divider" />
-              <h5>Previous Uploads</h5>
-              <div id="imports_dropdown_container">
-                <label for="imports_dropdown"></label>
-                <select class="btn_inverted" name="imports_dropdown" id="imports_dropdown">
-                  <option value="" selected disabled>Choose here</option>
-                </select>                
+              <div id="imports_container">
+                <hr class="divider" />
+                <h5>Previous Uploads</h5>
+                <div id="imports_dropdown_container">
+                  <label for="imports_dropdown"></label>
+                  <select class="btn btn_inverted" name="imports_dropdown" id="imports_dropdown">
+                    <option value="" selected disabled>Choose here</option>
+                  </select>
+                </div>
               </div>
-            </div>
 
-            <div id="selection_container">
-              <hr class="divider" />
-              <h5>Select Elements</h5>
-              <button class="btn_inverted" id="mask_pool_btn" type="submit">Library</button>
+              <div id="selection_container">
+                <hr class="divider" />
+                <h5>Select Elements</h5>
+                <button class="btn btn_inverted" id="mask_pool_btn" type="submit">Library</button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!--Secção "Composition" -->
-        <div class="section_container">
-          <input type="checkbox" name="section_collapsible" id="composition_collapsible" value="1" />
-          <label class="section_title" id="composition_title_container" for="composition_collapsible">
-            <h4>Composition</h4>
-            <img src="assets/icons/dropdown_arrow.svg" alt="dropdown_arrow">
-          </label>
+          <!--Secção "Composition" -->
+          <div class="section_container">
+            <input type="checkbox" name="section_collapsible" id="composition_collapsible" value="1" />
+            <label class="section_title" id="composition_title_container" for="composition_collapsible">
+              <h4>Composition</h4>
+              <img src="assets/icons/dropdown_arrow.svg" alt="dropdown_arrow" />
+            </label>
 
-          <div class="section_content" id="composition_container">
-            <!-- Canvas Ratio -->
-            <h5>Canvas Ratio</h5>
-            <div id="canvas_ratio_container">
-              <input class="slider" id="canvas_ratio" name="canvas_ratio" type="range" step="12.5" list="canvas_ratio_values" />
-              <datalist class="slider" id="canvas_ratio_values">
-                <option class="label" value="0">16:9</option>
-                <option class="label" value="12.5">3:2</option>
-                <option class="label" value="25">4:3</option>
-                <option class="label" value="37.5">5:4</option>
-                <option class="label" value="50">1:1</option>
-                <option class="label" value="62.5">4:5</option>
-                <option class="label" value="75">3:4</option>
-                <option class="label" value="87.5">2:3</option>
-                <option class="label" value="100">9:16</option>
-              </datalist>
-            </div>
-
-            <hr class="divider" />
-
-            <!-- Distribuição -->
-            <h5>Groups Distribution</h5>
-            <div id="distribution_container">
-              <div class="radio_option">
-                <input type="radio" id="thirds" name="distribution" value="0" checked />
-                <label for="thirds">Thirds</label>
+            <div class="section_content" id="composition_container">
+              <!-- Canvas Ratio -->
+              <h5>Canvas Ratio</h5>
+              <div id="canvas_ratio_container">
+                <input class="slider" id="canvas_ratio" name="canvas_ratio" type="range" step="12.5" list="canvas_ratio_values" />
+                <datalist class="slider" id="canvas_ratio_values">
+                  <option class="label" value="0">16:9</option>
+                  <option class="label" value="12.5">3:2</option>
+                  <option class="label" value="25">4:3</option>
+                  <option class="label" value="37.5">5:4</option>
+                  <option class="label" value="50">1:1</option>
+                  <option class="label" value="62.5">4:5</option>
+                  <option class="label" value="75">3:4</option>
+                  <option class="label" value="87.5">2:3</option>
+                  <option class="label" value="100">9:16</option>
+                </datalist>
               </div>
 
-              <div class="radio_option">
-                <input type="radio" id="center" name="distribution" value="1" />
-                <label for="center">Center</label>
-              </div>
+              <hr class="divider" />
 
-              <div class="radio_option">
-                <input type="radio" id="random_point" name="distribution" value="2" />
-                <label for="random_point">Random Point</label>
-              </div>
-            </div>
-
-            <hr class="divider" />
-
-            <!-- Dimensões dos Grupos -->
-            <h5>Groups Dimensions</h5>
-            <div id="groups_container">
-              <p id="group_width_label">Width</p>
-              <input class="slider" id="group_width" name="group_width" type="range" value="0.65" min="0.3" max="1" step="any" list="group_width_values" />
-              <datalist class="slider" id="group_width_values">
-                <option class="label" value="0" label="0%"></option>
-                <option class="label" value="1" label="100%"></option>
-              </datalist>
-
-              <p id="group_height_label">Height</p>
-              <input class="slider" id="group_height" name="group_height" type="range" value="0.65" min="0.3" max="1" step="any" list="group_height_values" />
-              <datalist class="slider" id="group_height_values">
-                <option class="label" value="0" label="0%"></option>
-                <option class="label" value="1" label="100%"></option>
-              </datalist>
-            </div>
-
-            <hr class="divider" />
-
-            <!-- Cores -->
-            <h5>Color</h5>
-            <div id="colors_container">
-              <p>Main Color</p>
-              <div id="color_input_container">
-                <div id="color_picker">
-                  <label for="user_color"></label>
-                  <input type="color" id="user_color" name="user_color" />
-                </div>
-
-                <div id="color_text">
-                  <span>#</span>
-                  <label for="color_hex"></label>
-                  <input id="color_hex" name="color_hex" type="text" maxlength="6" />
-                </div>
-              </div>
-
-              <p id="color_variation_title">Group Variation</p>
-              <div id="color_variation_container">
+              <!-- Distribuição -->
+              <h5>Groups Distribution</h5>
+              <div id="distribution_container">
                 <div class="radio_option">
-                  <input type="radio" id="unique" name="color_variation" value="0" checked />
-                  <label for="unique">Unique</label>
+                  <input type="radio" id="thirds" name="distribution" value="0" checked />
+                  <label class="btn" for="thirds">Thirds</label>
                 </div>
 
                 <div class="radio_option">
-                  <input type="radio" id="mono" name="color_variation" value="1" />
-                  <label for="mono">Monochromatic</label>
+                  <input type="radio" id="center" name="distribution" value="1" />
+                  <label class="btn" for="center">Center</label>
                 </div>
 
                 <div class="radio_option">
-                  <input type="radio" id="random" name="color_variation" value="2" />
-                  <label for="random">Random</label>
+                  <input type="radio" id="random_point" name="distribution" value="2" />
+                  <label class="btn" for="random_point">Random Point</label>
                 </div>
               </div>
-            </div>
 
-            <hr class="divider" id="apply_changes_divider" />
+              <hr class="divider" />
 
-            <div id="apply_changes_container">
-              <button class="btn" type="button" id="apply_changes_btn">Apply Changes</button>
+              <!-- Dimensões dos Grupos -->
+              <h5>Groups Dimensions</h5>
+              <div id="groups_container">
+                <p id="group_width_label">Width</p>
+                <input class="slider" id="group_width" name="group_width" type="range" value="0.65" min="0.3" max="1" step="any" list="group_width_values" />
+                <datalist class="slider" id="group_width_values">
+                  <option class="label" value="0" label="0%"></option>
+                  <option class="label" value="1" label="100%"></option>
+                </datalist>
+
+                <p id="group_height_label">Height</p>
+                <input class="slider" id="group_height" name="group_height" type="range" value="0.65" min="0.3" max="1" step="any" list="group_height_values" />
+                <datalist class="slider" id="group_height_values">
+                  <option class="label" value="0" label="0%"></option>
+                  <option class="label" value="1" label="100%"></option>
+                </datalist>
+              </div>
+
+              <hr class="divider" />
+
+              <!-- Cores -->
+              <h5>Color</h5>
+              <div id="colors_container">
+                <p>Main Color</p>
+                <div id="color_input_container">
+                  <div id="color_picker">
+                    <label for="user_color"></label>
+                    <input type="color" id="user_color" name="user_color" />
+                  </div>
+
+                  <div id="color_text">
+                    <span>#</span>
+                    <label for="color_hex"></label>
+                    <input id="color_hex" name="color_hex" type="text" maxlength="6" />
+                  </div>
+                </div>
+
+                <p id="color_variation_title">Group Variation</p>
+                <div id="color_variation_container">
+                  <div class="radio_option">
+                    <input type="radio" id="unique" name="color_variation" value="0" checked />
+                    <label class="btn" for="unique">Unique</label>
+                  </div>
+
+                  <div class="radio_option">
+                    <input type="radio" id="mono" name="color_variation" value="1" />
+                    <label class="btn" for="mono">Monochromatic</label>
+                  </div>
+
+                  <div class="radio_option">
+                    <input type="radio" id="random" name="color_variation" value="2" />
+                    <label class="btn" for="random">Random</label>
+                  </div>
+                </div>
+              </div>
+
+              <hr class="divider" id="apply_changes_divider" />
+
+              <div id="apply_changes_container">
+                <button class="btn" type="button" id="apply_changes_btn">Apply Changes</button>
+              </div>
             </div>
           </div>
         </div>

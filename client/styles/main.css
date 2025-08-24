@@ -1,27 +1,20 @@
 @font-face {
-  font-family: "Roboto";
-  src: url("../assets/fonts/Roboto-Regular.ttf") format("truetype");
+  font-family: "S-Core Dream";
+  src: url("../assets/fonts/SCDream4.woff") format("woff"), url("../assets/fonts/SCDream4.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
 }
 
-@font-face {
-  font-family: "Roboto";
-  src: url("../assets/fonts/Roboto-SemiBold.ttf") format("truetype");
-  font-weight: 600;
-  font-style: normal;
-}
-
 :root {
-  --bg-color: #ebebeb;
-  --section-color: #ebebeb;
-  --sidebar-color: #ffffff;
-  
-  --cnv-color: #ffffff;
+  --bg-color: #ebeae8;
+  --section-color: #ebeae8;
+  --sidebar-color: #fcfcfa;
+
+  --cnv-color: #fcfcfa;
   --cnv-shadow: hsla(0, 0%, 0%, 0.11);
-  
-  --btn-color: #000000;
-  --btn-hover-color: #ffffff;
+
+  --btn-color: #1a1918;
+  --btn-hover-color: #fcfcfa;
 
   --flex-gap: 10px;
   --div-padding: 1.5rem;
@@ -31,6 +24,9 @@
   margin: 0;
   padding: 0;
   user-select: none;
+  font-family: "S-Core Dream", sans-serif;
+  font-size: 12pt;
+  font-weight: 400;
 }
 
 html,
@@ -38,9 +34,6 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  font-family: "Roboto", sans-serif;
-  font-size: 12pt;
-  font-weight: 400;
 }
 
 *:focus {
@@ -52,31 +45,24 @@ body {
 /* TIPOGRAFIA */
 h1 {
   font-size: 2.7rem;
-  font-weight: 600;
 }
 h2 {
   font-size: 2.2rem;
-  font-weight: 600;
 }
 h3 {
   font-size: 1.8rem;
-  font-weight: 600;
 }
 h4 {
   font-size: 1.5rem;
-  font-weight: 400;
 }
 h5 {
   font-size: 1.2rem;
-  font-weight: 400;
 }
 h6 {
   font-size: 1rem;
-  font-weight: 600;
 }
 p {
   font-size: 1rem;
-  font-weight: 400;
 }
 .label {
   font-size: 0.7rem;
@@ -132,7 +118,7 @@ main {
   top: 0;
   left: 0;
   z-index: 2;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(235, 234, 232, 0.8);
 
   display: none;
   flex-direction: column;
@@ -172,13 +158,19 @@ main {
 .btn {
   width: 100%;
   padding: 0.5rem 2rem;
+  font-size: 1rem;
+  line-height: 1.2rem;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+
   background-color: var(--btn-color);
   color: var(--btn-hover-color);
   border: 1px solid var(--btn-color);
   border-radius: 5px;
-  font-size: 1rem;
-  text-align: center;
-  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 .btn:hover {
   background-color: var(--btn-hover-color);
@@ -186,15 +178,11 @@ main {
   border: 1px solid var(--btn-color);
 }
 .btn_inverted {
-  width: 100%;
-  padding: 0.5rem 2rem;
   background-color: var(--btn-hover-color);
   color: var(--btn-color);
   border: 1px solid var(--btn-color);
   border-radius: 5px;
-  font-size: 1rem;
-  text-align: center;
-  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 .btn_inverted:hover {
   background-color: var(--btn-color);
@@ -226,6 +214,10 @@ main {
   display: none;
 }
 
+#content {
+  position: relative;
+}
+
 /* ----------------------------------------------------------------------------- */
 
 /* SECÇÕES */
@@ -233,6 +225,7 @@ main {
   width: 100%;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 .section_container > input {
   display: none;
@@ -249,6 +242,11 @@ label.section_title {
   justify-content: space-between;
   user-select: none;
   background-color: var(--sidebar-color);
+
+  position: sticky;
+  top: 7rem;
+  left: 0;
+  z-index: 1;
 }
 label.section_title > img {
   width: 1.5rem;
@@ -279,8 +277,9 @@ label.section_title > img {
   position: sticky;
   top: 0;
   left: 0;
+  height: 4rem;
   z-index: 2;
-  background-color: #ffffff;
+  background-color: var(--sidebar-color);
   border: 1px var(--btn-color);
   border-style: none none solid none;
 
@@ -475,10 +474,12 @@ datalist.slider > option {
   gap: calc(var(--flex-gap) / 2);
 }
 #color_picker {
-  flex-grow: 3;
+  flex-grow: 1;
   border: 1px solid var(--btn-color);
   border-radius: 5px;
   height: 2rem;
+  min-width: 2rem;
+  flex-shrink: 0;
 }
 #color_text {
   display: flex;
@@ -522,6 +523,7 @@ datalist.slider > option {
   border-radius: 5px;
   flex-grow: 3;
   height: 100%;
+  width: 50%;
 }
 #color_text > span {
   color: #c6c6c6;
@@ -624,7 +626,6 @@ input[type="checkbox"]:checked ~ .mark::after {
   border-radius: 5px;
 }
 .radio_option > label {
-  padding: 0.5rem;
   width: 100%;
   text-align: center;
   background-color: var(--btn-hover-color);
@@ -632,6 +633,7 @@ input[type="checkbox"]:checked ~ .mark::after {
   border: 1px solid var(--btn-color);
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 #color_variation_container {

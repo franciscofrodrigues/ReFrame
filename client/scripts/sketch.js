@@ -17,14 +17,13 @@ let seed, debug;
 // ---------------------------------------------------------------------------
 
 function preload() {
-  font = loadFont("assets/fonts/Roboto-Regular.ttf");
+  font = loadFont("assets/fonts/SCDream4.woff");
 }
 
 function setup() {
   cnv = createCanvas(100, 100);
   cnv.drawingContext = cnv.elt.getContext("2d", { willReadFrequently: true });
   cnv.parent("#canvas");
-  noSmooth();
 
   // API
   // port_api = "8000";
@@ -50,7 +49,7 @@ function setup() {
   bg_color = css_styles.getPropertyValue("--bg-color");
   comp_shadow_color = css_styles.getPropertyValue("--cnv-shadow");
   comp_bg_color = css_styles.getPropertyValue("--cnv-color");
-  debug_color = color(0, 0, 0, 255);
+  debug_color = css_styles.getPropertyValue("--btn-color");
   overlay_alpha = 150;
 
   // Botões
@@ -357,28 +356,25 @@ async function save_output(additional = "") {
     filename = `${year}${month}${day}_${hour}${minutes}${seconds}${millis}_${additional}`;
   }
 
-  let comp_scaled_w = comp_graphics.width * 2;
-  let comp_scaled_h = comp_graphics.height * 2;
-
-  let grain_output = createGraphics(comp_scaled_w, comp_scaled_h);
+  let grain_output = createGraphics(comp_graphics.width, comp_graphics.height);
   grain_output.copy(comp_graphics, -comp_graphics.width / 2, -comp_graphics.height / 2, comp_graphics.width, comp_graphics.height, 0, 0, grain_output.width, grain_output.height);
-  add_grain(grain_output, 5);
+  // add_grain(grain_output, 5);
   await save(grain_output, `${filename}_seed_${seed}.png`);
 }
 
 // ----
 // https://editor.p5js.org/ogt/sketches/sk1qsRr_n
-function add_grain(pg, num) {
-  pg.loadPixels();
-  for (let i = 0; i < pg.width * pixelDensity() * (pg.height * pixelDensity()) * 4; i += 4) {
-    let noise = map(random(), 0, 1, -num, num);
-    pg.pixels[i] = pg.pixels[i] + noise;
-    pg.pixels[i + 1] = pg.pixels[i + 1] + noise;
-    pg.pixels[i + 2] = pg.pixels[i + 2] + noise;
-    pg.pixels[i + 3] = pg.pixels[i + 3] + noise;
-  }
-  pg.updatePixels();
-}
+// function add_grain(pg, num) {
+//   pg.loadPixels();
+//   for (let i = 0; i < pg.width * pixelDensity() * (pg.height * pixelDensity()) * 4; i += 4) {
+//     let noise = map(random(), 0, 1, -num, num);
+//     pg.pixels[i] = pg.pixels[i] + noise;
+//     pg.pixels[i + 1] = pg.pixels[i + 1] + noise;
+//     pg.pixels[i + 2] = pg.pixels[i + 2] + noise;
+//     pg.pixels[i + 3] = pg.pixels[i + 3] + noise;
+//   }
+//   pg.updatePixels();
+// }
 // ----
 
 // ---------------------------------------------------------------------------
