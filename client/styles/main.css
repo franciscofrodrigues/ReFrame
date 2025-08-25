@@ -336,7 +336,6 @@ select#imports_dropdown:hover {
   margin: 0 calc(var(--div-padding) * -2) 0 calc(var(--div-padding) * -2);
   position: sticky;
   bottom: 0;
-  /* background-color: var(--bg-color); */
   background: linear-gradient(#ffffff00, var(--bg-color));
 }
 
