@@ -108,6 +108,21 @@ function setup() {
   user_color_picker.value(random_color);
   user_color_picker.input(user_color_pick);
 
+  const color_variation = selectAll("input[name='color_variation']");
+  for (let i = 0; i < color_variation.length; i++) {
+    color_variation[i].changed(() => {
+      let random_radio_state = document.getElementById("random").checked;
+
+      if (random_radio_state) {        
+        user_color_hex_input.attribute("disabled", true);
+        user_color_picker.attribute("disabled", true);
+      } else {
+        user_color_hex_input.removeAttribute("disabled");
+        user_color_picker.removeAttribute("disabled");
+      }
+    });
+  }
+
   info_p = select("#canvas_info");
 
   // Mask Pool
@@ -131,7 +146,7 @@ function draw() {
   randomSeed(seed);
 
   display_info();
-  if(mask_selection) {
+  if (mask_selection) {
     export_btn.style.display = "none";
   } else {
     export_btn.style.display = "block";
@@ -175,7 +190,6 @@ function keyPressed() {
   // if (key === "b" || key === "B") {
   //   batch_export();
   // }
-
   // Modo Debug
   // if (key === "d" || key === "D") {
   //   debug = !debug;
@@ -211,7 +225,7 @@ function mousePressed() {
 // Zoom
 function mouseWheel(event) {
   if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
-    if(mask_selection) {
+    if (mask_selection) {
       masks_pool.mouse_wheel(event);
     } else {
       zoom -= event.delta * 0.001;

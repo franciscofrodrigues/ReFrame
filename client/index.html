@@ -199,27 +199,5 @@
     <script src="scripts/MasksPool.js"></script>
     <script src="scripts/sketch.js"></script>
     <script src="scripts/batchExport.js"></script>
-    <script>
-      // Pega os elementos
-      const colorPicker = document.getElementById("user_color");
-      const colorHex = document.getElementById("color_hex");
-      const radios = document.querySelectorAll('input[name="color_variation"]');
-
-      // Função para ativar/desativar
-      function updateColorInputs() {
-        const randomSelected = document.getElementById("random").checked;
-
-        colorPicker.disabled = randomSelected;
-        colorHex.disabled = randomSelected;
-      }
-
-      // Escuta mudanças nos radios
-      radios.forEach((radio) => {
-        radio.addEventListener("change", updateColorInputs);
-      });
-
-      // Estado inicial
-      updateColorInputs();
-    </script>
   </body>
 </html>
