@@ -1,17 +1,12 @@
-// const batch_accent_colors = ["#29E7CD", "#FEEA00", "#FF5A5F"];
-// const batch_complementary_colors = ["#FFFFFF", "#FFFFFF", "#FFFFFFF"];
-// const batch_ratios = [1, 0.75, 1.3333333333, 0.8, 0.5625, 1.7777777778];
-// const grid_types = [0, 1, 2];
-
-const batch_colors = ["#29E7CD"];
-const batch_ratios = [0.75];
-const grid_types = [0,1,2];
+const ratios = [0.75];
+const grid_types = [0, 1, 2];
+const color_variation_types = [0, 1, 2];
 
 const settings = {
   runs: 5,
-  color: batch_colors,
-  ratio: batch_ratios,
+  ratio: ratios,
   grid: grid_types,
+  color_variation: color_variation_types,
 };
 
 const imports = sessionStorage.getItem("imports");
@@ -21,11 +16,12 @@ async function batch_export() {
   for (let i = 0; i < data.length; i++) {
     // Obter Máscaras
     await get_masks(data[i].folder_name);
+    imports_dropdown.value = data[i].folder_name;
 
     for (let j = 0; j < settings.ratio.length; j++) {
-      for (let k = 0; k < settings.color.length; k++) {
-        for (let l = 0; l < settings.grid.length; l++) {
-          for (let h = 0; h < settings.runs; h++) {
+      for (let k = 0; k < settings.grid.length; k++) {
+        for (let m = 0; m < settings.color_variation.length; m++) {
+          for (let n = 0; n < settings.runs; n++) {
             seed = Date.now();
             randomSeed(seed);
 
@@ -55,26 +51,22 @@ async function batch_export() {
             comp_graphics.textFont(font);
             comp_graphics.textSize(12);
 
-            user_color = settings.color[k];
+            user_color = color(random(360), random(10, 100), random(40, 100));
 
             // Composition
-            composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, settings.grid[l], user_color, 0, 1, 1);
+            composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, settings.grid[k], user_color, settings.color_variation[m], 1, 1);
             composition.semantic_groups = semantic_groups;
-
             composition.recompose();
-            comp_graphics.background(comp_bg_color);
-            composition.run();
 
             // Guardar outputs
             // await save_output(`[${j}_${k}_${l}]`);
 
             // Preview de 1s
-            await new Promise((r) => setTimeout(r, 500));
-            // await new Promise((r) => setTimeout(r, 1000));
+            // await new Promise((r) => setTimeout(r, 500));
+            await new Promise((r) => setTimeout(r, 1000));
           }
         }
       }
     }
   }
-  apply_changes();
 }
