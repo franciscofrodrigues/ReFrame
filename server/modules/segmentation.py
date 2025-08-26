@@ -18,7 +18,7 @@ class Segmentation:
         self.save = False
         self.batch = 4
         self.imgsz = 640
-        self.conf = 0.5
+        self.conf = 0.7
         self.iou = 0.4
     
     def mask_img(self, binary_mask, original_img):
