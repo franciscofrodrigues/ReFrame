@@ -187,13 +187,13 @@ function draw() {
 
 function keyPressed() {
   // Modo Batch Export
-  // if (key === "b" || key === "B") {
-  //   batch_export();
-  // }
+  if (key === "b" || key === "B") {
+    batch_export();
+  }
   // Modo Debug
-  // if (key === "d" || key === "D") {
-  //   debug = !debug;
-  // }
+  if (key === "d" || key === "D") {
+    debug = !debug;
+  }
 }
 
 // Redimensionamento da Janela

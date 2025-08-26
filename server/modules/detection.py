@@ -94,5 +94,5 @@ class Detection:
 # ------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    detection = Detection('weights/yolo11x.pt', 'res/uploads', 'res/outputs/modules/detection')
+    detection = Detection('weights/yolo11x.pt', 'res/uploads', 'res/outputs')
     print(detection.run())

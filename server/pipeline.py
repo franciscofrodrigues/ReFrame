@@ -7,9 +7,12 @@ import config
 from modules import Detection, Segmentation, Concept, MaskFilter
 
 import os
+import time
 
 
 def pipeline(uploads_path, outputs_path, json_structure, task_uuid, tasks):            
+
+    start = time.time()
 
     # DETEÇÃO DE OBJETOS
     tasks[task_uuid].step = "Running Object Detection..."
@@ -35,6 +38,9 @@ def pipeline(uploads_path, outputs_path, json_structure, task_uuid, tasks):
     tasks[task_uuid].folder_name = filename
     tasks[task_uuid].status = "Process End"    
     tasks[task_uuid].labels = format_labels_list(labels_info)
+    
+    end = time.time()
+    print("Elapsed time:", end - start, "seconds")
     
 
 # ------------------------------------------------------------------------------

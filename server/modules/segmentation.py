@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 from ultralytics import FastSAM
 
+
 class Segmentation:
     def __init__(self, weights_path, input_files, outputs_path, input_counter):
         self.model = FastSAM(weights_path)
@@ -17,7 +18,9 @@ class Segmentation:
         self.save = False
         self.batch = 4
         self.imgsz = 640
-        self.conf = 0.8
+        # self.conf = 0.7
+        # self.iou = 0.4
+        self.conf = 0.3
         self.iou = 0.4
     
     def mask_img(self, binary_mask, original_img):
@@ -43,6 +46,18 @@ class Segmentation:
         conf = round(raw_conf*100)
         return conf
 
+    def get_graphcut(self, img):            
+        height, width = img.shape[:2]
+        mask = np.zeros((height, width),np.uint8)        
+        bgdModel = np.zeros((1,65),np.float64)
+        fgdModel = np.zeros((1,65),np.float64)        
+        padding = 30
+        rect = (padding, padding, width-padding, height-padding)
+        cv2.grabCut(img,mask,rect,bgdModel,fgdModel,1,cv2.GC_INIT_WITH_RECT)
+        graphcut_mask = np.where((mask == 2) | (mask == 0), 0, 255).astype('uint8')        
+        return graphcut_mask
+            
+
     # SEGMENTAÇÃO DE IMAGEM de VÁRIAS imagens
     def run(self):
         # Inferência
@@ -54,6 +69,9 @@ class Segmentation:
                 input_file = result.path
                 input_filename = get_filename(input_file)
                 original_img = cv2.imread(input_file)
+                                
+                mask_graphcut = self.get_graphcut(original_img)
+                graphcut_output_path = save_output(self.outputs_path, mask_graphcut, f'graphcut_[{input_filename}]', "segmentation")
                 
                 # result.show()
 
@@ -76,6 +94,7 @@ class Segmentation:
                             "mask_index": j,
                             "confidence": confidence,
                             "mask_pixels": white_count,
+                            "graphcut_mask_path": graphcut_output_path,
                             "binary_mask_path": binary_output_path,
                             "result_image_path": output_path
                         })                            

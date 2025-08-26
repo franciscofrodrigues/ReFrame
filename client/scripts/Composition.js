@@ -22,10 +22,12 @@ class Composition {
     this.max_group_h = this.h * max_group_h_factor;
     this.min_group_w = this.w * 0.2;
     this.min_group_h = this.h * 0.2;
-    // this.min_group_w = this.max_group_w - 0.2;
-    // this.min_group_h = this.max_group_h - 0.2;
-    this.group_w = constrain(random(this.min_group_w, this.max_group_w), 0, this.w);
-    this.group_h = constrain(random(this.min_group_h, this.max_group_h), 0, this.h);
+    // this.group_w = constrain(random(this.min_group_w, this.max_group_w), 0, this.w);
+    // this.group_h = constrain(random(this.min_group_h, this.max_group_h), 0, this.h);
+    // this.group_w = constrain(randomGaussian() * this.min_group_w + this.max_group_w, this.min_group_w, this.w);
+    // this.group_h = constrain(randomGaussian() * this.min_group_h + this.max_group_h, this.min_group_h, this.h);
+    this.group_w = constrain(this.max_group_w, this.min_group_w, this.w);
+    this.group_h = constrain(this.max_group_h, this.min_group_h, this.h);
 
     // this.group_ang = [-PI / 3, -QUARTER_PI, -PI / 6, 0, -PI / 6, QUARTER_PI, PI / 3];
     this.group_ang = [-QUARTER_PI, -PI / 6, 0, -PI / 6, QUARTER_PI];
@@ -87,8 +89,10 @@ class Composition {
   }
 
   reposition(index) {
-    this.group_w = constrain(random(this.min_group_w, this.max_group_w), 0, this.w);
-    this.group_h = constrain(random(this.min_group_h, this.max_group_h), 0, this.h);
+    // this.group_w = constrain(randomGaussian() * this.min_group_w + this.max_group_w, this.min_group_w, this.w);
+    // this.group_h = constrain(randomGaussian() * this.min_group_h + this.max_group_h, this.min_group_w, this.h);
+    this.group_w = constrain(this.max_group_w, this.min_group_w, this.w);
+    this.group_h = constrain(this.max_group_h, this.min_group_h, this.h);
     this.semantic_groups[index].w = this.group_w;
     this.semantic_groups[index].h = this.group_h;
 

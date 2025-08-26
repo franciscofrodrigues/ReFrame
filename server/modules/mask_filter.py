@@ -65,6 +65,24 @@ class MaskFilter:
                 largest_mask_pixels = mask["mask_pixels"]
                 largest_mask = mask
         return largest_mask
+    
+    def get_subject_mask(self, masks):
+        similar_pixels = -1
+
+        for mask in masks:
+            graphcut_mask_binary = cv2.imread(mask["graphcut_mask_path"], cv2.IMREAD_GRAYSCALE)
+            ret, graphcut_mask = cv2.threshold(graphcut_mask_binary, 127, 255, cv2.THRESH_BINARY)
+            
+            current_mask_binary = cv2.imread(mask["binary_mask_path"], cv2.IMREAD_GRAYSCALE)
+            ret, current_mask = cv2.threshold(current_mask_binary, 127, 255, cv2.THRESH_BINARY)
+            
+            current_similar_pixels = np.sum((current_mask == 255) & (graphcut_mask == 255))
+            
+            if current_similar_pixels >= similar_pixels:                
+                similar_pixels = current_similar_pixels
+                subject_mask = mask
+                subject_mask_mask = current_mask
+        return subject_mask, subject_mask_mask
 
     # Verificar se a máscara está contida na "largest_mask"
     def check_contained(self, current_mask, largest_mask):
@@ -81,23 +99,15 @@ class MaskFilter:
         for key_groups in groups:
             group_data = []
             # Para cada grupo com determinada key
-            for i, (key, masks) in enumerate(key_groups.items()):
-                largest_mask = self.get_largest_mask(masks)
-
-                # Obter máscara binária
-                largest_mask_binary = cv2.imread(
-                    largest_mask["binary_mask_path"], cv2.IMREAD_GRAYSCALE
-                )
-                ret, largest_mask_mask = cv2.threshold(
-                    largest_mask_binary, 127, 255, cv2.THRESH_BINARY
-                )
+            for i, (key, masks) in enumerate(key_groups.items()):                                
+                subject_mask, subject_mask_mask = self.get_subject_mask(masks)
 
                 # Inverter a máscara
-                largest_mask_inverted = cv2.bitwise_not(largest_mask_mask)
+                subject_mask_inverted = cv2.bitwise_not(subject_mask_mask)
                 inverse_output_path = save_output(
                     self.inverse_outputs_path,
-                    largest_mask_mask,
-                    f'[{key[0]}_{key[1]}_{largest_mask["mask_index"]}]',
+                    subject_mask_mask,
+                    f'[{key[0]}_{key[1]}_{subject_mask["mask_index"]}]',
                     "inverse",
                 )
 
@@ -107,7 +117,7 @@ class MaskFilter:
                 group_data.append(
                     {
                         "label": label,
-                        "result_image_path": largest_mask["result_image_path"],
+                        "result_image_path": subject_mask["result_image_path"],
                         "inverse": inverse_output_path,
                         "contained": contained_data,
                     }
@@ -123,16 +133,16 @@ class MaskFilter:
                     )
 
                     # Quando não se trata da "largest_mask"
-                    if not np.array_equal(current_mask_mask, largest_mask_mask):
+                    if not np.array_equal(current_mask_mask, subject_mask_mask):
                         contained_output_path = save_output(
                             self.contained_outputs_path,
                             current_mask_mask,
-                            f'[{key[0]}_{key[1]}_{largest_mask["mask_index"]}]',
+                            f'[{key[0]}_{key[1]}_{subject_mask["mask_index"]}]',
                             "contained",
                         )
 
                         # Verificar se a máscara está contida na "largest_mask"
-                        if self.check_contained(current_mask_mask, largest_mask_mask):
+                        if self.check_contained(current_mask_mask, subject_mask_mask):
                             contained_data.append(contained_output_path)
 
                     # Quando se trata da "largest_mask"
