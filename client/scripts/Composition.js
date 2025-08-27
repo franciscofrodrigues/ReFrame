@@ -141,7 +141,7 @@ class Composition {
 
   get_main_palette(c1, c2) {
     let num_steps = this.semantic_groups.length;
-    let hue_step = 30;
+    let hue_step = 20;
 
     let main_palette = [];
     main_palette.push(c1, c2);
