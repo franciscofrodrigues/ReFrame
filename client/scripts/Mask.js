@@ -311,11 +311,13 @@ class Mask {
   init_curves() {
     this.curves[0][0] = this.bezier_line(this.mask_centroid, 20, 0, true, 1, 10);
     // this.curves[1][0] = this.bezier_line(this.silhouette_mask_centroid, random(20, max(comp_graphics_w, comp_graphics_h)), 0, true, 1, 10);
-    this.curves[1][0] = this.bezier_line(this.silhouette_mask_centroid, random(20, 200), 0, true, 1, 10);
+    // this.curves[1][0] = this.bezier_line(this.silhouette_mask_centroid, random(20, 200), 0, true, 1, 10);
+    this.curves[1][0] = this.bezier_line(this.silhouette_mask_centroid, random(this.w*0.1, this.w*0.5), 0, true, 1, 5);
 
     for (let i = 0; i < this.contained_masks.length; i++) {
       // this.curves[2][i] = this.bezier_line(this.contained_mask_centroids[i], random(20, max(comp_graphics_w, comp_graphics_h)), 20, false, 1, 20);
-      this.curves[2][i] = this.bezier_line(this.contained_mask_centroids[i], random(20, 200), 20, false, 1, 20);
+      // this.curves[2][i] = this.bezier_line(this.contained_mask_centroids[i], random(20, 200), 20, false, 1, 20);
+      this.curves[2][i] = this.bezier_line(this.contained_mask_centroids[i], random(this.w*0.1, this.w*0.5), 20, false, 1, 20);
     }
   }
 
