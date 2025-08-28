@@ -234,10 +234,10 @@ class Mask {
     copy.loadPixels();
     img.loadPixels();
     for (let x = 0; x < img.width; x++) {
-      for (let y = 0; y < img.height; y++) {
-        const i = 4 * (y * img.width + x);
+      for (let y = 0; y < img.height; y++) {        
+        let index = 4 * (x + y * img.width);
 
-        let b = img.pixels[i];
+        let b = img.pixels[index];
         if (b < 50) {
           let transparent = color(0, 0, 0, 0);
           copy.set(x, y, transparent);

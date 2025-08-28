@@ -8,7 +8,7 @@ let port_api, endpoint_api, folder_name;
 let result_json;
 
 // Composition
-let comp_graphics, comp_graphics_ratio, comp_graphics_w, comp_graphics_h;
+let comp_graphics, comp_graphics_ratio, comp_graphics_w, comp_graphics_h, comp_graphics_display_w, comp_graphics_display_h;
 let masks, unselected_masks, masks_pool, semantic_groups, composition, ratio_values;
 
 // Sketch
@@ -24,6 +24,7 @@ function setup() {
   cnv = createCanvas(100, 100);
   cnv.drawingContext = cnv.elt.getContext("2d", { willReadFrequently: true });
   cnv.parent("#canvas");
+  pixelDensity(1);
 
   // API
   // port_api = "8000";
@@ -113,7 +114,7 @@ function setup() {
     color_variation[i].changed(() => {
       let random_radio_state = document.getElementById("random").checked;
 
-      if (random_radio_state) {        
+      if (random_radio_state) {
         user_color_hex_input.attribute("disabled", true);
         user_color_picker.attribute("disabled", true);
       } else {
@@ -129,7 +130,7 @@ function setup() {
   masks_pool = new MasksPool(masks, unselected_masks, 0, 0, width, height, 5, 5);
 
   // Preview Changes
-  preview_changes = new PreviewChanges(0, 0, width, height, ratio_values, composition);
+  preview_changes = new PreviewChanges(0, 0, width, height, ratio_values, composition, comp_graphics_display_w, comp_graphics_display_h);
 
   // Ajustar ao ecrã
   resize_canvas();
@@ -173,10 +174,10 @@ function draw() {
     drawingContext.shadowColor = comp_shadow_color;
     noStroke();
     fill(bg_color);
-    rect(width / 2, height / 2, comp_graphics_w, comp_graphics_h);
+    rect(width / 2, height / 2, comp_graphics_display_w, comp_graphics_display_h);
     pop();
 
-    image(comp_graphics, width / 2, height / 2, comp_graphics_w, comp_graphics_h);
+    image(comp_graphics, width / 2, height / 2, comp_graphics_display_w, comp_graphics_display_h);
 
     // Preview Changes
     preview_changes.run();
@@ -206,8 +207,8 @@ function resize_canvas() {
   resizeCanvas(cnv_parent.offsetWidth, cnv_parent.offsetHeight);
 
   // Composition
-  comp_graphics_h = height * 0.8;
-  comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
+  comp_graphics_display_h = height * 0.8;
+  comp_graphics_display_w = comp_graphics_display_h * comp_graphics_ratio;
   composition.w = comp_graphics_w;
   composition.h = comp_graphics_h;
 
@@ -215,7 +216,7 @@ function resize_canvas() {
   masks_pool = new MasksPool(masks, unselected_masks, 0, 0, width, height, 5, 5);
 
   // Preview Changes
-  preview_changes = new PreviewChanges(0, 0, width, height, ratio_values, composition);
+  preview_changes = new PreviewChanges(0, 0, width, height, ratio_values, composition, comp_graphics_display_w, comp_graphics_display_h);
 }
 
 function mousePressed() {
@@ -309,8 +310,13 @@ async function apply_changes() {
   }
 
   comp_graphics_ratio = ratio_values[ratio_slider.value()];
-  comp_graphics_h = height * 0.8;
+  // comp_graphics_h = height * 0.8;
+  // comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
+  comp_graphics_h = 1920;
   comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
+
+  comp_graphics_display_h = height * 0.8;
+  comp_graphics_display_w = comp_graphics_display_h * comp_graphics_ratio;
 
   // Criação de nova Composição com os novos parâmetros
   comp_graphics = createGraphics(comp_graphics_w, comp_graphics_h, WEBGL);
@@ -319,6 +325,7 @@ async function apply_changes() {
   comp_graphics.rectMode(CENTER);
   comp_graphics.textFont(font);
   comp_graphics.textSize(12);
+  comp_graphics.noSmooth();
 
   await new Promise((r) => {
     composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, grid_type, user_color, color_variation_type, max_group_w_factor, max_group_h_factor);
@@ -330,7 +337,7 @@ async function apply_changes() {
   });
 
   // Preview Changes
-  preview_changes = new PreviewChanges(0, 0, width, height, ratio_values, composition);
+  preview_changes = new PreviewChanges(0, 0, width, height, ratio_values, composition, comp_graphics_display_w, comp_graphics_display_h);
   preview_changes.preview = false;
 
   mask_selection = false;
@@ -376,20 +383,20 @@ async function save_output(additional = "") {
   await save(grain_output, `${filename}_seed_${seed}.png`);
 }
 
-// ----
-// https://editor.p5js.org/ogt/sketches/sk1qsRr_n
-// function add_grain(pg, num) {
-//   pg.loadPixels();
-//   for (let i = 0; i < pg.width * pixelDensity() * (pg.height * pixelDensity()) * 4; i += 4) {
-//     let noise = map(random(), 0, 1, -num, num);
-//     pg.pixels[i] = pg.pixels[i] + noise;
-//     pg.pixels[i + 1] = pg.pixels[i + 1] + noise;
-//     pg.pixels[i + 2] = pg.pixels[i + 2] + noise;
-//     pg.pixels[i + 3] = pg.pixels[i + 3] + noise;
-//   }
-//   pg.updatePixels();
-// }
-// ----
+function add_grain(pg, variation) {
+  pg.loadPixels();
+
+  let d = pixelDensity();
+  let pixels_count = 4 * pg.width * d * pg.height * d;
+
+  for (let i = 0; i < pixels_count; i += 4) {
+    let noise = map(random(), 0, 1, -variation, variation);
+    pg.pixels[i] = pg.pixels[i] + noise;
+    pg.pixels[i + 1] = pg.pixels[i + 1] + noise;
+    pg.pixels[i + 2] = pg.pixels[i + 2] + noise;
+  }
+  pg.updatePixels();
+}
 
 // ---------------------------------------------------------------------------
 

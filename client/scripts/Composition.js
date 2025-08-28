@@ -32,7 +32,7 @@ class Composition {
     // this.group_ang = [-PI / 3, -QUARTER_PI, -PI / 6, 0, -PI / 6, QUARTER_PI, PI / 3];
     this.group_ang = [-QUARTER_PI, -PI / 6, 0, -PI / 6, QUARTER_PI];
 
-    this.random_point = this.calc_random_point();
+    this.random_point = this.calc_random_point(this.w, this.h);
     this.center_ellipse_w = random(this.w * 0.4, this.w * 0.8) / 2;
     this.center_ellipse_h = random(this.h * 0.4, this.h * 0.8) / 2;
 
@@ -72,7 +72,7 @@ class Composition {
     this.loaded = false;
 
     // Recalcular o posicionamento do "random_point"
-    this.random_point = this.calc_random_point();
+    this.random_point = this.calc_random_point(this.w, this.h);
     shuffle(this.semantic_groups, true);
 
     this.center_ellipse_w = random(this.w * 0.4, this.w * 0.8) / 2;
@@ -126,9 +126,9 @@ class Composition {
     }
   }
 
-  calc_random_point() {
-    let padding = this.w * 0.2;
-    return createVector(random(padding, this.w - padding), random(padding, this.h - padding));
+  calc_random_point(w, h) {
+    let padding = w * 0.2;
+    return createVector(random(padding, w - padding), random(padding, h - padding));
   }
 
   // ---------------------------------------------------------------------------
@@ -179,19 +179,19 @@ class Composition {
   // Posicionar elementos na grelha
   place_in_grid(index) {
     let pos;
-    if (this.grid_type == 0) pos = this.thirds_grid();
-    else if (this.grid_type == 1) pos = this.center_grid(index);
-    else if (this.grid_type == 2) pos = this.random_point_grid(index, this.random_point);
+    if (this.grid_type == 0) pos = this.thirds_grid(this.w, this.h);
+    else if (this.grid_type == 1) pos = this.center_grid(index, this.w, this.h);
+    else if (this.grid_type == 2) pos = this.random_point_grid(index, this.w, this.h, this.random_point);
     return pos;
   }
 
-  thirds_grid() {
+  thirds_grid(w, h) {
     let pos = createVector(0, 0);
-    let mean_width_1 = this.w / 3;
-    let mean_width_2 = 2 * (this.w / 3);
-    let mean_height_1 = this.h / 3;
-    let mean_height_2 = 2 * (this.h / 3);
-    let std = this.w / 20;
+    let mean_width_1 = w / 3;
+    let mean_width_2 = 2 * (w / 3);
+    let mean_height_1 = h / 3;
+    let mean_height_2 = 2 * (h / 3);
+    let std = w / 20;
 
     // Distribuição Horizontal
     if (random() < 0.5) {
@@ -212,20 +212,20 @@ class Composition {
     return pos;
   }
 
-  center_grid(index) {
+  center_grid(index, w, h) {
     let pos = createVector(0, 0);
     let ang = random(TWO_PI);
     let ang_inc = TWO_PI / this.semantic_groups.length;
-    let std = this.w / 20;
+    let std = w / 20;
 
     // Elemento Central
     if (index == 0) {
-      pos.x = randomGaussian() * std + this.w / 2;
-      pos.y = randomGaussian() * std + this.h / 2;
+      pos.x = randomGaussian() * std + w / 2;
+      pos.y = randomGaussian() * std + h / 2;
     } else {
       // Elementos ao redor do Elemento Central
-      pos.x = randomGaussian() * std + this.w / 2 + cos(ang + index * ang_inc) * this.center_ellipse_w;
-      pos.y = randomGaussian() * std + this.h / 2 + sin(ang + index * ang_inc) * this.center_ellipse_h;
+      pos.x = randomGaussian() * std + w / 2 + cos(ang + index * ang_inc) * this.center_ellipse_w;
+      pos.y = randomGaussian() * std + h / 2 + sin(ang + index * ang_inc) * this.center_ellipse_h;
       // pos.x = randomGaussian() * std + this.w / 2 + cos(ang + index * ang_inc) * this.semantic_groups[0].w;
       // pos.y = randomGaussian() * std + this.h / 2 + sin(ang + index * ang_inc) * this.semantic_groups[0].h;
     }
@@ -235,12 +235,12 @@ class Composition {
     return pos;
   }
 
-  random_point_grid(index, random_point) {
+  random_point_grid(index, w, h, random_point) {
     let pos = createVector(0, 0, 0);
-    let std = this.w / 20;
+    let std = w / 20;
 
     // Cantos "Composition"
-    let corners = [createVector(0, 0), createVector(0, this.h), createVector(this.w, this.h), createVector(this.w, 0)];
+    let corners = [createVector(0, 0), createVector(0, h), createVector(w, h), createVector(w, 0)];
     shuffle(corners, true);
 
     // Calcular orientação do "SemanticGroup"

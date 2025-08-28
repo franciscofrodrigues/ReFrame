@@ -1,11 +1,13 @@
 class PreviewChanges {
-  constructor(x, y, w, h, ratio_values, comp) {
+  constructor(x, y, w, h, ratio_values, comp, comp_w, comp_h) {
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
 
     this.comp = comp;
+    this.comp_w = comp_w;
+    this.comp_h = comp_h;
     this.ratio_comp_w = 0;
     this.ratio_comp_h = 0;
 
@@ -37,11 +39,11 @@ class PreviewChanges {
     this.ratio_preview_duration = 1000;
     this.num_preview_points = 500;
 
-    this.center_ellipse_w = random(this.comp.w * 0.4, this.comp.w * 0.8);
-    this.center_ellipse_h = random(this.comp.h * 0.4, this.comp.h * 0.8);
+    this.center_ellipse_w = random(this.comp_w * 0.4, this.comp_w * 0.8);
+    this.center_ellipse_h = random(this.comp_h * 0.4, this.comp_h * 0.8);
     this.target_ellipse_w = this.center_ellipse_w;
     this.target_ellipse_h = this.center_ellipse_h;
-    this.random_point = this.comp.calc_random_point();
+    this.random_point = this.comp.calc_random_point(this.comp_w, this.comp_h);
 
     this.framecount_change = 60;
     this.amplitude = 10;
@@ -106,20 +108,20 @@ class PreviewChanges {
 
   thirds_grid_preview() {
     this.pg.push();
-    this.pg.translate(-this.comp.w / 2, -this.comp.h / 2);
+    this.pg.translate(-this.comp_w / 2, -this.comp_h / 2);
 
-    let mean_width_1 = this.comp.w / 3;
-    let mean_width_2 = 2 * (this.comp.w / 3);
-    let mean_height_1 = this.comp.h / 3;
-    let mean_height_2 = 2 * (this.comp.h / 3);
+    let mean_width_1 = this.comp_w / 3;
+    let mean_width_2 = 2 * (this.comp_w / 3);
+    let mean_height_1 = this.comp_h / 3;
+    let mean_height_2 = 2 * (this.comp_h / 3);
 
     this.pg.noFill();
     this.pg.stroke(debug_color);
     this.pg.strokeWeight(1);
-    this.pg.line(mean_width_1, 0, mean_width_1, this.comp.h);
-    this.pg.line(mean_width_2, 0, mean_width_2, this.comp.h);
-    this.pg.line(0, mean_height_1, this.comp.w, mean_height_1);
-    this.pg.line(0, mean_height_2, this.comp.w, mean_height_2);
+    this.pg.line(mean_width_1, 0, mean_width_1, this.comp_h);
+    this.pg.line(mean_width_2, 0, mean_width_2, this.comp_h);
+    this.pg.line(0, mean_height_1, this.comp_w, mean_height_1);
+    this.pg.line(0, mean_height_2, this.comp_w, mean_height_2);
 
     this.render_prob_points(0, this.phase, this.amplitude);
     this.pg.pop();
@@ -128,8 +130,8 @@ class PreviewChanges {
   center_grid_preview() {
     if (frameCount % this.framecount_change === 0) {
       randomSeed(Date.now());
-      this.target_ellipse_w = random(this.comp.w * 0.4, this.comp.w * 0.8);
-      this.target_ellipse_h = random(this.comp.h * 0.4, this.comp.h * 0.8);
+      this.target_ellipse_w = random(this.comp_w * 0.4, this.comp_w * 0.8);
+      this.target_ellipse_h = random(this.comp_h * 0.4, this.comp_h * 0.8);
       randomSeed(seed);
     }
 
@@ -137,12 +139,12 @@ class PreviewChanges {
     this.center_ellipse_h = lerp(this.center_ellipse_h, this.target_ellipse_h, 0.1);
 
     this.pg.push();
-    this.pg.translate(-this.comp.w / 2, -this.comp.h / 2);
+    this.pg.translate(-this.comp_w / 2, -this.comp_h / 2);
 
     this.pg.noFill();
     this.pg.stroke(debug_color);
     this.pg.strokeWeight(1);
-    this.pg.ellipse(this.comp.w / 2, this.comp.h / 2, this.center_ellipse_w, this.center_ellipse_h);
+    this.pg.ellipse(this.comp_w / 2, this.comp_h / 2, this.center_ellipse_w, this.center_ellipse_h);
 
     this.render_prob_points(1, this.phase, this.amplitude);
     this.pg.pop();
@@ -151,16 +153,16 @@ class PreviewChanges {
   random_point_grid_preview() {
     if (frameCount % this.framecount_change === 0) {
       randomSeed(Date.now());
-      this.target_random_point = this.comp.calc_random_point();
+      this.target_random_point = this.comp.calc_random_point(this.comp_w, this.comp_h);
       randomSeed(seed);
     }
 
     this.random_point.lerp(this.target_random_point, 0.1);
 
     this.pg.push();
-    this.pg.translate(-this.comp.w / 2, -this.comp.h / 2);
+    this.pg.translate(-this.comp_w / 2, -this.comp_h / 2);
 
-    let corners = [createVector(0, 0), createVector(0, this.comp.h), createVector(this.comp.w, this.comp.h), createVector(this.comp.w, 0)];
+    let corners = [createVector(0, 0), createVector(0, this.comp_h), createVector(this.comp_w, this.comp_h), createVector(this.comp_w, 0)];
 
     this.pg.noFill();
     this.pg.stroke(debug_color);
@@ -181,9 +183,9 @@ class PreviewChanges {
 
     for (let i = 0; i < this.num_preview_points; i++) {
       let pos;
-      if (grid_type === 0) pos = this.comp.thirds_grid();
-      if (grid_type === 1) pos = this.center_grid(i);
-      if (grid_type === 2) pos = this.comp.random_point_grid(i, this.random_point);
+      if (grid_type === 0) pos = this.comp.thirds_grid(this.comp_w, this.comp_h);
+      if (grid_type === 1) pos = this.center_grid(i, this.comp_w, this.comp_h);
+      if (grid_type === 2) pos = this.comp.random_point_grid(i, this.comp_w, this.comp_h, this.random_point);
       pos.x += sin(this.ang + i * phase) * amplitude;
       pos.y += cos(this.ang + i * phase) * amplitude;
 
@@ -216,7 +218,7 @@ class PreviewChanges {
     this.pg.stroke(debug_color);
     this.pg.strokeWeight(1);
     this.pg.noFill();
-    this.pg.rect(0, 0, this.comp.w*this.group_width_input.value(), this.comp.h*this.group_height_input.value());
+    this.pg.rect(0, 0, this.comp_w*this.group_width_input.value(), this.comp_h*this.group_height_input.value());
     this.pg.pop();
   }
 
@@ -262,19 +264,19 @@ class PreviewChanges {
 
   // ---------------------------------------------------------------------------
 
-  center_grid(index) {
+  center_grid(index, w, h) {
     let pos = createVector(0, 0);
-    let std = this.comp.w / 50;
+    let std = w / 50;
     let num_groups = 3;
     let ang = random(TWO_PI);
     let ang_inc = TWO_PI / num_groups;
 
     if (index <= this.num_preview_points * 0.2) {
-      pos.x = randomGaussian() * std + this.comp.w / 2;
-      pos.y = randomGaussian() * std + this.comp.h / 2;
+      pos.x = randomGaussian() * std + w / 2;
+      pos.y = randomGaussian() * std + h / 2;
     } else {
-      pos.x = randomGaussian() * std + this.comp.w / 2 + (cos(ang + index * ang_inc) * this.center_ellipse_w) / 2;
-      pos.y = randomGaussian() * std + this.comp.h / 2 + (sin(ang + index * ang_inc) * this.center_ellipse_h) / 2;
+      pos.x = randomGaussian() * std + w / 2 + (cos(ang + index * ang_inc) * this.center_ellipse_w) / 2;
+      pos.y = randomGaussian() * std + h / 2 + (sin(ang + index * ang_inc) * this.center_ellipse_h) / 2;
     }
 
     return pos;

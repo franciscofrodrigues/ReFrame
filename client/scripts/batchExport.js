@@ -53,12 +53,13 @@ async function batch_export() {
               comp_graphics.rectMode(CENTER);
               comp_graphics.textFont(font);
               comp_graphics.textSize(12);
+              comp_graphics.noSmooth();
               comp_graphics.background(comp_bg_color);
 
               user_color = color(settings.color[l]);
 
               // Composition
-              composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, settings.grid[k], user_color, settings.color_variation[m], 0.65, 0.65);
+              composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, settings.grid[k], user_color, settings.color_variation[m], 0.5, 0.5);
               composition.semantic_groups = semantic_groups;
               composition.recompose();
               composition.loaded = true;
