@@ -9,7 +9,7 @@ from modules import Detection, Segmentation, Concept, MaskFilter
 import os
 
 
-def pipeline(uploads_path, outputs_path, json_structure, task_uuid, tasks):            
+def pipeline(uploads_path, outputs_path, json_structure, task_uuid, tasks):
     # DETEÇÃO DE OBJETOS
     tasks[task_uuid].step = "Running Object Detection..."
     folders_data = object_detection(uploads_path, outputs_path, json_structure)
@@ -21,7 +21,7 @@ def pipeline(uploads_path, outputs_path, json_structure, task_uuid, tasks):
     # RELAÇÕES SEMÂNTICAS
     tasks[task_uuid].step = "Checking for Semantic Relations..."
     semantic_relations(json_structure)
-    
+
     # FILTRAR MÁSCARAS
     tasks[task_uuid].step = "Filtering Masks..."
     labels_info = mask_filter(outputs_path, json_structure)
@@ -32,14 +32,14 @@ def pipeline(uploads_path, outputs_path, json_structure, task_uuid, tasks):
     save_json(json_structure, outputs_path, filename)
 
     tasks[task_uuid].folder_name = filename
-    tasks[task_uuid].status = "Process End"    
+    tasks[task_uuid].status = "Process End"
     tasks[task_uuid].labels = format_labels_list(labels_info)
-    
+
 
 # ------------------------------------------------------------------------------
 
-    
-def object_detection(uploads_path, outputs_path, json_structure):     
+
+def object_detection(uploads_path, outputs_path, json_structure):
     detection = Detection(config.YOLO_WEIGHTS, uploads_path, outputs_path)
     folders_data, inputs_data, detection_data = detection.run()
 
@@ -47,8 +47,8 @@ def object_detection(uploads_path, outputs_path, json_structure):
     json_structure["input_images"].extend(inputs_data)
     json_structure["detection"].extend(detection_data)
     return folders_data
-    
-    
+
+
 def image_segmentation(folders_data, json_structure):
     # Instâncias da pasta UPLOADS_PATH
     for i, folder_data in enumerate(folders_data):
@@ -57,19 +57,23 @@ def image_segmentation(folders_data, json_structure):
         segmentation_folder = folder_data["segmentation_folder"]
 
         # Se existirem deteções na pasta CROPS
-        if len(os.listdir(crops_folder)) != 0:                        
-            segmentation = Segmentation(config.FASTSAM_WEIGHTS, crops_folder, segmentation_folder, i)
+        if len(os.listdir(crops_folder)) != 0:
+            segmentation = Segmentation(config.FASTSAM_WEIGHTS,
+                                        crops_folder,
+                                        segmentation_folder,
+                                        i)
             segmentation_data = segmentation.run()
 
             # Estrutura do JSON (Módulo de SEGMENTAÇÃO DE IMAGEM)
             json_structure["segmentation"].extend(segmentation_data)
-            
-                
+
+
 def semantic_relations(json_structure):
     labels_data = []
     for segmentation in json_structure["segmentation"]:
 
-        key = (segmentation["input_image_index"], segmentation["detection_index"])
+        key = (segmentation["input_image_index"],
+               segmentation["detection_index"])
         label = ""
         for detection in json_structure["detection"]:
             if (detection["input_image_index"], detection["detection_index"]) == key:
@@ -83,14 +87,14 @@ def semantic_relations(json_structure):
                 "label": label
             }
         )
-    
+
     concepts = Concept(labels_data)
     concepts_data = concepts.run()
 
     # Estrutura do JSON (Módulo de Relações Semânticas (CONCEPT NET))
     json_structure["concepts"].extend(concepts_data)
-    
-    
+
+
 def mask_filter(outputs_path, json_structure):
     inverse_folder, contained_folder = filter_folder_structure(outputs_path)
     mask_filter = MaskFilter(
@@ -106,7 +110,9 @@ def mask_filter(outputs_path, json_structure):
     json_structure["result"].extend(mask_filter_data)
     return labels_info
 
+
 # ------------------------------------------------------------------------------
+
 
 def format_labels_list(labels_list):
     if not labels_list:

@@ -54,6 +54,15 @@ class Segmentation:
         cv2.grabCut(img,mask,rect,bgdModel,fgdModel,1,cv2.GC_INIT_WITH_RECT)
         graphcut_mask = np.where((mask == 2) | (mask == 0), 0, 255).astype('uint8')        
         return graphcut_mask
+    
+    def get_largest_mask(self, masks):
+        largest_mask_pixels = -1
+
+        for mask in masks:
+            if mask["mask_pixels"] >= largest_mask_pixels:
+                largest_mask_pixels = mask["mask_pixels"]
+                largest_mask = mask
+        return largest_mask 
             
 
     # SEGMENTAÇÃO DE IMAGEM de VÁRIAS imagens
@@ -92,7 +101,6 @@ class Segmentation:
                             "mask_index": j,
                             "confidence": confidence,
                             "mask_pixels": white_count,
-                            "graphcut_mask_path": graphcut_output_path,
                             "binary_mask_path": binary_output_path,
                             "result_image_path": output_path
                         })                            
@@ -102,6 +110,6 @@ class Segmentation:
 # ------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    segmentation = Segmentation('weights/FastSAM-x.pt', 'res/uploads', 'res/outputs/modules/segmentation', 0)
+    segmentation = Segmentation('weights/FastSAM-x.pt', 'res/uploads', 'res/outputs', 0)
     segmentation_data = segmentation.run()
     print(segmentation_data)

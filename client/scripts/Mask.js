@@ -14,7 +14,6 @@ class Mask {
     // categ (categorized mask), cont (contained mask), silh (silhouette mask), rep (repeat)
     // this.view_type_options = ["categ", "categ_rep", "categ+cont", "cont", "categ+cont_rep", "categ+silh", "categ+silh_rep", "silh_rep"];
     this.view_type_options = ["categ", "categ_rep", "categ+cont", "categ+cont_rep", "categ+silh", "categ+silh_rep", "silh_rep"];
-    // this.view_type_options = ["categ", "categ", "categ", "categ", "categ", "categ", "categ_rep", "categ+cont", "categ+cont_rep", "categ+silh", "categ+silh_rep", "silh_rep"];
     this.view_type = random(this.view_type_options);
 
     // Inversa
@@ -59,7 +58,7 @@ class Mask {
       pg.translate(0, 0, 3);
       pg.noFill();
       pg.stroke(debug_color);
-      pg.strokeWeight(1);
+      pg.strokeWeight(3);
       pg.rect(0, 0, this.w, this.h);
 
       pg.fill(0);
@@ -309,7 +308,7 @@ class Mask {
 
   // BEZIER
   init_curves() {
-    this.curves[0][0] = this.bezier_line(this.mask_centroid, 20, 0, true, 1, 10);
+    this.curves[0][0] = this.bezier_line(this.mask_centroid, this.w*0.1, 0, true, 1, 10);
     // this.curves[1][0] = this.bezier_line(this.silhouette_mask_centroid, random(20, max(comp_graphics_w, comp_graphics_h)), 0, true, 1, 10);
     // this.curves[1][0] = this.bezier_line(this.silhouette_mask_centroid, random(20, 200), 0, true, 1, 10);
     this.curves[1][0] = this.bezier_line(this.silhouette_mask_centroid, random(this.w*0.1, this.w*0.5), 0, true, 1, 5);
@@ -408,6 +407,7 @@ class Mask {
       pg.translate(0, 0, 3);
       pg.noFill();
       pg.stroke(debug_color);
+      pg.strokeWeight(3);
       pg.bezier(line.x1 + centroid.x, line.y1 + centroid.y, line.x2 + centroid.x, line.y2 + centroid.y, line.x3 + centroid.x, line.y3 + centroid.y, line.x4 + centroid.x, line.y4 + centroid.y);
       pg.pop();
     }

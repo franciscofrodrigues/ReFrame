@@ -2,6 +2,7 @@ const ratios = [0.75];
 const grid_types = [0, 1, 2];
 const colors = ["#F299B9", "#027333", "#F2AB27", "#F2220F"];
 const color_variation_types = [0, 1, 2];
+const factor = 0.5;
 
 const settings = {
   runs: 10,
@@ -9,6 +10,7 @@ const settings = {
   grid: grid_types,
   color: colors,
   color_variation: color_variation_types,
+  factor: factor
 };
 
 const imports = sessionStorage.getItem("imports");
@@ -59,7 +61,7 @@ async function batch_export() {
               user_color = color(settings.color[l]);
 
               // Composition
-              composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, settings.grid[k], user_color, settings.color_variation[m], 0.5, 0.5);
+              composition = new Composition(comp_graphics, comp_graphics_w, comp_graphics_h, settings.grid[k], user_color, settings.color_variation[m], settings.factor, settings.factor);
               composition.semantic_groups = semantic_groups;
               composition.recompose();
               composition.loaded = true;
@@ -69,7 +71,6 @@ async function batch_export() {
               // await save_output(`[${j}_${k}_${l}_${m}_${n}]`);
 
               // Preview de 1s
-              // await new Promise((r) => setTimeout(r, 500));
               await new Promise((r) => setTimeout(r, 1000));
             }
           }

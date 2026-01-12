@@ -35,7 +35,7 @@ class SemanticGroup {
       pg.translate(0, 0, 3);
       pg.noFill();
       pg.stroke(debug_color);
-      pg.strokeWeight(1);
+      pg.strokeWeight(3);
       pg.rect(0, 0, this.w, this.h);
       pg.pop();
     }

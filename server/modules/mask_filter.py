@@ -70,9 +70,6 @@ class MaskFilter:
         similar_pixels = -1
 
         for mask in masks:
-            graphcut_mask_binary = cv2.imread(mask["graphcut_mask_path"], cv2.IMREAD_GRAYSCALE)
-            ret, graphcut_mask = cv2.threshold(graphcut_mask_binary, 127, 255, cv2.THRESH_BINARY)
-            
             current_mask_binary = cv2.imread(mask["binary_mask_path"], cv2.IMREAD_GRAYSCALE)
             ret, current_mask = cv2.threshold(current_mask_binary, 127, 255, cv2.THRESH_BINARY)
             
@@ -83,6 +80,15 @@ class MaskFilter:
                 subject_mask = mask
                 subject_mask_mask = current_mask
         return subject_mask, subject_mask_mask
+    
+    def get_largest_mask(self, masks):
+        largest_mask_pixels = -1
+
+        for mask in masks:
+            if mask["mask_pixels"] >= largest_mask_pixels:
+                largest_mask_pixels = mask["mask_pixels"]
+                largest_mask = mask
+        return largest_mask
 
     # Verificar se a máscara está contida na "largest_mask"
     def check_contained(self, current_mask, largest_mask):
@@ -100,7 +106,17 @@ class MaskFilter:
             group_data = []
             # Para cada grupo com determinada key
             for i, (key, masks) in enumerate(key_groups.items()):                                
-                subject_mask, subject_mask_mask = self.get_subject_mask(masks)
+                # subject_mask, subject_mask_mask = self.get_subject_mask(masks)
+                
+                subject_mask = self.get_largest_mask(masks)
+
+                # Obter máscara binária
+                subject_mask_binary = cv2.imread(
+                    subject_mask["binary_mask_path"], cv2.IMREAD_GRAYSCALE
+                )
+                ret, subject_mask_mask = cv2.threshold(
+                    subject_mask_binary, 127, 255, cv2.THRESH_BINARY
+                )
 
                 # Inverter a máscara
                 subject_mask_inverted = cv2.bitwise_not(subject_mask_mask)

@@ -22,12 +22,11 @@ class Composition {
     this.max_group_h = this.h * max_group_h_factor;
     this.min_group_w = this.w * 0.2;
     this.min_group_h = this.h * 0.2;
-    // this.group_w = constrain(random(this.min_group_w, this.max_group_w), 0, this.w);
-    // this.group_h = constrain(random(this.min_group_h, this.max_group_h), 0, this.h);
-    this.group_w = constrain(randomGaussian() * this.min_group_w + this.max_group_w, this.min_group_w, this.w);
-    this.group_h = constrain(randomGaussian() * this.min_group_h + this.max_group_h, this.min_group_h, this.h);
-    // this.group_w = constrain(this.max_group_w, this.min_group_w, this.w);
-    // this.group_h = constrain(this.max_group_h, this.min_group_h, this.h);
+    this.group_variation_w = this.w * 0.05;
+    this.group_variation_h = this.h * 0.05;
+
+    this.group_w = constrain(randomGaussian() * this.group_variation_w + this.max_group_w, this.min_group_w, this.w);
+    this.group_h = constrain(randomGaussian() * this.group_variation_h + this.max_group_h, this.min_group_h, this.h);
 
     // this.group_ang = [-PI / 3, -QUARTER_PI, -PI / 6, 0, -PI / 6, QUARTER_PI, PI / 3];
     this.group_ang = [-QUARTER_PI, -PI / 6, 0, -PI / 6, QUARTER_PI];
@@ -89,10 +88,8 @@ class Composition {
   }
 
   reposition(index) {
-    this.group_w = constrain(randomGaussian() * this.min_group_w + this.max_group_w, this.min_group_w, this.w);
-    this.group_h = constrain(randomGaussian() * this.min_group_h + this.max_group_h, this.min_group_w, this.h);
-    // this.group_w = constrain(this.max_group_w, this.min_group_w, this.w);
-    // this.group_h = constrain(this.max_group_h, this.min_group_h, this.h);
+    this.group_w = constrain(randomGaussian() * this.group_variation_w + this.max_group_w, this.min_group_w, this.w);
+    this.group_h = constrain(randomGaussian() * this.group_variation_h + this.max_group_h, this.min_group_h, this.h);
     this.semantic_groups[index].w = this.group_w;
     this.semantic_groups[index].h = this.group_h;
 
@@ -191,7 +188,7 @@ class Composition {
     let mean_width_2 = 2 * (w / 3);
     let mean_height_1 = h / 3;
     let mean_height_2 = 2 * (h / 3);
-    let std = w / 20;
+    let std = w / 40;
 
     // Distribuição Horizontal
     if (random() < 0.5) {
@@ -216,7 +213,7 @@ class Composition {
     let pos = createVector(0, 0);
     let ang = random(TWO_PI);
     let ang_inc = TWO_PI / this.semantic_groups.length;
-    let std = w / 20;
+    let std = w / 40;
 
     // Elemento Central
     if (index == 0) {
@@ -237,7 +234,7 @@ class Composition {
 
   random_point_grid(index, w, h, random_point) {
     let pos = createVector(0, 0, 0);
-    let std = w / 20;
+    let std = w / 40;
 
     // Cantos "Composition"
     let corners = [createVector(0, 0), createVector(0, h), createVector(w, h), createVector(w, 0)];
