@@ -1,4 +1,4 @@
-# Decomposing Visual Information
+# ReFrame
 
 ### Virtual Environment
 #### Create
