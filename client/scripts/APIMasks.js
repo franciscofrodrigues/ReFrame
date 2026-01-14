@@ -56,7 +56,7 @@ async function get_masks(folder_name) {
   }
 
   group_masks(masks, semantic_groups);
-  
+
   setTimeout(() => {
     toggle_loader(false);
   }, loader_time);

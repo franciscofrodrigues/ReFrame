@@ -9,15 +9,14 @@ import uvicorn
 import os
 import shutil
 
-os.makedirs(config.UPLOADS_PATH, exist_ok=True)
-os.makedirs(config.OUTPUTS_PATH, exist_ok=True)
+
+os.makedirs(config.UPLOADS_PATH, exist_ok=True) # Uploads
+os.makedirs(config.OUTPUTS_PATH, exist_ok=True) # Outputs
 
 app = FastAPI()
-app.include_router(upload.router)
-app.include_router(masks.router)
-app.mount("/",
-          StaticFiles(directory=config.CLIENT_PATH, html=True),
-          name="static")
+app.include_router(upload.router) # Endpoint "upload"
+app.include_router(masks.router) # Endpoint "masks"
+app.mount("/", StaticFiles(directory=config.CLIENT_PATH, html=True), name="static") # Static
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,11 +26,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 @app.on_event("shutdown")
 def remove_folders():
-    shutil.rmtree(config.UPLOADS_PATH)  # Uploads
-    shutil.rmtree(config.OUTPUTS_PATH)  # Outputs
+    shutil.rmtree(config.UPLOADS_PATH) # Uploads
+    shutil.rmtree(config.OUTPUTS_PATH) # Outputs
 
 
 # ------------------------------------------------------------------------------

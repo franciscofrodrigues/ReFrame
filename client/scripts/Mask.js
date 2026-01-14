@@ -12,7 +12,6 @@ class Mask {
     this.semantic_group = semantic_group;
 
     // categ (categorized mask), cont (contained mask), silh (silhouette mask), rep (repeat)
-    // this.view_type_options = ["categ", "categ_rep", "categ+cont", "cont", "categ+cont_rep", "categ+silh", "categ+silh_rep", "silh_rep"];
     this.view_type_options = ["categ", "categ_rep", "categ+cont", "categ+cont_rep", "categ+silh", "categ+silh_rep", "silh_rep"];
     this.view_type = random(this.view_type_options);
 
@@ -32,7 +31,6 @@ class Mask {
 
     // Cores
     this.blend_mode = MULTIPLY;
-    // this.blend_mode = BLEND;
     // this.blend_mode = random([MULTIPLY, BLEND]);
 
     // Máscaras binárias -> Shapes
@@ -106,8 +104,6 @@ class Mask {
   recompose() {
     this.view_type = random(this.view_type_options);
 
-    // this.accent_color = accent_color;
-    // this.complementary_color = complementary_color;
     this.init_shapes();
     this.init_curves();
 
@@ -127,7 +123,6 @@ class Mask {
   // Apenas no eixo X
   overlaps(other) {
     // Distância para que não haja sobreposição
-    // (this.w + other.w) / 2
     let x_distance = (this.w + other.w) / 5;
     return abs(this.x - other.x) < x_distance;
   }
@@ -233,7 +228,7 @@ class Mask {
     copy.loadPixels();
     img.loadPixels();
     for (let x = 0; x < img.width; x++) {
-      for (let y = 0; y < img.height; y++) {        
+      for (let y = 0; y < img.height; y++) {
         let index = 4 * (x + y * img.width);
 
         let b = img.pixels[index];
@@ -275,12 +270,6 @@ class Mask {
     return normalized;
   }
 
-  // pick_color() {
-  //   // let color_palette = ["#00FFFF", "#FF00FF", "#FFFF00"];
-  //   let color_palette = ["#F299B9", "#027333", "#F2AB27", "#F2220F"];
-  //   return random(color_palette);
-  // }
-
   pick_color() {
     let picked_color;
     if (this.color_variation_type == 0) {
@@ -294,11 +283,6 @@ class Mask {
     return picked_color;
   }
 
-  // get_monochromatic_color(c) {
-  //   let mono_color = color(hue(c), random(20, 80), random(20, 80));
-  //   return mono_color;
-  // }
-
   get_random_color() {
     let random_color = color(random(360), random(70, 90), random(70, 90));
     return random_color;
@@ -308,15 +292,11 @@ class Mask {
 
   // BEZIER
   init_curves() {
-    this.curves[0][0] = this.bezier_line(this.mask_centroid, this.w*0.1, 0, true, 1, 10);
-    // this.curves[1][0] = this.bezier_line(this.silhouette_mask_centroid, random(20, max(comp_graphics_w, comp_graphics_h)), 0, true, 1, 10);
-    // this.curves[1][0] = this.bezier_line(this.silhouette_mask_centroid, random(20, 200), 0, true, 1, 10);
-    this.curves[1][0] = this.bezier_line(this.silhouette_mask_centroid, random(this.w*0.1, this.w*0.5), 0, true, 1, 5);
+    this.curves[0][0] = this.bezier_line(this.mask_centroid, this.w * 0.1, 0, true, 1, 10);
+    this.curves[1][0] = this.bezier_line(this.silhouette_mask_centroid, random(this.w * 0.1, this.w * 0.5), 0, true, 1, 5);
 
     for (let i = 0; i < this.contained_masks.length; i++) {
-      // this.curves[2][i] = this.bezier_line(this.contained_mask_centroids[i], random(20, max(comp_graphics_w, comp_graphics_h)), 20, false, 1, 20);
-      // this.curves[2][i] = this.bezier_line(this.contained_mask_centroids[i], random(20, 200), 20, false, 1, 20);
-      this.curves[2][i] = this.bezier_line(this.contained_mask_centroids[i], random(this.w*0.1, this.w*0.5), 20, false, 1, 20);
+      this.curves[2][i] = this.bezier_line(this.contained_mask_centroids[i], random(this.w * 0.1, this.w * 0.5), 20, false, 1, 20);
     }
   }
 

@@ -13,48 +13,36 @@ class Segmentation:
         self.input_counter = input_counter
 
         # Configuração do modelo
-        self.device = 'cpu'
+        self.device = "cpu"
         self.retina_masks = True
         self.save = False
         self.batch = 4
         self.imgsz = 640
         self.conf = 0.7
         self.iou = 0.4
-    
+
     def mask_img(self, binary_mask, original_img):
-        result_img = cv2.bitwise_and(original_img, original_img, mask=binary_mask) # Máscara de corte à imagem
+        result_img = cv2.bitwise_and(
+            original_img, original_img, mask=binary_mask
+        )  # Máscara de corte à imagem
 
         # Preto e Branco
         result_img_bw = cv2.cvtColor(result_img, cv2.COLOR_BGR2GRAY)
-        result_img_rgba = cv2.cvtColor(result_img_bw, cv2.COLOR_GRAY2BGRA)        
-        
-        # Cores
-        # result_img_rgba = cv2.cvtColor(result_img, cv2.COLOR_BGR2BGRA)
-        
-        result_img_rgba[binary_mask == 0] = [0, 0, 0, 0] # Preto para transparente
+        result_img_rgba = cv2.cvtColor(result_img_bw, cv2.COLOR_GRAY2BGRA)
+
+        result_img_rgba[binary_mask == 0] = [0, 0, 0, 0]  # Preto para transparente
         return result_img_rgba
-    
+
     def get_binary_mask(self, mask):
-        mask_np = mask.cpu().numpy() # Converter de tensor para numpy
+        mask_np = mask.cpu().numpy()  # Converter de tensor para numpy
         mask_binary = mask_np.astype(np.uint8) * 255  # Máscara binária
         return mask_binary
-    
+
     def get_confidence(self, box):
         raw_conf = float(box.conf.item())
-        conf = round(raw_conf*100)
+        conf = round(raw_conf * 100)
         return conf
 
-    def get_graphcut(self, img):            
-        height, width = img.shape[:2]
-        mask = np.zeros((height, width),np.uint8)        
-        bgdModel = np.zeros((1,65),np.float64)
-        fgdModel = np.zeros((1,65),np.float64)        
-        padding = 30
-        rect = (padding, padding, width-padding, height-padding)
-        cv2.grabCut(img,mask,rect,bgdModel,fgdModel,1,cv2.GC_INIT_WITH_RECT)
-        graphcut_mask = np.where((mask == 2) | (mask == 0), 0, 255).astype('uint8')        
-        return graphcut_mask
-    
     def get_largest_mask(self, masks):
         largest_mask_pixels = -1
 
@@ -62,13 +50,23 @@ class Segmentation:
             if mask["mask_pixels"] >= largest_mask_pixels:
                 largest_mask_pixels = mask["mask_pixels"]
                 largest_mask = mask
-        return largest_mask 
-            
+        return largest_mask
+
+    # ------------------------------------------------------------------------------
 
     # SEGMENTAÇÃO DE IMAGEM de VÁRIAS imagens
     def run(self):
         # Inferência
-        results = self.model(self.input_files, device=self.device, retina_masks=self.retina_masks, save=self.save, batch=self.batch, imgsz=self.imgsz, conf=self.conf, iou=self.iou)
+        results = self.model(
+            self.input_files,
+            device=self.device,
+            retina_masks=self.retina_masks,
+            save=self.save,
+            batch=self.batch,
+            imgsz=self.imgsz,
+            conf=self.conf,
+            iou=self.iou,
+        )
 
         data = []
         if results:
@@ -76,40 +74,51 @@ class Segmentation:
                 input_file = result.path
                 input_filename = get_filename(input_file)
                 original_img = cv2.imread(input_file)
-                                
-                mask_graphcut = self.get_graphcut(original_img)
-                graphcut_output_path = save_output(self.outputs_path, mask_graphcut, f'graphcut_[{input_filename}]', "segmentation")
-                
+
                 # result.show()
 
                 if result.masks:
                     for j, mask in enumerate(result.masks.data):
-                        # confidence = result.boxes[j].conf.item()
-                        confidence = self.get_confidence(result.boxes[j]) # CONFIDENCE
-                        
+                        confidence = self.get_confidence(result.boxes[j])  # CONFIDENCE
+
+                        # MÁSCARA BINÁRIA
                         mask_binary = self.get_binary_mask(mask)
-                        binary_output_path = save_output(self.outputs_path, mask_binary, f'binary_[{input_filename}]', "segmentation")
+                        binary_output_path = save_output(
+                            self.outputs_path,
+                            mask_binary,
+                            f"binary_[{input_filename}]",
+                            "segmentation",
+                        )
                         white_count = int(np.sum(mask_binary == 255))
 
                         # Aplicar MÁSCARA a IMAGEM ORIGINAL
                         masked_img = self.mask_img(mask_binary, original_img)
-                        output_path = save_output(self.outputs_path, masked_img, f'[{input_filename}]', "segmentation")
-                            
-                        data.append({
-                            "input_image_index": self.input_counter,
-                            "detection_index": i,
-                            "mask_index": j,
-                            "confidence": confidence,
-                            "mask_pixels": white_count,
-                            "binary_mask_path": binary_output_path,
-                            "result_image_path": output_path
-                        })                            
-                    
+                        output_path = save_output(
+                            self.outputs_path,
+                            masked_img,
+                            f"[{input_filename}]",
+                            "segmentation",
+                        )
+
+                        data.append(
+                            {
+                                "input_image_index": self.input_counter,
+                                "detection_index": i,
+                                "mask_index": j,
+                                "confidence": confidence,
+                                "mask_pixels": white_count,
+                                "binary_mask_path": binary_output_path,
+                                "result_image_path": output_path,
+                            }
+                        )
+
             return data
+
 
 # ------------------------------------------------------------------------------
 
+
 if __name__ == "__main__":
-    segmentation = Segmentation('weights/FastSAM-x.pt', 'res/uploads', 'res/outputs', 0)
+    segmentation = Segmentation("weights/FastSAM-x.pt", "res/uploads", "res/outputs", 0)
     segmentation_data = segmentation.run()
     print(segmentation_data)

@@ -28,7 +28,6 @@ class Composition {
     this.group_w = constrain(randomGaussian() * this.group_variation_w + this.max_group_w, this.min_group_w, this.w);
     this.group_h = constrain(randomGaussian() * this.group_variation_h + this.max_group_h, this.min_group_h, this.h);
 
-    // this.group_ang = [-PI / 3, -QUARTER_PI, -PI / 6, 0, -PI / 6, QUARTER_PI, PI / 3];
     this.group_ang = [-QUARTER_PI, -PI / 6, 0, -PI / 6, QUARTER_PI];
 
     this.random_point = this.calc_random_point(this.w, this.h);
@@ -223,8 +222,6 @@ class Composition {
       // Elementos ao redor do Elemento Central
       pos.x = randomGaussian() * std + w / 2 + cos(ang + index * ang_inc) * this.center_ellipse_w;
       pos.y = randomGaussian() * std + h / 2 + sin(ang + index * ang_inc) * this.center_ellipse_h;
-      // pos.x = randomGaussian() * std + this.w / 2 + cos(ang + index * ang_inc) * this.semantic_groups[0].w;
-      // pos.y = randomGaussian() * std + this.h / 2 + sin(ang + index * ang_inc) * this.semantic_groups[0].h;
     }
 
     pos.z = random(this.group_ang);
@@ -245,8 +242,6 @@ class Composition {
     pos.z = PI / 2 + atan2(dir.y, dir.x);
 
     // Calcular a posição central entre os "corners" e o "random_point"
-    // pos.x = (random_point.x + corners[index % corners.length].x) / 2;
-    // pos.y = (random_point.y + corners[index % corners.length].y) / 2;
     pos.x = (randomGaussian() * std + random_point.x + corners[index % corners.length].x) / 2;
     pos.y = (randomGaussian() * std + random_point.y + corners[index % corners.length].y) / 2;
     return pos;

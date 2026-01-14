@@ -345,6 +345,7 @@ select#imports_dropdown:hover {
   right: var(--div-padding);
   width: fit-content;
 }
+
 /* ----------------------------------------------------------------------------- */
 
 #imports_container {
@@ -568,15 +569,6 @@ datalist.slider > option {
   opacity: 0.5;
   background-color: var(--bg-color);
 }
-
-/* LABEL */
-/* #colors_container p.label {
-  height: 30%;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-} */
 
 /* CHECKBOX MARKS */
 .mark {

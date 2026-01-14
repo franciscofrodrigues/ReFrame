@@ -9,10 +9,12 @@ class Concept:
     def get_related_concepts(self, label):
         relation_type = "RelatedTo"
         limit = 50
-        
+
         # Obter todos os conceitos relacionados para determinada label
         try:
-            response = requests.get(f"https://api.conceptnet.io/query?node=/c/en/{label}&rel=/r/{relation_type}&filter=/c/en&limit={limit}").json()            
+            response = requests.get(
+                f"https://api.conceptnet.io/query?node=/c/en/{label}&rel=/r/{relation_type}&filter=/c/en&limit={limit}"
+            ).json()
             concepts = {edge["end"]["label"] for edge in response["edges"]}
             return list(concepts)
         except requests.RequestException:
@@ -68,71 +70,76 @@ class Concept:
         return intersections
 
     def get_relations_structure(self, intersections_data, concepts_data):
-            relations = []
-            related_dict = {}
-            
-            # Criar dict para cada uma das labels provenientes da deteção
-            for concept in concepts_data:
-                label = concept["label"]
-                input_image_index = concept["input_image_index"]
-                detection_index = concept["detection_index"]
-                
-                if label in related_dict:
-                    related_dict[label]["labels"].append(label)
-                    related_dict[label]["input_image_indexes"].append(input_image_index)
-                    related_dict[label]["detection_indexes"].append(detection_index)
-                else:
-                    related_dict[label] = {
-                        "labels": [label],
-                        "input_image_indexes": [input_image_index],
-                        "detection_indexes": [detection_index]
-                    }                    
+        relations = []
+        related_dict = {}
 
-            # Verificar interseções
-            for intersection in intersections_data:
-                label_1, label_2 = intersection["labels"]
-                input_index_1, input_index_2 = intersection["input_image_indexes"]
-                detection_index_1, detection_index_2 = intersection["detection_indexes"]
-                
-                if label_2 in related_dict:
-                    related_dict[label_2]["labels"].append(label_1)
-                    related_dict[label_2]["input_image_indexes"].append(input_index_1)
-                    related_dict[label_2]["detection_indexes"].append(detection_index_1)
-                
-                if label_1 in related_dict:
-                    related_dict[label_1]["labels"].append(label_2)
-                    related_dict[label_1]["input_image_indexes"].append(input_index_2)
-                    related_dict[label_1]["detection_indexes"].append(detection_index_2)
-                
-            # Criar estrutura de relações
-            for label, related in related_dict.items():
-                relations.append({
+        # Criar dict para cada uma das labels provenientes da deteção
+        for concept in concepts_data:
+            label = concept["label"]
+            input_image_index = concept["input_image_index"]
+            detection_index = concept["detection_index"]
+
+            if label in related_dict:
+                related_dict[label]["labels"].append(label)
+                related_dict[label]["input_image_indexes"].append(input_image_index)
+                related_dict[label]["detection_indexes"].append(detection_index)
+            else:
+                related_dict[label] = {
+                    "labels": [label],
+                    "input_image_indexes": [input_image_index],
+                    "detection_indexes": [detection_index],
+                }
+
+        # Verificar interseções
+        for intersection in intersections_data:
+            label_1, label_2 = intersection["labels"]
+            input_index_1, input_index_2 = intersection["input_image_indexes"]
+            detection_index_1, detection_index_2 = intersection["detection_indexes"]
+
+            if label_2 in related_dict:
+                related_dict[label_2]["labels"].append(label_1)
+                related_dict[label_2]["input_image_indexes"].append(input_index_1)
+                related_dict[label_2]["detection_indexes"].append(detection_index_1)
+
+            if label_1 in related_dict:
+                related_dict[label_1]["labels"].append(label_2)
+                related_dict[label_1]["input_image_indexes"].append(input_index_2)
+                related_dict[label_1]["detection_indexes"].append(detection_index_2)
+
+        # Criar estrutura de relações
+        for label, related in related_dict.items():
+            relations.append(
+                {
                     "label": label,
                     "related": {
                         "labels": related["labels"],
                         "input_image_indexes": related["input_image_indexes"],
-                        "detection_indexes": related["detection_indexes"]
-                    }
-                })
-                
-            return relations
-        
+                        "detection_indexes": related["detection_indexes"],
+                    },
+                }
+            )
+
+        return relations
+
     def run(self):
         concepts = self.get_concepts_structure(self.labels_data)
         intersections = self.get_intersections_structure(concepts)
         relations = self.get_relations_structure(intersections, self.labels_data)
 
         data = []
-        data.append({
-            "concepts": concepts,
-            "intersections": intersections,
-            "relations": relations,
-        })
+        data.append(
+            {
+                "concepts": concepts,
+                "intersections": intersections,
+                "relations": relations,
+            }
+        )
 
         return data
 
 
 # ------------------------------------------------------------------------------
+
 
 if __name__ == "__main__":
     concept = Concept(

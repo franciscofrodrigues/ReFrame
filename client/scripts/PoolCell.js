@@ -78,7 +78,7 @@ class PoolCell {
       push();
       textAlign(RIGHT, TOP);
       fill(0);
-      let label = this.mask.label.charAt(0).toUpperCase()+this.mask.label.slice(1);
+      let label = this.mask.label.charAt(0).toUpperCase() + this.mask.label.slice(1);
       text(label, this.w - padding, padding);
       pop();
     }

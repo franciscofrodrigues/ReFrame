@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from typing import Dict, List
 from uuid import UUID, uuid4
 
+
 class Upload(BaseModel):
     uuid: UUID = Field(default_factory=uuid4)
     folder_name: str
@@ -21,7 +22,9 @@ uploads: Dict[UUID, Upload] = {}
 
 
 @router.post("")
-async def upload_images(background_tasks: BackgroundTasks, files: List[UploadFile] = File(...)):
+async def upload_images(
+    background_tasks: BackgroundTasks, files: List[UploadFile] = File(...)
+):
     # Guardar FICHEIROS de UPLOAD
     paths = []
     for file in files:
@@ -47,9 +50,11 @@ async def upload_images(background_tasks: BackgroundTasks, files: List[UploadFil
     # Adicionar nova tarefa à QUEUE
     new_upload = Upload(folder_name=folder_name)
     uploads[new_upload.uuid] = new_upload
-    
+
     # Executar PIPELINE
-    background_tasks.add_task(pipeline, paths, group_path, group_data, new_upload.uuid, uploads)
+    background_tasks.add_task(
+        pipeline, paths, group_path, group_data, new_upload.uuid, uploads
+    )
 
     return new_upload
 

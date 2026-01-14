@@ -7,7 +7,6 @@ BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 CLIENT_PATH = os.path.join(BASE_PATH, "..", "client")
 
 # Server
-# SERVER_PATH = os.path.join(BASE_PATH, "server")
 SERVER_PATH = "server"
 
 # Weights

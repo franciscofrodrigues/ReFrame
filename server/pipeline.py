@@ -10,19 +10,19 @@ import os
 
 
 def pipeline(uploads_path, outputs_path, json_structure, task_uuid, tasks):
-    # DETEÇÃO DE OBJETOS
+    # INPUT + CLASSIFICAÇÃO DE ELEMENTOS
     tasks[task_uuid].step = "Running Object Detection..."
     folders_data = object_detection(uploads_path, outputs_path, json_structure)
 
-    # SEGMENTAÇÃO DE IMAGEM
+    # EXTRAÇÃO DE MÁSCARAS
     tasks[task_uuid].step = "Running Image Segmentation..."
     image_segmentation(folders_data, json_structure)
 
-    # RELAÇÕES SEMÂNTICAS
+    # ANÁLISE SEMÂNTICA
     tasks[task_uuid].step = "Checking for Semantic Relations..."
     semantic_relations(json_structure)
 
-    # FILTRAR MÁSCARAS
+    # FILTRO DE ELEMENTOS
     tasks[task_uuid].step = "Filtering Masks..."
     labels_info = mask_filter(outputs_path, json_structure)
 
@@ -39,20 +39,21 @@ def pipeline(uploads_path, outputs_path, json_structure, task_uuid, tasks):
 # ------------------------------------------------------------------------------
 
 
+# Módulo de CLASSIFICAÇÃO DE ELEMENTOS (detection)
 def object_detection(uploads_path, outputs_path, json_structure):
     detection = Detection(config.YOLO_WEIGHTS, uploads_path, outputs_path)
     folders_data, inputs_data, detection_data = detection.run()
 
-    # Estrutura do JSON (INPUTS e módulo OBJECT DETECTION)
-    json_structure["input_images"].extend(inputs_data)
-    json_structure["detection"].extend(detection_data)
+    # Estrutura do JSON
+    json_structure["input_images"].extend(inputs_data) # Inputs
+    json_structure["detection"].extend(detection_data) # Detection
     return folders_data
 
-
+# Módulo de EXTRAÇÃO DE MÁSCARAS (segmentation)
 def image_segmentation(folders_data, json_structure):
     # Instâncias da pasta UPLOADS_PATH
     for i, folder_data in enumerate(folders_data):
-        # Pastas de determinado output
+        # Pastas de um determinado output
         crops_folder = folder_data["crops_folder"]
         segmentation_folder = folder_data["segmentation_folder"]
 
@@ -64,10 +65,10 @@ def image_segmentation(folders_data, json_structure):
                                         i)
             segmentation_data = segmentation.run()
 
-            # Estrutura do JSON (Módulo de SEGMENTAÇÃO DE IMAGEM)
-            json_structure["segmentation"].extend(segmentation_data)
+            # Estrutura do JSON
+            json_structure["segmentation"].extend(segmentation_data) # Segmentation
 
-
+# Módulo de ANÁLISE SEMÂNTICA (concept)
 def semantic_relations(json_structure):
     labels_data = []
     for segmentation in json_structure["segmentation"]:
@@ -91,10 +92,10 @@ def semantic_relations(json_structure):
     concepts = Concept(labels_data)
     concepts_data = concepts.run()
 
-    # Estrutura do JSON (Módulo de Relações Semânticas (CONCEPT NET))
-    json_structure["concepts"].extend(concepts_data)
+    # Estrutura do JSON
+    json_structure["concepts"].extend(concepts_data) # Análise Semântica
 
-
+# Módulo de FILTRO DE ELEMENTOS (mask_filter)
 def mask_filter(outputs_path, json_structure):
     inverse_folder, contained_folder = filter_folder_structure(outputs_path)
     mask_filter = MaskFilter(
@@ -106,8 +107,8 @@ def mask_filter(outputs_path, json_structure):
     )
     mask_filter_data, labels_info = mask_filter.run()
 
-    # Estrutura do JSON (Módulo Filtrar Máscaras (MASK FILTER))
-    json_structure["result"].extend(mask_filter_data)
+    # Estrutura do JSON
+    json_structure["result"].extend(mask_filter_data) # Filtro de Elementos
     return labels_info
 
 

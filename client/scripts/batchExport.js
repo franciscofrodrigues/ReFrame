@@ -10,7 +10,7 @@ const settings = {
   grid: grid_types,
   color: colors,
   color_variation: color_variation_types,
-  factor: factor
+  factor: factor,
 };
 
 const imports = sessionStorage.getItem("imports");

@@ -56,31 +56,7 @@ class MaskFilter:
 
         return groups
 
-    # Obter a maior máscara de determinado crop
-    def get_largest_mask(self, masks):
-        largest_mask_pixels = -1
-
-        for mask in masks:
-            if mask["mask_pixels"] >= largest_mask_pixels:
-                largest_mask_pixels = mask["mask_pixels"]
-                largest_mask = mask
-        return largest_mask
-    
-    def get_subject_mask(self, masks):
-        similar_pixels = -1
-
-        for mask in masks:
-            current_mask_binary = cv2.imread(mask["binary_mask_path"], cv2.IMREAD_GRAYSCALE)
-            ret, current_mask = cv2.threshold(current_mask_binary, 127, 255, cv2.THRESH_BINARY)
-            
-            current_similar_pixels = np.sum((current_mask == 255) & (graphcut_mask == 255))
-            
-            if current_similar_pixels >= similar_pixels:                
-                similar_pixels = current_similar_pixels
-                subject_mask = mask
-                subject_mask_mask = current_mask
-        return subject_mask, subject_mask_mask
-    
+    # Obter a maior máscara figura de determinado crop
     def get_largest_mask(self, masks):
         largest_mask_pixels = -1
 
@@ -97,6 +73,8 @@ class MaskFilter:
         difference = np.sum((current_mask == 255) & (largest_mask != 255))
         return difference <= tolerance
 
+    # ------------------------------------------------------------------------------
+
     def run(self):
         groups = self.create_key_groups(self.segmentation_data, self.concepts_data)
         data = []
@@ -105,9 +83,7 @@ class MaskFilter:
         for key_groups in groups:
             group_data = []
             # Para cada grupo com determinada key
-            for i, (key, masks) in enumerate(key_groups.items()):                                
-                # subject_mask, subject_mask_mask = self.get_subject_mask(masks)
-                
+            for i, (key, masks) in enumerate(key_groups.items()):
                 subject_mask = self.get_largest_mask(masks)
 
                 # Obter máscara binária

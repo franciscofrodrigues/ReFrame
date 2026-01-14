@@ -218,7 +218,7 @@ class PreviewChanges {
     this.pg.stroke(debug_color);
     this.pg.strokeWeight(1);
     this.pg.noFill();
-    this.pg.rect(0, 0, this.comp_w*this.group_width_input.value(), this.comp_h*this.group_height_input.value());
+    this.pg.rect(0, 0, this.comp_w * this.group_width_input.value(), this.comp_h * this.group_height_input.value());
     this.pg.pop();
   }
 

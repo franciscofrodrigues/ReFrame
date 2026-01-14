@@ -27,8 +27,6 @@ function setup() {
   pixelDensity(1);
 
   // API
-  // port_api = "8000";
-  // endpoint_api = `http://localhost:${port_api}`;
   endpoint_api = window.location.protocol + "//" + window.location.host;
 
   // Inicializar "masks", "unselected_masks" e "semantic_groups"
@@ -310,8 +308,6 @@ async function apply_changes() {
   }
 
   comp_graphics_ratio = ratio_values[ratio_slider.value()];
-  // comp_graphics_h = height * 0.8;
-  // comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
   comp_graphics_h = 1920;
   comp_graphics_w = comp_graphics_h * comp_graphics_ratio;
 
@@ -420,7 +416,7 @@ function random_user_color() {
 
 function display_info() {
   if (masks.length == 0 && unselected_masks.length == 0 && mask_selection) {
-    info_p.html("No elements to display.<br>Please try uploading some images.");
+    info_p.html("No elements to display.<br>Please try to upload some images.");
   } else if (masks.length == 0 && !mask_selection) {
     info_p.html("No elements selected.");
   } else {
