@@ -64,24 +64,19 @@ function setup() {
   // Botão "Apply Changes"
   const apply_changes_btn = select("#apply_changes_btn");
   apply_changes_btn.mousePressed(async () => {
-    toggle_loader(true);
-    update_loader_info("Applying Changes...");
-    group_masks(masks, semantic_groups);
-    await apply_changes();
-    toggle_loader(false);
-
-    setTimeout(() => {
-      composition.loaded = true;
-    }, loader_time);
+    await loader_task("Applying Changes...", async () => {
+      group_masks(masks, semantic_groups);
+      await apply_changes();
+      setTimeout(() => {
+        composition.loaded = true;
+      }, loader_time);
+    });
   });
 
   // Botão Export
   const export_btn = select("#export_btn");
   export_btn.mousePressed(async () => {
-    toggle_loader(true);
-    update_loader_info("Exporting Composition...");
-    await save_output();
-    toggle_loader(false);
+    await loader_task("Exporting Composition...", () => save_output());
   });
 
   // Botão "Open Library"
@@ -234,6 +229,17 @@ function mouseWheel(event) {
   }
 }
 
+// Loader
+async function loader_task(message, taskFn) {
+  toggle_loader(true);
+  update_loader_info(message);
+  try {
+    await taskFn();
+  } finally {
+    toggle_loader(false);
+  }
+}
+
 // ---------------------------------------------------------------------------
 
 // Agrupar máscaras por grupos semânticos
@@ -373,25 +379,9 @@ async function save_output(additional = "") {
     filename = `${year}${month}${day}_${hour}${minutes}${seconds}${millis}_${additional}`;
   }
 
-  let grain_output = createGraphics(comp_graphics.width, comp_graphics.height);
-  grain_output.copy(comp_graphics, -comp_graphics.width / 2, -comp_graphics.height / 2, comp_graphics.width, comp_graphics.height, 0, 0, grain_output.width, grain_output.height);
-  // add_grain(grain_output, 5);
-  await save(grain_output, `${filename}_seed_${seed}.png`);
-}
-
-function add_grain(pg, variation) {
-  pg.loadPixels();
-
-  let d = pixelDensity();
-  let pixels_count = 4 * pg.width * d * pg.height * d;
-
-  for (let i = 0; i < pixels_count; i += 4) {
-    let noise = map(random(), 0, 1, -variation, variation);
-    pg.pixels[i] = pg.pixels[i] + noise;
-    pg.pixels[i + 1] = pg.pixels[i + 1] + noise;
-    pg.pixels[i + 2] = pg.pixels[i + 2] + noise;
-  }
-  pg.updatePixels();
+  let output = createGraphics(comp_graphics.width, comp_graphics.height);
+  output.copy(comp_graphics, -comp_graphics.width / 2, -comp_graphics.height / 2, comp_graphics.width, comp_graphics.height, 0, 0, output.width, output.height);
+  await save(output, `${filename}_seed_${seed}.png`);
 }
 
 // ---------------------------------------------------------------------------
