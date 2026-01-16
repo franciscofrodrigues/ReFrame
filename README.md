@@ -8,8 +8,8 @@ ReFrame is a web-based system developed as part of a Master's Dissertation explo
     - [Key Concepts](#key-concepts)
 - [Getting Started](#getting-started)
     - [Installation](#installation)
-- [Usage](#usage)
-- [API Endpoints](#api-endpoints)
+    - [Usage](#usage)
+    - [API Endpoints](#api-endpoints)
 - [License](#license)
 - [Credits](#credits)
 
