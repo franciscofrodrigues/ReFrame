@@ -79,7 +79,7 @@ For complete API documentation with interactive testing, visit the [FastAPI - Sw
 #### Upload Endpoint
 
 <details>
-<summary><code>POST /upload</code> - Submit images for processing</summary>
+<summary><code>POST /upload</code> - Submit images for processing</summary><br>
 
 To send files from client-side to server-side using multipart/form-data for processing.
 
@@ -89,7 +89,7 @@ To send files from client-side to server-side using multipart/form-data for proc
 </details>
 
 <details>
-<summary><code>GET /upload/{uuid}/status</code> - Check processing status</summary>
+<summary><code>GET /upload/{uuid}/status</code> - Check processing status</summary><br>
 
 To check server-side pipeline processing status of a specific upload UUID.
 
@@ -101,7 +101,7 @@ To check server-side pipeline processing status of a specific upload UUID.
 #### Masks Endpoint
 
 <details>
-<summary><code>GET /masks/{folder_name}/result</code> - Get processing results</summary>
+<summary><code>GET /masks/{folder_name}/result</code> - Get processing results</summary><br>
 
 To get resulting data from the server-side processing pipeline.
 
@@ -111,7 +111,7 @@ To get resulting data from the server-side processing pipeline.
 </details>
 
 <details>
-<summary><code>GET /masks/{folder_name}/result/{group_index}/{result_index}.png</code> - Get mask image</summary>
+<summary><code>GET /masks/{folder_name}/result/{group_index}/{result_index}.png</code> - Get mask image</summary><br>
 
 To get a specific resulting mask and/or inverse. Specify the type of mask with the boolean query parameter `inverse` set to `true` or `false` depending on which mask you want.
 
@@ -124,7 +124,7 @@ To get a specific resulting mask and/or inverse. Specify the type of mask with t
 </details>
 
 <details>
-<summary><code>GET /masks/{folder_name}/result/{group_index}/{result_index}/contained/{contained_index}.png</code> - Get contained masks</summary>
+<summary><code>GET /masks/{folder_name}/result/{group_index}/{result_index}/contained/{contained_index}.png</code> - Get contained masks</summary><br>
 
 To get all masks contained within a specific resulting mask.
 
