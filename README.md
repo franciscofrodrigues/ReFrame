@@ -1,19 +1,17 @@
 # ReFrame
-> **Decomposition and Recomposition of Visual Information.**
 
 ReFrame is a web-based system developed as part of a Master's Dissertation exploring the intersection of Graphic Design, Generative Design, and Computer Vision. It automates the extraction of semantic layers from images to enable new conceptual paths in visual representation.
 
 ## Table of Contents
 
-- [ReFrame](#reframe)
-    - [About](#about)
-        - [Key Concepts](#key-concepts)
-    - [Getting Started](#getting-started)
-        - [Installation](#installation)
-    - [Usage](#usage)
-    - [API Endpoints](#api-endpoints)
-    - [License](#license)
-    - [Credits](#credits)
+- [About](#about)
+    - [Key Concepts](#key-concepts)
+- [Getting Started](#getting-started)
+    - [Installation](#installation)
+- [Usage](#usage)
+- [API Endpoints](#api-endpoints)
+- [License](#license)
+- [Credits](#credits)
 
 ## About
 
@@ -34,35 +32,29 @@ ReFrame establishes a balance between automated rules and user decisions, offeri
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/franciscofrodrigues/ReFrame.git
    cd ReFrame
    ```
 
 2. **Create a virtual environment**
    ```bash
-   python -m venv venv
+   python -m venv <name>
    ```
 
-#### Activate
-
-```bash
-source <name>/bin/activate
-```
-
----
+3. **Activate virtual environment**
+    ```bash
+    source <name>/bin/activate
+    ```
 
 4. **Install dependencies**
    ```bash
    pip install -r requirements.txt
    ```
 
----
-
 5. **Run the Application**
-
-```bash
-python server/main.py
-```
+    ```bash
+    python server/main.py
+    ```
 
 ### Usage
 
@@ -142,12 +134,7 @@ This project is licensed under the [AGPL-3.0 License](LICENSE).
 
 ## Credits
 
-This project is developed in the context of a university course.
-
-This project was developed as part of the Master's Dissertation
-
-This project was developed as the part of the Master's Dissertation *"ReFrame: Decomposição e Recomposição de Informação Visual"*, within the scope of the **MSc in Design and Multimedia** of the **University of Coimbra**.
+This project was developed as the part of Master's Dissertation *"ReFrame: Decomposição e Recomposição de Informação Visual"*, within the scope of the **MSc in Design and Multimedia** of the **University of Coimbra**.
 
 ### Contributors
-
-- Francisco Rodrigues
+- [Francisco Rodrigues](https://github.com/franciscofrodrigues)
