@@ -83,7 +83,7 @@ For complete API documentation with interactive testing, visit the [FastAPI - Sw
 
 To send files from client-side to server-side using multipart/form-data for processing.
 
-**Request**: Image files in multipart format
+**Request**: Image files in multipart format<br>
 **Response**: Task UUID and initial status
 
 </details>
@@ -93,7 +93,7 @@ To send files from client-side to server-side using multipart/form-data for proc
 
 To check server-side pipeline processing status of a specific upload UUID.
 
-**Parameters**: `uuid` - Task identifier from upload response
+**Parameters**: `uuid` - Task identifier from upload response<br>
 **Response**: Current processing step, status, and labels information
 
 </details>
@@ -105,7 +105,7 @@ To check server-side pipeline processing status of a specific upload UUID.
 
 To get resulting data from the server-side processing pipeline.
 
-**Parameters**: `folder_name` - Output folder from status response
+**Parameters**: `folder_name` - Output folder from status response<br>
 **Response**: Complete JSON structure with all extracted data
 
 </details>
